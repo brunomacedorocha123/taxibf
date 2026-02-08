@@ -23,6 +23,10 @@
             box-sizing: border-box;
         }
 
+        html {
+            overflow-y: auto;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -31,11 +35,13 @@
             align-items: center;
             justify-content: center;
             padding: 1rem;
+            overflow-x: hidden;
         }
 
         .container {
             width: 100%;
             max-width: 420px;
+            margin: 1rem auto;
         }
 
         .auth-card {
@@ -44,12 +50,17 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
             position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .card-header {
             background: var(--dark-graphite);
-            padding: 2.5rem 2rem;
+            padding: 2rem;
             text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .logo {
@@ -89,6 +100,10 @@
             display: flex;
             margin-bottom: 2rem;
             border-bottom: 2px solid var(--border);
+            position: sticky;
+            top: 126px;
+            background: var(--white);
+            z-index: 5;
         }
 
         .tab {
@@ -126,20 +141,21 @@
         }
 
         .form {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
+            position: relative;
             opacity: 0;
             transform: translateX(20px);
             transition: all 0.3s ease;
             pointer-events: none;
+            max-height: 0;
+            overflow: hidden;
         }
 
         .form.active {
             opacity: 1;
             transform: translateX(0);
             pointer-events: all;
+            max-height: 1000px;
+            overflow: visible;
         }
 
         .form-group {
@@ -413,6 +429,7 @@
             justify-content: center;
             padding: 1rem;
             z-index: 1000;
+            overflow-y: auto;
         }
 
         .modal.show {
@@ -426,6 +443,8 @@
             max-width: 400px;
             width: 100%;
             animation: modalSlide 0.3s;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         @keyframes modalSlide {
@@ -464,6 +483,25 @@
             background: var(--light-gray);
         }
 
+        /* Scrollbar personalizada */
+        .auth-card::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .auth-card::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .auth-card::-webkit-scrollbar-thumb {
+            background: var(--taxi-yellow);
+            border-radius: 3px;
+        }
+
+        .auth-card::-webkit-scrollbar-thumb:hover {
+            background: #e6b400;
+        }
+
         /* Responsividade */
         @media (max-width: 480px) {
             .container {
@@ -472,14 +510,19 @@
             
             .auth-card {
                 border-radius: 16px;
+                max-height: 95vh;
             }
             
             .card-header {
-                padding: 2rem 1.5rem;
+                padding: 1.5rem;
             }
             
             .card-body {
                 padding: 1.5rem;
+            }
+            
+            .tab-container {
+                top: 106px;
             }
             
             .tab {
@@ -496,6 +539,20 @@
             }
         }
 
+        @media (max-height: 700px) {
+            .auth-card {
+                max-height: 85vh;
+            }
+            
+            .card-header {
+                padding: 1.5rem;
+            }
+            
+            .card-body {
+                padding: 1.5rem;
+            }
+        }
+
         @media (max-width: 360px) {
             .logo {
                 font-size: 1.5rem;
@@ -508,6 +565,10 @@
             
             .card-body {
                 padding: 1.25rem;
+            }
+            
+            .tab-container {
+                top: 101px;
             }
         }
     </style>
@@ -689,20 +750,35 @@
             getDoc 
         } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-        // Configuração Firebase
+        // ATENÇÃO: Substitua estas credenciais pelas suas do Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyAHMFQ-QqtdFdcdOXvmRjbNeQvv0rvi2bw",
-            authDomain: "taxibf-3a1fa.firebaseapp.com",
-            projectId: "taxibf-3a1fa",
-            storageBucket: "taxibf-3a1fa.firebasestorage.app",
-            messagingSenderId: "845069797456",
-            appId: "1:845069797456:web:84c61d126f204f945ba955"
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_AUTH_DOMAIN",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const googleProvider = new GoogleAuthProvider();
+        // Inicializar Firebase apenas se as credenciais estiverem configuradas
+        let app, auth, db, googleProvider;
+        
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            googleProvider = new GoogleAuthProvider();
+            
+            // Configurar escopos do Google (opcional)
+            googleProvider.addScope('profile');
+            googleProvider.addScope('email');
+            
+            // Configurar idioma
+            auth.languageCode = 'pt';
+        } catch (error) {
+            console.error("Erro ao inicializar Firebase:", error);
+            showGlobalError("Erro de configuração. Verifique as credenciais do Firebase.");
+        }
 
         // UI Controls
         const tabs = document.querySelectorAll('.tab');
@@ -712,6 +788,17 @@
         const closeModalBtn = document.getElementById('closeModal');
         const forgotPasswordBtn = document.getElementById('forgotPassword');
         const registerPasswordInput = document.getElementById('registerPassword');
+
+        // Função para mostrar erro global
+        function showGlobalError(message) {
+            const loginError = document.getElementById('loginError');
+            const registerError = document.getElementById('registerError');
+            
+            loginError.textContent = message;
+            loginError.classList.add('show');
+            registerError.textContent = message;
+            registerError.classList.add('show');
+        }
 
         // Trocar entre login e cadastro
         tabs.forEach(tab => {
@@ -725,6 +812,12 @@
                 document.getElementById(tabId + 'Form').classList.add('active');
                 
                 clearMessages();
+                
+                // Scroll suave para o topo do formulário ativo
+                setTimeout(() => {
+                    const activeForm = document.getElementById(tabId + 'Form');
+                    activeForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
             });
         });
 
@@ -744,6 +837,9 @@
                     icon.classList.remove('fa-eye-slash');
                     icon.classList.add('fa-eye');
                 }
+                
+                // Focar no input após alternar
+                input.focus();
             });
         });
 
@@ -762,17 +858,35 @@
             if (/[A-Z]/.test(password)) strength++;
             if (/[a-z]/.test(password)) strength++;
             if (/\d/.test(password)) strength++;
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength++;
             
             // Atualizar barra
             strengthBar.className = 'password-strength-bar';
             if (password.length === 0) {
                 strengthBar.style.width = '0%';
-            } else if (strength <= 1) {
-                strengthBar.classList.add('strength-weak');
             } else if (strength <= 2) {
+                strengthBar.classList.add('strength-weak');
+            } else if (strength <= 4) {
                 strengthBar.classList.add('strength-medium');
             } else {
                 strengthBar.classList.add('strength-strong');
+            }
+            
+            // Atualizar dica
+            if (password.length > 0) {
+                if (strength <= 2) {
+                    hint.style.color = 'var(--error)';
+                    hint.textContent = 'Senha fraca. Adicione letras maiúsculas, números e símbolos.';
+                } else if (strength <= 4) {
+                    hint.style.color = '#FFA500';
+                    hint.textContent = 'Senha média. Pode ser melhorada.';
+                } else {
+                    hint.style.color = 'var(--success)';
+                    hint.textContent = 'Senha forte! Excelente.';
+                }
+            } else {
+                hint.style.color = '#999';
+                hint.textContent = 'Use 8+ caracteres com letras maiúsculas, minúsculas, números e símbolos';
             }
         });
 
@@ -780,6 +894,7 @@
         forgotPasswordBtn.addEventListener('click', (e) => {
             e.preventDefault();
             resetModal.classList.add('show');
+            document.getElementById('resetEmail').focus();
         });
 
         closeModalBtn.addEventListener('click', () => {
@@ -789,6 +904,14 @@
 
         resetModal.addEventListener('click', (e) => {
             if (e.target === resetModal) {
+                resetModal.classList.remove('show');
+                clearMessages();
+            }
+        });
+
+        // Fechar modal com ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && resetModal.classList.contains('show')) {
                 resetModal.classList.remove('show');
                 clearMessages();
             }
@@ -814,22 +937,44 @@
 
         function showMessage(type, message, isSuccess = false) {
             const element = document.getElementById(type);
+            if (!element) return;
+            
             element.textContent = message;
             element.classList.add('show');
+            
             if (isSuccess) {
                 element.style.borderLeftColor = 'var(--success)';
                 element.style.background = 'rgba(46, 204, 113, 0.1)';
                 element.style.color = 'var(--success)';
+            } else {
+                element.style.borderLeftColor = 'var(--error)';
+                element.style.background = 'rgba(231, 76, 60, 0.1)';
+                element.style.color = 'var(--error)';
             }
+            
+            // Scroll para a mensagem
+            setTimeout(() => {
+                element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
         }
 
         // Login com email/senha
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            if (!auth) {
+                showMessage('loginError', 'Sistema de autenticação não configurado.');
+                return;
+            }
+            
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
             const submitBtn = document.getElementById('loginBtn');
+            
+            if (!email || !password) {
+                showMessage('loginError', 'Preencha todos os campos.');
+                return;
+            }
             
             clearMessages();
             setLoading(submitBtn, true);
@@ -838,15 +983,33 @@
                 await signInWithEmailAndPassword(auth, email, password);
                 showMessage('loginSuccess', 'Login realizado com sucesso! Redirecionando...', true);
                 
+                // Simular redirecionamento
                 setTimeout(() => {
                     window.location.href = 'dashboard.html';
                 }, 1500);
                 
             } catch (error) {
                 let message = 'Erro ao fazer login. Verifique suas credenciais.';
-                if (error.code === 'auth/user-not-found') message = 'Usuário não encontrado.';
-                if (error.code === 'auth/wrong-password') message = 'Senha incorreta.';
-                if (error.code === 'auth/invalid-credential') message = 'Credenciais inválidas.';
+                switch(error.code) {
+                    case 'auth/user-not-found':
+                        message = 'Usuário não encontrado.';
+                        break;
+                    case 'auth/wrong-password':
+                        message = 'Senha incorreta.';
+                        break;
+                    case 'auth/invalid-credential':
+                        message = 'Credenciais inválidas.';
+                        break;
+                    case 'auth/invalid-email':
+                        message = 'E-mail inválido.';
+                        break;
+                    case 'auth/too-many-requests':
+                        message = 'Muitas tentativas. Tente novamente mais tarde.';
+                        break;
+                    case 'auth/network-request-failed':
+                        message = 'Erro de conexão. Verifique sua internet.';
+                        break;
+                }
                 showMessage('loginError', message);
             } finally {
                 setLoading(submitBtn, false);
@@ -856,6 +1019,11 @@
         // Cadastro com email/senha
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            if (!auth || !db) {
+                showMessage('registerError', 'Sistema não configurado corretamente.');
+                return;
+            }
             
             const name = document.getElementById('registerName').value.trim();
             const email = document.getElementById('registerEmail').value.trim();
@@ -867,14 +1035,20 @@
             clearMessages();
             
             // Validações
+            if (!name || !email || !password || !confirm) {
+                showMessage('registerError', 'Preencha todos os campos.');
+                return;
+            }
+            
             if (password !== confirm) {
                 showMessage('registerError', 'As senhas não coincidem.');
                 return;
             }
             
-            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+            // Regex de senha mais flexível
+            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/;
             if (!passwordRegex.test(password)) {
-                showMessage('registerError', 'A senha precisa de 8+ caracteres com letras maiúsculas, minúsculas e números.');
+                showMessage('registerError', 'A senha precisa de pelo menos 8 caracteres, incluindo letras e números.');
                 return;
             }
             
@@ -884,24 +1058,41 @@
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
                 
-                await updateProfile(user, { displayName: name });
+                await updateProfile(user, { 
+                    displayName: name
+                });
                 
                 await setDoc(doc(db, 'users', user.uid), {
+                    uid: user.uid,
                     name: name,
                     email: email,
                     type: type,
+                    photoURL: user.photoURL || '',
                     createdAt: new Date().toISOString(),
-                    lastLogin: new Date().toISOString()
+                    lastLogin: new Date().toISOString(),
+                    emailVerified: user.emailVerified
                 });
                 
                 if (type === 'driver') {
                     await setDoc(doc(db, 'drivers', user.uid), {
                         userId: user.uid,
                         name: name,
+                        email: email,
                         status: 'offline',
                         rating: 0,
                         totalRides: 0,
-                        createdAt: new Date().toISOString()
+                        createdAt: new Date().toISOString(),
+                        vehicleInfo: {},
+                        location: null
+                    });
+                } else {
+                    await setDoc(doc(db, 'passengers', user.uid), {
+                        userId: user.uid,
+                        name: name,
+                        email: email,
+                        totalRides: 0,
+                        createdAt: new Date().toISOString(),
+                        favorites: []
                     });
                 }
                 
@@ -913,18 +1104,37 @@
                 
             } catch (error) {
                 let message = 'Erro ao criar conta. Tente novamente.';
-                if (error.code === 'auth/email-already-in-use') message = 'Este e-mail já está cadastrado.';
-                if (error.code === 'auth/invalid-email') message = 'E-mail inválido.';
-                if (error.code === 'auth/weak-password') message = 'Senha muito fraca.';
+                switch(error.code) {
+                    case 'auth/email-already-in-use':
+                        message = 'Este e-mail já está cadastrado.';
+                        break;
+                    case 'auth/invalid-email':
+                        message = 'E-mail inválido.';
+                        break;
+                    case 'auth/weak-password':
+                        message = 'Senha muito fraca. Use pelo menos 8 caracteres com letras e números.';
+                        break;
+                    case 'auth/network-request-failed':
+                        message = 'Erro de conexão. Verifique sua internet.';
+                        break;
+                    case 'auth/operation-not-allowed':
+                        message = 'Operação não permitida. Contate o suporte.';
+                        break;
+                }
                 showMessage('registerError', message);
             } finally {
                 setLoading(submitBtn, false);
             }
         });
 
-        // Login com Google
+        // Login/Cadastro com Google
         async function signInWithGoogle(isRegister = false) {
             const btn = isRegister ? document.getElementById('googleRegister') : document.getElementById('googleLogin');
+            
+            if (!auth || !db) {
+                showMessage(isRegister ? 'registerError' : 'loginError', 'Sistema de autenticação não configurado.');
+                return;
+            }
             
             clearMessages();
             setLoading(btn, true);
@@ -933,26 +1143,71 @@
                 const result = await signInWithPopup(auth, googleProvider);
                 const user = result.user;
                 
+                // Verificar se usuário já existe
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
                 
                 if (!userDoc.exists()) {
+                    // Novo usuário
                     await setDoc(doc(db, 'users', user.uid), {
+                        uid: user.uid,
                         name: user.displayName,
                         email: user.email,
                         type: 'pending',
-                        createdAt: new Date().toISOString(),
                         photoURL: user.photoURL,
-                        lastLogin: new Date().toISOString()
+                        createdAt: new Date().toISOString(),
+                        lastLogin: new Date().toISOString(),
+                        emailVerified: user.emailVerified,
+                        provider: 'google'
                     });
                     
-                    window.location.href = 'escolher-tipo.html';
+                    // Redirecionar para escolher tipo
+                    showMessage(isRegister ? 'registerError' : 'loginSuccess', 'Autenticação com Google realizada! Escolha seu tipo de conta.', true);
+                    
+                    setTimeout(() => {
+                        window.location.href = 'escolher-tipo.html';
+                    }, 1500);
+                    
                 } else {
+                    // Usuário existente
                     const userData = userDoc.data();
-                    window.location.href = userData.type === 'driver' ? 'dashboard-motorista.html' : 'dashboard-passageiro.html';
+                    
+                    // Atualizar último login
+                    await setDoc(doc(db, 'users', user.uid), {
+                        ...userData,
+                        lastLogin: new Date().toISOString(),
+                        photoURL: user.photoURL || userData.photoURL
+                    }, { merge: true });
+                    
+                    showMessage(isRegister ? 'registerError' : 'loginSuccess', 'Login com Google realizado! Redirecionando...', true);
+                    
+                    setTimeout(() => {
+                        if (userData.type === 'pending') {
+                            window.location.href = 'escolher-tipo.html';
+                        } else {
+                            window.location.href = userData.type === 'driver' ? 'dashboard-motorista.html' : 'dashboard-passageiro.html';
+                        }
+                    }, 1500);
                 }
                 
             } catch (error) {
-                const message = 'Erro ao autenticar com Google. Tente novamente.';
+                let message = 'Erro ao autenticar com Google. Tente novamente.';
+                switch(error.code) {
+                    case 'auth/popup-blocked':
+                        message = 'Popup bloqueado. Permita popups para este site.';
+                        break;
+                    case 'auth/popup-closed-by-user':
+                        message = 'Popup fechado. Tente novamente.';
+                        break;
+                    case 'auth/cancelled-popup-request':
+                        message = 'Solicitação cancelada.';
+                        break;
+                    case 'auth/unauthorized-domain':
+                        message = 'Domínio não autorizado. Contate o suporte.';
+                        break;
+                    case 'auth/network-request-failed':
+                        message = 'Erro de conexão. Verifique sua internet.';
+                        break;
+                }
                 showMessage(isRegister ? 'registerError' : 'loginError', message);
             } finally {
                 setLoading(btn, false);
@@ -964,6 +1219,11 @@
 
         // Redefinir senha
         document.getElementById('resetBtn').addEventListener('click', async () => {
+            if (!auth) {
+                showMessage('resetError', 'Sistema de autenticação não configurado.');
+                return;
+            }
+            
             const email = document.getElementById('resetEmail').value.trim();
             const submitBtn = document.getElementById('resetBtn');
             
@@ -972,25 +1232,50 @@
                 return;
             }
             
+            // Validação básica de email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showMessage('resetError', 'Digite um e-mail válido.');
+                return;
+            }
+            
             setLoading(submitBtn, true);
             clearMessages();
             
             try {
                 await sendPasswordResetEmail(auth, email);
-                showMessage('resetSuccess', 'Link de redefinição enviado! Verifique seu e-mail.', true);
+                showMessage('resetSuccess', 'Link de redefinição enviado! Verifique seu e-mail (incluindo spam).', true);
                 
                 setTimeout(() => {
                     resetModal.classList.remove('show');
                     clearMessages();
+                    document.getElementById('resetEmail').value = '';
                 }, 3000);
                 
             } catch (error) {
                 let message = 'Erro ao enviar e-mail. Tente novamente.';
-                if (error.code === 'auth/user-not-found') message = 'E-mail não cadastrado.';
-                if (error.code === 'auth/invalid-email') message = 'E-mail inválido.';
+                switch(error.code) {
+                    case 'auth/user-not-found':
+                        message = 'E-mail não cadastrado.';
+                        break;
+                    case 'auth/invalid-email':
+                        message = 'E-mail inválido.';
+                        break;
+                    case 'auth/network-request-failed':
+                        message = 'Erro de conexão. Verifique sua internet.';
+                        break;
+                }
                 showMessage('resetError', message);
             } finally {
                 setLoading(submitBtn, false);
+            }
+        });
+
+        // Permitir enviar redefinição com Enter
+        document.getElementById('resetEmail').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('resetBtn').click();
             }
         });
 
@@ -999,6 +1284,35 @@
             input.addEventListener('input', () => {
                 clearMessages();
             });
+        });
+
+        // Focar no primeiro campo ao trocar de aba
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                setTimeout(() => {
+                    const activeForm = document.querySelector('.form.active');
+                    const firstInput = activeForm.querySelector('.form-input');
+                    if (firstInput) {
+                        firstInput.focus();
+                    }
+                }, 300);
+            });
+        });
+
+        // Configuração inicial
+        window.addEventListener('load', () => {
+            // Verificar se Firebase está configurado
+            if (!firebaseConfig.apiKey || firebaseConfig.apiKey === 'SUA_API_KEY') {
+                showGlobalError('⚠️ Configure suas credenciais do Firebase!');
+            }
+            
+            // Focar no campo de email do login inicialmente
+            const loginEmail = document.getElementById('loginEmail');
+            if (loginEmail) {
+                setTimeout(() => {
+                    loginEmail.focus();
+                }, 500);
+            }
         });
     </script>
 </body>
