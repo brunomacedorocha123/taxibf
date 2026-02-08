@@ -22,14 +22,19 @@
             box-sizing: border-box;
         }
 
-        body {
+        html, body {
+            height: 100%;
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, var(--light-gray) 0%, var(--white) 100%);
-            min-height: 100vh;
+        }
+
+        body {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             padding: 1rem;
+            overflow-y: auto;
+            min-height: 100vh;
         }
 
         .container {
@@ -39,6 +44,7 @@
             width: 100%;
             max-width: 480px;
             overflow: hidden;
+            margin: 2rem 0;
         }
 
         .header {
@@ -64,6 +70,8 @@
 
         .form-container {
             padding: 2rem;
+            max-height: none;
+            overflow: visible;
         }
 
         h2 {
@@ -81,12 +89,12 @@
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
             font-weight: 600;
             color: var(--dark-graphite);
             font-size: 0.9rem;
@@ -95,7 +103,7 @@
         .form-group input,
         .form-group select {
             width: 100%;
-            padding: 1rem;
+            padding: 0.9rem;
             border: 2px solid #e0e0e0;
             border-radius: 12px;
             font-size: 1rem;
@@ -130,6 +138,7 @@
             padding: 0 1.2rem;
             cursor: pointer;
             transition: all 0.3s;
+            font-size: 1.1rem;
         }
 
         .btn-icon:hover {
@@ -138,9 +147,9 @@
         }
 
         .hint {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #999;
-            margin-top: 0.4rem;
+            margin-top: 0.3rem;
         }
 
         .id-status {
@@ -157,14 +166,14 @@
         .user-types {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+            gap: 0.8rem;
             margin-bottom: 1.5rem;
         }
 
         .type-card {
             border: 2px solid #e0e0e0;
             border-radius: 12px;
-            padding: 1.5rem;
+            padding: 1.2rem;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
@@ -180,19 +189,19 @@
         }
 
         .type-card i {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+            margin-bottom: 0.4rem;
             display: block;
         }
 
         .type-card span {
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .btn {
             width: 100%;
-            padding: 1rem;
+            padding: 0.9rem;
             border-radius: 12px;
             font-weight: 700;
             font-size: 1rem;
@@ -204,23 +213,40 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            margin-top: 0.8rem;
         }
 
         .btn-primary {
             background: var(--taxi-yellow);
             color: var(--dark-graphite);
-            margin-top: 1rem;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(255, 196, 0, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #666;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--dark-graphite);
+            color: var(--dark-graphite);
         }
 
         .btn-google {
             background: var(--white);
             border: 2px solid #e0e0e0;
             margin-bottom: 1rem;
+            color: var(--dark-graphite);
         }
 
         .btn-google:hover {
@@ -249,10 +275,10 @@
         .error {
             background: #fee;
             color: #c33;
-            padding: 1rem;
+            padding: 0.8rem;
             border-radius: 10px;
             margin-bottom: 1rem;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             display: none;
             border-left: 4px solid var(--busy);
         }
@@ -291,7 +317,7 @@
             display: flex;
             justify-content: center;
             gap: 0.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .dot {
@@ -309,14 +335,102 @@
             background: var(--available);
         }
 
+        /* Password Requirements */
+        .password-requirements {
+            background: var(--light-gray);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .password-requirements h4 {
+            margin-bottom: 0.5rem;
+            color: var(--dark-graphite);
+            font-size: 0.85rem;
+        }
+
+        .password-requirements ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.3rem;
+        }
+
+        .password-requirements li {
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .password-requirements li.met {
+            color: var(--available);
+        }
+
+        .password-requirements li.met::before {
+            content: '✓';
+            font-weight: bold;
+        }
+
+        .password-requirements li:not(.met)::before {
+            content: '○';
+            opacity: 0.5;
+        }
+
+        .password-match {
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .password-match.show {
+            display: block;
+        }
+
+        .password-match.error {
+            color: var(--busy);
+        }
+
+        .password-match.success {
+            color: var(--available);
+        }
+
+        /* Spinner */
+        .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(0,0,0,0.2);
+            border-radius: 50%;
+            border-top-color: var(--dark-graphite);
+            animation: spin 1s linear infinite;
+        }
+
+        .btn.loading .spinner {
+            display: inline-block;
+        }
+
+        .btn.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         @media (max-width: 480px) {
+            body {
+                padding: 0;
+                align-items: flex-start;
+            }
+            
             .container {
                 border-radius: 0;
                 min-height: 100vh;
+                margin: 0;
             }
-            body {
-                padding: 0;
-            }
+            
             .user-types {
                 grid-template-columns: 1fr;
             }
@@ -366,7 +480,8 @@
                 <div id="error1" class="error">Selecione um tipo de usuário</div>
 
                 <button class="btn btn-primary" onclick="nextStep(1)">
-                    Continuar <i class="fas fa-arrow-right"></i>
+                    <span class="btn-text">Continuar</span>
+                    <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
 
@@ -397,7 +512,7 @@
                     <label>Seu ID único (7 números) *</label>
                     <div class="id-box">
                         <input type="text" id="userId" placeholder="1234567" maxlength="7" readonly>
-                        <button class="btn-icon" onclick="generateId()" title="Gerar ID">
+                        <button type="button" class="btn-icon" onclick="generateId()" title="Gerar ID">
                             <i class="fas fa-random"></i>
                         </button>
                     </div>
@@ -416,8 +531,14 @@
                     <p class="hint">Opcional - pode completar depois</p>
                 </div>
 
-                <button class="btn btn-primary" onclick="nextStep(2)">
-                    Continuar <i class="fas fa-arrow-right"></i>
+                <button type="button" class="btn btn-secondary" onclick="prevStep(2)">
+                    <i class="fas fa-arrow-left"></i>
+                    Voltar
+                </button>
+
+                <button type="button" class="btn btn-primary" onclick="nextStep(2)">
+                    <span class="btn-text">Continuar</span>
+                    <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
 
@@ -432,16 +553,17 @@
                 <h2>Dados de acesso</h2>
                 <p class="subtitle">Crie suas credenciais</p>
 
-                <button class="btn btn-google" onclick="signInWithGoogle()">
-                    <img src="https://www.google.com/favicon.ico" width="20">
-                    Cadastrar com Google
+                <button type="button" class="btn btn-google" onclick="signInWithGoogle()">
+                    <img src="https://www.google.com/favicon.ico" width="20" style="margin-right: 0.5rem;">
+                    <span class="btn-text">Cadastrar com Google</span>
+                    <div class="spinner"></div>
                 </button>
 
-                <div class="divider"><span>ou</span></div>
+                <div class="divider"><span>ou use e-mail</span></div>
 
                 <div id="error3" class="error"></div>
 
-                <form onsubmit="handleRegister(event)">
+                <form id="registerForm" onsubmit="handleRegister(event)">
                     <div class="form-group">
                         <label>E-mail *</label>
                         <input type="email" id="email" placeholder="seu@email.com" required>
@@ -449,17 +571,33 @@
 
                     <div class="form-group">
                         <label>Senha *</label>
-                        <input type="password" id="password" placeholder="Mínimo 8 caracteres" required>
-                        <p class="hint">8+ caracteres, maiúscula, minúscula e número</p>
+                        <input type="password" id="password" placeholder="Crie uma senha segura" required>
+                        
+                        <div class="password-requirements">
+                            <h4>A senha deve conter:</h4>
+                            <ul>
+                                <li id="req-length">8 caracteres</li>
+                                <li id="req-upper">Letra maiúscula</li>
+                                <li id="req-lower">Letra minúscula</li>
+                                <li id="req-number">Número</li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="form-group">
                         <label>Confirmar senha *</label>
-                        <input type="password" id="confirmPassword" placeholder="Repita a senha" required>
+                        <input type="password" id="confirmPassword" placeholder="Digite a senha novamente" required>
+                        <div id="passwordMatch" class="password-match"></div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">
-                        Criar conta <i class="fas fa-check"></i>
+                    <button type="button" class="btn btn-secondary" onclick="prevStep(3)">
+                        <i class="fas fa-arrow-left"></i>
+                        Voltar
+                    </button>
+
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <span class="btn-text">Criar conta</span>
+                        <div class="spinner"></div>
                     </button>
                 </form>
             </div>
@@ -517,7 +655,7 @@
                 const phone = document.getElementById('phone').value.trim();
                 
                 if (!name || !display || !phone || phone.length < 14) {
-                    document.getElementById('error2').textContent = 'Preencha todos os campos obrigatórios';
+                    document.getElementById('error2').textContent = 'Preencha todos os campos obrigatórios corretamente';
                     document.getElementById('error2').classList.add('show');
                     return;
                 }
@@ -527,12 +665,24 @@
             }
         };
 
+        // Voltar etapa
+        window.prevStep = function(current) {
+            if (current === 2) {
+                document.getElementById('step2').classList.remove('active');
+                document.getElementById('step1').classList.add('active');
+            } else if (current === 3) {
+                document.getElementById('step3').classList.remove('active');
+                document.getElementById('step2').classList.add('active');
+            }
+        };
+
         // Gerar ID único
         window.generateId = async function() {
             const input = document.getElementById('userId');
             const status = document.getElementById('idStatus');
             
             status.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
+            status.className = 'id-status';
             
             let id = '';
             let unique = false;
@@ -540,9 +690,13 @@
             
             while (!unique && attempts < 10) {
                 id = Math.floor(1000000 + Math.random() * 9000000).toString();
-                const q = query(collection(db, 'users'), where('userId', '==', id));
-                const snap = await getDocs(q);
-                if (snap.empty) unique = true;
+                try {
+                    const q = query(collection(db, 'users'), where('userId', '==', id));
+                    const snap = await getDocs(q);
+                    if (snap.empty) unique = true;
+                } catch (e) {
+                    console.error('Erro ao verificar ID:', e);
+                }
                 attempts++;
             }
             
@@ -552,21 +706,63 @@
                 status.innerHTML = '<i class="fas fa-check"></i> ID disponível';
                 status.className = 'id-status ok';
             } else {
-                status.innerHTML = '<i class="fas fa-times"></i> Erro, tente novamente';
+                status.innerHTML = '<i class="fas fa-times"></i> Erro, clique novamente';
                 status.className = 'id-status error';
             }
         };
 
         // Máscara telefone
         document.getElementById('phone').addEventListener('input', function(e) {
-            let v = e.target.value.replace(/\\D/g, '');
+            let v = e.target.value.replace(/\D/g, '');
             if (v.length > 11) v = v.slice(0, 11);
             if (v.length > 7) v = v.slice(0, 7) + '-' + v.slice(7);
             if (v.length > 2) v = '(' + v.slice(0, 2) + ') ' + v.slice(2);
             e.target.value = v;
         });
 
-        // Cadastro
+        // Validação de senha em tempo real
+        document.getElementById('password').addEventListener('input', function(e) {
+            const password = e.target.value;
+            
+            // Verificar requisitos
+            const hasLength = password.length >= 8;
+            const hasUpper = /[A-Z]/.test(password);
+            const hasLower = /[a-z]/.test(password);
+            const hasNumber = /\d/.test(password);
+            
+            document.getElementById('req-length').classList.toggle('met', hasLength);
+            document.getElementById('req-upper').classList.toggle('met', hasUpper);
+            document.getElementById('req-lower').classList.toggle('met', hasLower);
+            document.getElementById('req-number').classList.toggle('met', hasNumber);
+            
+            // Verificar match se confirmPassword já tem valor
+            checkPasswordMatch();
+        });
+
+        // Verificar match das senhas
+        document.getElementById('confirmPassword').addEventListener('input', checkPasswordMatch);
+
+        function checkPasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            const matchEl = document.getElementById('passwordMatch');
+            
+            if (!confirm) {
+                matchEl.classList.remove('show');
+                return;
+            }
+            
+            matchEl.classList.add('show');
+            if (password !== confirm) {
+                matchEl.textContent = '❌ As senhas não coincidem';
+                matchEl.className = 'password-match show error';
+            } else {
+                matchEl.textContent = '✓ Senhas coincidem';
+                matchEl.className = 'password-match show success';
+            }
+        }
+
+        // Cadastro com email
         window.handleRegister = async function(e) {
             e.preventDefault();
             
@@ -574,19 +770,24 @@
             const password = document.getElementById('password').value;
             const confirm = document.getElementById('confirmPassword').value;
             const errorEl = document.getElementById('error3');
+            const btn = document.getElementById('submitBtn');
             
+            // Validações
             if (password !== confirm) {
                 errorEl.textContent = 'As senhas não coincidem';
                 errorEl.classList.add('show');
                 return;
             }
             
-            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$/;
+            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
             if (!regex.test(password)) {
-                errorEl.textContent = 'Senha deve ter 8+ caracteres, maiúscula, minúscula e número';
+                errorEl.textContent = 'A senha não atende aos requisitos mínimos';
                 errorEl.classList.add('show');
                 return;
             }
+            
+            setLoading(btn, true);
+            errorEl.classList.remove('show');
             
             try {
                 const cred = await createUserWithEmailAndPassword(auth, email, password);
@@ -601,7 +802,7 @@
                     phone: document.getElementById('phone').value.trim(),
                     address: document.getElementById('address').value.trim() || null,
                     type: userType,
-                    createdAt: new Date(),
+                    createdAt: new Date().toISOString(),
                     profileComplete: false
                 };
                 
@@ -612,7 +813,8 @@
                         ...userData,
                         status: 'offline',
                         vehicleInfo: {},
-                        rating: 0
+                        rating: 0,
+                        totalRides: 0
                     });
                 }
                 
@@ -620,44 +822,72 @@
                 window.location.href = userType === 'passageiro' ? 'dashboard-passageiro.html' : 'completar-perfil.html';
                 
             } catch (err) {
-                let msg = 'Erro ao criar conta';
-                if (err.code === 'auth/email-already-in-use') msg = 'E-mail já cadastrado';
-                if (err.code === 'auth/invalid-email') msg = 'E-mail inválido';
+                console.error('Erro cadastro:', err);
+                let msg = 'Erro ao criar conta. Tente novamente.';
+                if (err.code === 'auth/email-already-in-use') msg = 'Este e-mail já está cadastrado.';
+                if (err.code === 'auth/invalid-email') msg = 'E-mail inválido.';
+                if (err.code === 'auth/weak-password') msg = 'Senha muito fraca.';
                 errorEl.textContent = msg;
                 errorEl.classList.add('show');
+            } finally {
+                setLoading(btn, false);
             }
         };
 
-        // Google
+        // Cadastro com Google
         window.signInWithGoogle = async function() {
+            const btn = document.querySelector('.btn-google');
+            setLoading(btn, true);
+            
             try {
                 const result = await signInWithPopup(auth, googleProvider);
                 const user = result.user;
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
                 
                 if (!userDoc.exists()) {
+                    // Novo usuário - precisa completar cadastro
                     const newId = Math.floor(1000000 + Math.random() * 9000000).toString();
                     await setDoc(doc(db, 'users', user.uid), {
                         uid: user.uid,
-                        fullName: user.displayName,
-                        displayName: user.displayName?.split(' ')[0],
+                        fullName: user.displayName || '',
+                        displayName: user.displayName?.split(' ')[0] || 'Usuário',
                         userId: newId,
                         email: user.email,
                         phone: '',
+                        address: '',
                         type: 'pending',
-                        photoURL: user.photoURL,
-                        createdAt: new Date()
+                        photoURL: user.photoURL || null,
+                        createdAt: new Date().toISOString(),
+                        profileComplete: false
                     });
-                    window.location.href = 'escolher-tipo.html';
+                    window.location.href = 'escolher-tipo.html?google=true';
                 } else {
+                    // Usuário existente
                     const data = userDoc.data();
-                    window.location.href = data.type === 'passageiro' ? 'dashboard-passageiro.html' : 'dashboard-motorista.html';
+                    if (data.type === 'passageiro') {
+                        window.location.href = 'dashboard-passageiro.html';
+                    } else {
+                        window.location.href = 'dashboard-motorista.html';
+                    }
                 }
             } catch (err) {
-                document.getElementById('error3').textContent = 'Erro com Google';
+                console.error('Erro Google:', err);
+                document.getElementById('error3').textContent = 'Erro ao cadastrar com Google. Tente novamente.';
                 document.getElementById('error3').classList.add('show');
+            } finally {
+                setLoading(btn, false);
             }
         };
+
+        function setLoading(btn, loading) {
+            if (loading) {
+                btn.classList.add('loading');
+                btn.disabled = true;
+            } else {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+            }
+        }
     </script>
 </body>
 </html>
