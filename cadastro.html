@@ -15,7 +15,6 @@
             --success: #2ECC71;
             --error: #E74C3C;
             --border: #E0E0E0;
-            --shadow: 0 20px 60px rgba(0,0,0,0.15);
         }
 
         * {
@@ -41,14 +40,14 @@
 
         .container {
             width: 100%;
-            max-width: 450px;
-            margin: 0 auto;
+            max-width: 420px;
+            margin: 20px auto;
         }
 
         .auth-card {
             background: var(--white);
             border-radius: 24px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
         }
 
@@ -90,8 +89,6 @@
 
         .card-body {
             padding: 40px;
-            position: relative;
-            min-height: 500px;
         }
 
         .tabs {
@@ -128,28 +125,6 @@
             background: var(--taxi-yellow);
         }
 
-        .form-container {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .form {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            opacity: 0;
-            transform: translateX(20px);
-            transition: all 0.3s ease;
-            pointer-events: none;
-        }
-
-        .form.active {
-            opacity: 1;
-            transform: translateX(0);
-            pointer-events: all;
-        }
-
         .form-group {
             margin-bottom: 20px;
         }
@@ -160,10 +135,6 @@
             font-weight: 600;
             color: var(--dark-graphite);
             font-size: 14px;
-        }
-
-        .input-with-icon {
-            position: relative;
         }
 
         input, select {
@@ -182,23 +153,38 @@
             box-shadow: 0 0 0 3px rgba(255, 196, 0, 0.15);
         }
 
-        .input-icon {
+        .input-with-icon {
+            position: relative;
+        }
+
+        .toggle-password {
             position: absolute;
             right: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: #999;
             background: none;
             border: none;
+            color: #999;
             cursor: pointer;
             font-size: 18px;
         }
 
-        .password-strength {
+        .password-hint {
+            font-size: 12px;
+            color: #666;
             margin-top: 8px;
+            display: none;
+        }
+
+        .password-hint.show {
+            display: block;
+        }
+
+        .password-strength {
             height: 4px;
             background: var(--border);
             border-radius: 2px;
+            margin-top: 8px;
             overflow: hidden;
         }
 
@@ -212,15 +198,6 @@
         .strength-weak { background: var(--error); width: 33%; }
         .strength-medium { background: #FFA500; width: 66%; }
         .strength-strong { background: var(--success); width: 100%; }
-
-        .hint {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-            display: none;
-        }
-
-        .hint.show { display: block; }
 
         .btn {
             width: 100%;
@@ -261,6 +238,16 @@
         }
 
         .btn-google:hover {
+            background: var(--light-gray);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--dark-graphite);
+        }
+
+        .btn-secondary:hover {
             background: var(--light-gray);
         }
 
@@ -310,12 +297,6 @@
             border-left-color: var(--success);
         }
 
-        .alert-info {
-            background: rgba(52, 152, 219, 0.1);
-            color: #3498db;
-            border-left-color: #3498db;
-        }
-
         @keyframes slideIn {
             from {
                 opacity: 0;
@@ -349,6 +330,22 @@
             to { transform: rotate(360deg); }
         }
 
+        .forgot-link {
+            text-align: right;
+            margin-top: 8px;
+        }
+
+        .forgot-link a {
+            color: #666;
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        .forgot-link a:hover {
+            color: var(--taxi-yellow);
+            text-decoration: underline;
+        }
+
         .footer-links {
             text-align: center;
             margin-top: 25px;
@@ -366,20 +363,55 @@
             text-decoration: underline;
         }
 
-        .forgot-link {
-            text-align: right;
-            margin-top: 8px;
+        .back-home {
+            text-align: center;
+            margin-top: 20px;
         }
 
-        .forgot-link a {
+        .back-home a {
             color: #666;
-            font-size: 13px;
             text-decoration: none;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .forgot-link a:hover {
+        .back-home a:hover {
             color: var(--taxi-yellow);
-            text-decoration: underline;
+        }
+
+        .user-id-display {
+            background: var(--light-gray);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            color: var(--dark-graphite);
+            letter-spacing: 2px;
+            display: none;
+        }
+
+        .user-id-display.show {
+            display: block;
+        }
+
+        .copy-id-btn {
+            background: var(--taxi-yellow);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .copy-id-btn:hover {
+            opacity: 0.9;
         }
 
         @media (max-width: 480px) {
@@ -413,18 +445,7 @@
             }
         }
 
-        @media (max-width: 360px) {
-            .card-body {
-                padding: 20px;
-            }
-            
-            .tab {
-                padding: 12px;
-                font-size: 14px;
-            }
-        }
-
-        /* Modal de redefinição de senha */
+        /* Modal */
         .modal {
             position: fixed;
             top: 0;
@@ -487,174 +508,141 @@
         .modal-close:hover {
             background: var(--light-gray);
         }
-
-        .user-id-display {
-            background: var(--light-gray);
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 15px;
-            font-family: monospace;
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-            color: var(--dark-graphite);
-            letter-spacing: 2px;
-        }
-
-        .copy-id {
-            background: var(--taxi-yellow);
-            border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-top: 10px;
-            width: 100%;
-        }
-
-        .copy-id:hover {
-            opacity: 0.9;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="auth-card">
             <div class="card-header">
-                <div class="logo">
+                <a href="index.html" class="logo">
                     <div class="logo-icon">
                         <i class="fas fa-taxi"></i>
                     </div>
                     <span>TaxiBF</span>
-                </div>
+                </a>
                 <p class="tagline">Conectando passageiros e motoristas</p>
             </div>
             
             <div class="card-body">
                 <div class="tabs">
-                    <button class="tab active" data-tab="login">Entrar</button>
-                    <button class="tab" data-tab="register">Cadastrar</button>
+                    <button class="tab active" id="loginTab">Entrar</button>
+                    <button class="tab" id="registerTab">Cadastrar</button>
                 </div>
                 
-                <div class="form-container">
-                    <!-- Formulário de Login -->
-                    <form class="form active" id="loginForm">
-                        <div class="alert alert-error" id="loginError"></div>
-                        <div class="alert alert-success" id="loginSuccess"></div>
-                        
-                        <div class="form-group">
-                            <label>E-mail</label>
-                            <div class="input-with-icon">
-                                <input type="email" id="loginEmail" placeholder="seu@email.com" required>
-                                <i class="fas fa-envelope input-icon"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Senha</label>
-                            <div class="input-with-icon">
-                                <input type="password" id="loginPassword" placeholder="Sua senha" required>
-                                <button type="button" class="input-icon toggle-password" data-target="loginPassword">
-                                    <i class="far fa-eye"></i>
-                                </button>
-                            </div>
-                            <div class="forgot-link">
-                                <a href="#" id="forgotPassword">Esqueci minha senha</a>
-                            </div>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary" id="loginBtn">
-                            <span class="btn-text">Entrar na conta</span>
-                            <div class="spinner"></div>
-                        </button>
-                        
-                        <div class="divider"><span>ou continue com</span></div>
-                        
-                        <button type="button" class="btn btn-google" id="googleLogin">
-                            <img src="https://www.google.com/favicon.ico" width="18">
-                            <span class="btn-text">Google</span>
-                            <div class="spinner"></div>
-                        </button>
-                    </form>
+                <!-- Formulário de Login -->
+                <form id="loginForm">
+                    <div class="alert alert-error" id="loginError"></div>
+                    <div class="alert alert-success" id="loginSuccess"></div>
                     
-                    <!-- Formulário de Cadastro -->
-                    <form class="form" id="registerForm">
-                        <div class="alert alert-error" id="registerError"></div>
-                        <div class="alert alert-success" id="registerSuccess"></div>
-                        
-                        <div class="alert alert-info" id="userIdDisplay" style="display: none;">
-                            <strong>Seu ID único:</strong>
-                            <div class="user-id-display" id="userIdValue"></div>
-                            <button type="button" class="copy-id" onclick="copyUserId()">
-                                <i class="fas fa-copy"></i> Copiar ID
+                    <div class="form-group">
+                        <label>E-mail</label>
+                        <input type="email" id="loginEmail" placeholder="seu@email.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <div class="input-with-icon">
+                            <input type="password" id="loginPassword" placeholder="Sua senha" required>
+                            <button type="button" class="toggle-password" data-target="loginPassword">
+                                <i class="far fa-eye"></i>
                             </button>
-                            <p style="margin-top: 10px; font-size: 12px;">Guarde este ID! Ele será usado para identificação no sistema.</p>
                         </div>
-                        
-                        <div class="form-group">
-                            <label>Nome completo</label>
-                            <div class="input-with-icon">
-                                <input type="text" id="registerName" placeholder="Seu nome completo" required>
-                                <i class="fas fa-user input-icon"></i>
-                            </div>
+                        <div class="forgot-link">
+                            <a href="#" id="forgotPassword">Esqueci minha senha</a>
                         </div>
-                        
-                        <div class="form-group">
-                            <label>E-mail</label>
-                            <div class="input-with-icon">
-                                <input type="email" id="registerEmail" placeholder="seu@email.com" required>
-                                <i class="fas fa-envelope input-icon"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Senha</label>
-                            <div class="input-with-icon">
-                                <input type="password" id="registerPassword" placeholder="Crie uma senha forte" required>
-                                <button type="button" class="input-icon toggle-password" data-target="registerPassword">
-                                    <i class="far fa-eye"></i>
-                                </button>
-                            </div>
-                            <div class="hint" id="passwordHint">
-                                Mínimo 8 caracteres com letras maiúsculas, minúsculas e números
-                            </div>
-                            <div class="password-strength">
-                                <div class="strength-bar" id="passwordStrength"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Confirmar senha</label>
-                            <div class="input-with-icon">
-                                <input type="password" id="registerConfirm" placeholder="Digite novamente" required>
-                                <button type="button" class="input-icon toggle-password" data-target="registerConfirm">
-                                    <i class="far fa-eye"></i>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Você é:</label>
-                            <select id="registerType" required>
-                                <option value="">Selecione seu tipo</option>
-                                <option value="passenger">Passageiro</option>
-                                <option value="driver">Motorista</option>
-                            </select>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary" id="registerBtn">
-                            <span class="btn-text">Criar minha conta</span>
-                            <div class="spinner"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="loginBtn">
+                        <span class="btn-text">Entrar na conta</span>
+                        <div class="spinner"></div>
+                    </button>
+                    
+                    <div class="divider"><span>ou continue com</span></div>
+                    
+                    <button type="button" class="btn btn-google" id="googleLogin">
+                        <i class="fab fa-google"></i>
+                        <span class="btn-text">Google</span>
+                        <div class="spinner"></div>
+                    </button>
+                </form>
+                
+                <!-- Formulário de Cadastro -->
+                <form id="registerForm" style="display: none;">
+                    <div class="alert alert-error" id="registerError"></div>
+                    <div class="alert alert-success" id="registerSuccess"></div>
+                    
+                    <div class="user-id-display" id="userIdDisplay">
+                        <strong>Seu ID único:</strong>
+                        <div id="userIdValue" style="margin: 10px 0;"></div>
+                        <button type="button" class="copy-id-btn" onclick="copyUserId()">
+                            <i class="fas fa-copy"></i> Copiar ID
                         </button>
-                        
-                        <div class="divider"><span>ou cadastre-se com</span></div>
-                        
-                        <button type="button" class="btn btn-google" id="googleRegister">
-                            <img src="https://www.google.com/favicon.ico" width="18">
-                            <span class="btn-text">Google</span>
-                            <div class="spinner"></div>
-                        </button>
-                    </form>
+                        <p style="margin-top: 10px; font-size: 12px;">Guarde este ID! Você precisará dele para se identificar.</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Nome completo</label>
+                        <input type="text" id="registerName" placeholder="Seu nome completo" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>E-mail</label>
+                        <input type="email" id="registerEmail" placeholder="seu@email.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <div class="input-with-icon">
+                            <input type="password" id="registerPassword" placeholder="Crie uma senha forte" required>
+                            <button type="button" class="toggle-password" data-target="registerPassword">
+                                <i class="far fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="password-hint" id="passwordHint">
+                            Mínimo 8 caracteres com letras maiúsculas, minúsculas e números
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-bar" id="passwordStrength"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Confirmar senha</label>
+                        <div class="input-with-icon">
+                            <input type="password" id="registerConfirm" placeholder="Digite novamente" required>
+                            <button type="button" class="toggle-password" data-target="registerConfirm">
+                                <i class="far fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Você é:</label>
+                        <select id="registerType" required>
+                            <option value="">Selecione seu tipo</option>
+                            <option value="passenger">Passageiro</option>
+                            <option value="driver">Motorista</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="registerBtn">
+                        <span class="btn-text">Criar minha conta</span>
+                        <div class="spinner"></div>
+                    </button>
+                    
+                    <div class="divider"><span>ou cadastre-se com</span></div>
+                    
+                    <button type="button" class="btn btn-google" id="googleRegister">
+                        <i class="fab fa-google"></i>
+                        <span class="btn-text">Google</span>
+                        <div class="spinner"></div>
+                    </button>
+                </form>
+                
+                <div class="back-home">
+                    <a href="index.html">
+                        <i class="fas fa-arrow-left"></i> Voltar para a página inicial
+                    </a>
                 </div>
                 
                 <div class="footer-links">
@@ -695,26 +683,13 @@
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-        import { 
-            getAuth, 
-            signInWithEmailAndPassword, 
-            createUserWithEmailAndPassword,
-            signInWithPopup,
-            GoogleAuthProvider,
-            sendPasswordResetEmail,
-            updateProfile
-        } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-        import { 
-            getFirestore, 
-            doc, 
-            setDoc, 
-            getDoc,
-            serverTimestamp 
-        } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+    <!-- Firebase SDK (versão compilada para navegadores) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-        // Configuração Firebase (SUAS CREDENCIAIS)
+    <script>
+        // Configuração Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAHMFQ-QqtdFdcdOXvmRjbNeQvv0rvi2bw",
             authDomain: "taxibf-3a1fa.firebaseapp.com",
@@ -725,12 +700,12 @@
         };
 
         // Inicializar Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const googleProvider = new GoogleAuthProvider();
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const googleProvider = new firebase.auth.GoogleAuthProvider();
 
-        // Gerar ID único de 7 dígitos
+        // Função para gerar ID único de 7 dígitos
         function generateUserId() {
             const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             let result = '';
@@ -748,31 +723,25 @@
             });
         }
 
-        // Interface
-        const tabs = document.querySelectorAll('.tab');
-        const forms = document.querySelectorAll('.form');
-        const togglePasswordBtns = document.querySelectorAll('.toggle-password');
-        const resetModal = document.getElementById('resetModal');
-        const forgotPasswordBtn = document.getElementById('forgotPassword');
-        const registerPasswordInput = document.getElementById('registerPassword');
+        // Alternar entre formulários
+        document.getElementById('loginTab').addEventListener('click', () => {
+            document.getElementById('loginTab').classList.add('active');
+            document.getElementById('registerTab').classList.remove('active');
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+            clearMessages();
+        });
 
-        // Trocar entre login e cadastro
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabId = tab.getAttribute('data-tab');
-                
-                tabs.forEach(t => t.classList.remove('active'));
-                forms.forEach(f => f.classList.remove('active'));
-                
-                tab.classList.add('active');
-                document.getElementById(tabId + 'Form').classList.add('active');
-                
-                clearMessages();
-            });
+        document.getElementById('registerTab').addEventListener('click', () => {
+            document.getElementById('registerTab').classList.add('active');
+            document.getElementById('loginTab').classList.remove('active');
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('loginForm').style.display = 'none';
+            clearMessages();
         });
 
         // Mostrar/ocultar senha
-        togglePasswordBtns.forEach(btn => {
+        document.querySelectorAll('.toggle-password').forEach(btn => {
             btn.addEventListener('click', () => {
                 const targetId = btn.getAttribute('data-target');
                 const input = document.getElementById(targetId);
@@ -790,50 +759,46 @@
             });
         });
 
-        // Validação de força da senha
-        registerPasswordInput.addEventListener('input', function() {
+        // Validar força da senha
+        document.getElementById('registerPassword').addEventListener('input', function() {
             const password = this.value;
             const strengthBar = document.getElementById('passwordStrength');
             const hint = document.getElementById('passwordHint');
             
             hint.classList.add('show');
             
-            // Verificar força
             let strength = 0;
             if (password.length >= 8) strength++;
             if (/[A-Z]/.test(password)) strength++;
             if (/[a-z]/.test(password)) strength++;
             if (/\d/.test(password)) strength++;
-            if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength++;
             
-            // Atualizar visual
             strengthBar.className = 'strength-bar';
-            if (strength <= 2) {
+            if (password.length === 0) {
+                strengthBar.style.width = '0%';
+            } else if (strength <= 2) {
                 strengthBar.classList.add('strength-weak');
-                hint.style.color = 'var(--error)';
-            } else if (strength <= 4) {
+            } else if (strength <= 3) {
                 strengthBar.classList.add('strength-medium');
-                hint.style.color = '#FFA500';
             } else {
                 strengthBar.classList.add('strength-strong');
-                hint.style.color = 'var(--success)';
             }
         });
 
         // Modal de redefinição
-        forgotPasswordBtn.addEventListener('click', (e) => {
+        document.getElementById('forgotPassword').addEventListener('click', (e) => {
             e.preventDefault();
-            resetModal.classList.add('show');
+            document.getElementById('resetModal').classList.add('show');
         });
 
         document.getElementById('closeModal').addEventListener('click', () => {
-            resetModal.classList.remove('show');
+            document.getElementById('resetModal').classList.remove('show');
             clearMessages();
         });
 
-        resetModal.addEventListener('click', (e) => {
-            if (e.target === resetModal) {
-                resetModal.classList.remove('show');
+        document.getElementById('resetModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('resetModal')) {
+                document.getElementById('resetModal').classList.remove('show');
                 clearMessages();
             }
         });
@@ -844,9 +809,10 @@
                 el.classList.remove('show');
                 el.textContent = '';
             });
+            document.getElementById('userIdDisplay').classList.remove('show');
         }
 
-        function showMessage(elementId, message, type = 'error') {
+        function showAlert(elementId, message, type = 'error') {
             const element = document.getElementById(elementId);
             element.textContent = message;
             element.className = `alert alert-${type} show`;
@@ -870,19 +836,24 @@
             const password = document.getElementById('loginPassword').value;
             const submitBtn = document.getElementById('loginBtn');
             
+            if (!auth) {
+                showAlert('loginError', 'Sistema de autenticação não carregado.');
+                return;
+            }
+            
             clearMessages();
             setLoading(submitBtn, true);
             
             try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 const user = userCredential.user;
                 
-                // Buscar dados do usuário no Firestore
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                // Buscar dados do usuário
+                const userDoc = await db.collection('users').doc(user.uid).get();
                 
-                if (userDoc.exists()) {
+                if (userDoc.exists) {
                     const userData = userDoc.data();
-                    showMessage('loginSuccess', 'Login realizado com sucesso! Redirecionando...', 'success');
+                    showAlert('loginSuccess', 'Login realizado com sucesso! Redirecionando...', 'success');
                     
                     setTimeout(() => {
                         if (userData.type === 'driver') {
@@ -892,7 +863,7 @@
                         }
                     }, 1500);
                 } else {
-                    showMessage('loginError', 'Perfil do usuário não encontrado.');
+                    showAlert('loginError', 'Perfil do usuário não encontrado.');
                 }
                 
             } catch (error) {
@@ -900,7 +871,7 @@
                 if (error.code === 'auth/user-not-found') message = 'Usuário não encontrado.';
                 if (error.code === 'auth/wrong-password') message = 'Senha incorreta.';
                 if (error.code === 'auth/invalid-email') message = 'E-mail inválido.';
-                showMessage('loginError', message);
+                showAlert('loginError', message);
             } finally {
                 setLoading(submitBtn, false);
             }
@@ -921,51 +892,49 @@
             
             // Validações
             if (!name || !email || !password || !type) {
-                showMessage('registerError', 'Preencha todos os campos.');
+                showAlert('registerError', 'Preencha todos os campos.');
                 return;
             }
             
             if (password !== confirm) {
-                showMessage('registerError', 'As senhas não coincidem.');
+                showAlert('registerError', 'As senhas não coincidem.');
                 return;
             }
             
-            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*#?&]{8,}$/;
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
             if (!passwordRegex.test(password)) {
-                showMessage('registerError', 'A senha precisa ter no mínimo 8 caracteres, incluindo letras maiúsculas, minúsculas e números.');
+                showAlert('registerError', 'A senha precisa ter no mínimo 8 caracteres, incluindo letras maiúsculas, minúsculas e números.');
                 return;
             }
             
             setLoading(submitBtn, true);
             
             try {
-                // Criar usuário no Firebase Auth
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                // Criar usuário
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 const user = userCredential.user;
                 
-                // Atualizar perfil com nome
-                await updateProfile(user, { displayName: name });
+                // Atualizar perfil
+                await user.updateProfile({ displayName: name });
                 
-                // Gerar ID único de 7 dígitos
+                // Gerar ID único
                 const userId = generateUserId();
                 
-                // Criar documento do usuário no Firestore
-                await setDoc(doc(db, 'users', user.uid), {
+                // Salvar no Firestore
+                await db.collection('users').doc(user.uid).set({
                     uid: user.uid,
-                    userId: userId, // ID único de 7 dígitos
+                    userId: userId,
                     name: name,
                     email: email,
                     type: type,
-                    createdAt: serverTimestamp(),
-                    lastLogin: serverTimestamp(),
-                    status: type === 'driver' ? 'offline' : 'active',
-                    photoURL: null,
-                    phoneNumber: null
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                    status: type === 'driver' ? 'offline' : 'active'
                 });
                 
-                // Criar subcoleção específica baseada no tipo
+                // Criar subcoleção baseada no tipo
                 if (type === 'driver') {
-                    await setDoc(doc(db, 'drivers', user.uid), {
+                    await db.collection('drivers').doc(user.uid).set({
                         userId: user.uid,
                         driverId: userId,
                         name: name,
@@ -976,25 +945,25 @@
                         location: null,
                         vehicleInfo: {},
                         workSchedule: {},
-                        createdAt: serverTimestamp()
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 } else {
-                    await setDoc(doc(db, 'passengers', user.uid), {
+                    await db.collection('passengers').doc(user.uid).set({
                         userId: user.uid,
                         passengerId: userId,
                         name: name,
                         email: email,
                         favoriteDrivers: [],
                         totalRides: 0,
-                        createdAt: serverTimestamp()
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 }
                 
                 // Mostrar ID gerado
                 document.getElementById('userIdValue').textContent = userId;
-                document.getElementById('userIdDisplay').style.display = 'block';
+                document.getElementById('userIdDisplay').classList.add('show');
                 
-                showMessage('registerSuccess', 'Conta criada com sucesso! Seu ID único foi gerado. Guarde-o!', 'success');
+                showAlert('registerSuccess', 'Conta criada com sucesso! Anote seu ID único.', 'success');
                 
                 // Redirecionar após 3 segundos
                 setTimeout(() => {
@@ -1009,14 +978,14 @@
                 let message = 'Erro ao criar conta. Tente novamente.';
                 if (error.code === 'auth/email-already-in-use') message = 'Este e-mail já está cadastrado.';
                 if (error.code === 'auth/invalid-email') message = 'E-mail inválido.';
-                if (error.code === 'auth/weak-password') message = 'Senha muito fraca. Use 8+ caracteres com letras maiúsculas, minúsculas e números.';
-                showMessage('registerError', message);
+                if (error.code === 'auth/weak-password') message = 'Senha muito fraca.';
+                showAlert('registerError', message);
             } finally {
                 setLoading(submitBtn, false);
             }
         });
 
-        // Login/Cadastro com Google
+        // Login com Google
         async function signInWithGoogle(isRegister = false) {
             const btn = isRegister ? document.getElementById('googleRegister') : document.getElementById('googleLogin');
             
@@ -1024,33 +993,32 @@
             setLoading(btn, true);
             
             try {
-                const result = await signInWithPopup(auth, googleProvider);
+                const result = await auth.signInWithPopup(googleProvider);
                 const user = result.user;
                 
-                // Verificar se já existe no Firestore
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                // Verificar se já existe
+                const userDoc = await db.collection('users').doc(user.uid).get();
                 
-                if (!userDoc.exists()) {
-                    // Novo usuário - gerar ID único
+                if (!userDoc.exists) {
+                    // Novo usuário
                     const userId = generateUserId();
                     
-                    await setDoc(doc(db, 'users', user.uid), {
+                    await db.collection('users').doc(user.uid).set({
                         uid: user.uid,
                         userId: userId,
                         name: user.displayName,
                         email: user.email,
                         type: 'pending',
-                        createdAt: serverTimestamp(),
-                        lastLogin: serverTimestamp(),
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
                         photoURL: user.photoURL,
                         provider: 'google'
                     });
                     
-                    // Mostrar ID gerado
                     document.getElementById('userIdValue').textContent = userId;
-                    document.getElementById('userIdDisplay').style.display = 'block';
+                    document.getElementById('userIdDisplay').classList.add('show');
                     
-                    showMessage('registerSuccess', 'Conta criada com Google! Seu ID único foi gerado.', 'success');
+                    showAlert('registerSuccess', 'Conta criada com Google! Seu ID único foi gerado.', 'success');
                     
                     setTimeout(() => {
                         window.location.href = 'escolher-tipo.html';
@@ -1060,13 +1028,12 @@
                     // Usuário existente
                     const userData = userDoc.data();
                     
-                    // Atualizar último login
-                    await setDoc(doc(db, 'users', user.uid), {
-                        lastLogin: serverTimestamp(),
+                    await db.collection('users').doc(user.uid).update({
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
                         photoURL: user.photoURL
-                    }, { merge: true });
+                    });
                     
-                    showMessage('loginSuccess', 'Login com Google realizado! Redirecionando...', 'success');
+                    showAlert('loginSuccess', 'Login com Google realizado! Redirecionando...', 'success');
                     
                     setTimeout(() => {
                         if (userData.type === 'pending') {
@@ -1083,7 +1050,7 @@
                 let message = 'Erro ao autenticar com Google. Tente novamente.';
                 if (error.code === 'auth/popup-blocked') message = 'Popup bloqueado. Permita popups para este site.';
                 if (error.code === 'auth/popup-closed-by-user') message = 'Autenticação cancelada pelo usuário.';
-                showMessage(isRegister ? 'registerError' : 'loginError', message);
+                showAlert(isRegister ? 'registerError' : 'loginError', message);
             } finally {
                 setLoading(btn, false);
             }
@@ -1098,7 +1065,7 @@
             const submitBtn = document.getElementById('resetBtn');
             
             if (!email) {
-                showMessage('resetError', 'Digite seu e-mail.');
+                showAlert('resetError', 'Digite seu e-mail.');
                 return;
             }
             
@@ -1106,11 +1073,11 @@
             clearMessages();
             
             try {
-                await sendPasswordResetEmail(auth, email);
-                showMessage('resetSuccess', 'Link de redefinição enviado! Verifique seu e-mail.', 'success');
+                await auth.sendPasswordResetEmail(email);
+                showAlert('resetSuccess', 'Link de redefinição enviado! Verifique seu e-mail.', 'success');
                 
                 setTimeout(() => {
-                    resetModal.classList.remove('show');
+                    document.getElementById('resetModal').classList.remove('show');
                     clearMessages();
                     document.getElementById('resetEmail').value = '';
                 }, 3000);
@@ -1119,7 +1086,7 @@
                 let message = 'Erro ao enviar e-mail. Tente novamente.';
                 if (error.code === 'auth/user-not-found') message = 'E-mail não cadastrado.';
                 if (error.code === 'auth/invalid-email') message = 'E-mail inválido.';
-                showMessage('resetError', message);
+                showAlert('resetError', message);
             } finally {
                 setLoading(submitBtn, false);
             }
@@ -1129,36 +1096,36 @@
         document.querySelectorAll('input, select').forEach(input => {
             input.addEventListener('input', () => {
                 clearMessages();
-                document.getElementById('userIdDisplay').style.display = 'none';
             });
         });
 
         // Fechar modal com ESC
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && resetModal.classList.contains('show')) {
-                resetModal.classList.remove('show');
+            if (e.key === 'Escape' && document.getElementById('resetModal').classList.contains('show')) {
+                document.getElementById('resetModal').classList.remove('show');
                 clearMessages();
             }
         });
 
-        // Focar no primeiro campo ao trocar de aba
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                setTimeout(() => {
-                    const activeForm = document.querySelector('.form.active');
-                    const firstInput = activeForm.querySelector('input, select');
-                    if (firstInput) {
-                        firstInput.focus();
+        // Verificar se usuário já está logado
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log('Usuário já logado:', user.email);
+                // Se já está logado, redirecionar para dashboard apropriado
+                db.collection('users').doc(user.uid).get().then(doc => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        if (userData.type === 'driver') {
+                            window.location.href = 'dashboard-motorista.html';
+                        } else if (userData.type === 'passenger') {
+                            window.location.href = 'dashboard-passageiro.html';
+                        }
                     }
-                }, 300);
-            });
+                });
+            }
         });
 
-        // Configuração inicial
-        window.addEventListener('load', () => {
-            console.log('TaxiBF Login/Cadastro carregado');
-            console.log('Firebase configurado para:', firebaseConfig.projectId);
-        });
+        console.log('Página de cadastro/login carregada!');
     </script>
 </body>
 </html>
