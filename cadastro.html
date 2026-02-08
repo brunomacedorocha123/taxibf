@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro - TaxiBF</title>
+    <title>TaxiBF - Login & Cadastro</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -12,8 +12,9 @@
             --dark-graphite: #1C1C1C;
             --white: #FFFFFF;
             --light-gray: #F5F5F5;
-            --available: #2ECC71;
-            --busy: #E74C3C;
+            --success: #2ECC71;
+            --error: #E74C3C;
+            --border: #E0E0E0;
         }
 
         * {
@@ -22,34 +23,32 @@
             box-sizing: border-box;
         }
 
-        html, body {
-            height: 100%;
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, var(--light-gray) 0%, var(--white) 100%);
-        }
-
         body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: center;
             padding: 1rem;
-            overflow-y: auto;
-            min-height: 100vh;
         }
 
         .container {
-            background: var(--white);
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
             width: 100%;
-            max-width: 480px;
-            overflow: hidden;
-            margin: 2rem 0;
+            max-width: 420px;
         }
 
-        .header {
+        .auth-card {
+            background: var(--white);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-header {
             background: var(--dark-graphite);
-            padding: 2rem;
+            padding: 2.5rem 2rem;
             text-align: center;
         }
 
@@ -57,153 +56,189 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
             color: var(--white);
             font-size: 1.8rem;
             font-weight: 800;
             text-decoration: none;
+            margin-bottom: 0.5rem;
         }
 
-        .logo img {
+        .logo-icon {
+            background: var(--taxi-yellow);
+            width: 40px;
             height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark-graphite);
+            font-weight: 800;
+        }
+
+        .tagline {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .tab-container {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1rem;
+            background: none;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #999;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .tab.active {
+            color: var(--dark-graphite);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--taxi-yellow);
+            border-radius: 3px 3px 0 0;
         }
 
         .form-container {
-            padding: 2rem;
-            max-height: none;
-            overflow: visible;
+            position: relative;
+            min-height: 300px;
         }
 
-        h2 {
-            font-size: 1.5rem;
-            color: var(--dark-graphite);
-            margin-bottom: 0.5rem;
-            text-align: center;
+        .form {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
         }
 
-        .subtitle {
-            text-align: center;
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 2rem;
+        .form.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
         }
 
         .form-group {
-            margin-bottom: 1.2rem;
+            margin-bottom: 1.25rem;
         }
 
-        .form-group label {
+        .form-label {
             display: block;
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.5rem;
             font-weight: 600;
             color: var(--dark-graphite);
             font-size: 0.9rem;
         }
 
-        .form-group input,
-        .form-group select {
+        .form-input {
             width: 100%;
-            padding: 0.9rem;
-            border: 2px solid #e0e0e0;
+            padding: 0.9rem 1rem;
+            border: 2px solid var(--border);
             border-radius: 12px;
             font-size: 1rem;
             font-family: 'Inter', sans-serif;
             transition: all 0.3s;
+            background: var(--white);
         }
 
-        .form-group input:focus,
-        .form-group select:focus {
+        .form-input:focus {
             outline: none;
             border-color: var(--taxi-yellow);
-            box-shadow: 0 0 0 4px rgba(255, 196, 0, 0.15);
+            box-shadow: 0 0 0 3px rgba(255, 196, 0, 0.15);
         }
 
-        .id-box {
-            display: flex;
-            gap: 0.5rem;
+        .password-container {
+            position: relative;
         }
 
-        .id-box input {
-            flex: 1;
-            text-align: center;
-            font-weight: 700;
-            letter-spacing: 3px;
-            font-size: 1.3rem;
-        }
-
-        .btn-icon {
-            background: var(--light-gray);
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 0 1.2rem;
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #999;
             cursor: pointer;
-            transition: all 0.3s;
             font-size: 1.1rem;
+            padding: 0.25rem;
+            border-radius: 4px;
         }
 
-        .btn-icon:hover {
-            background: var(--taxi-yellow);
-            border-color: var(--taxi-yellow);
+        .toggle-password:hover {
+            background: var(--light-gray);
         }
 
-        .hint {
+        .password-hint {
             font-size: 0.75rem;
             color: #999;
-            margin-top: 0.3rem;
+            margin-top: 0.5rem;
+            display: none;
         }
 
-        .id-status {
-            font-size: 0.8rem;
-            margin-top: 0.4rem;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        .id-status.ok { color: var(--available); }
-        .id-status.error { color: var(--busy); }
-
-        .user-types {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.8rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .type-card {
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 1.2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .type-card:hover {
-            border-color: var(--taxi-yellow);
-        }
-
-        .type-card.selected {
-            border-color: var(--taxi-yellow);
-            background: rgba(255, 196, 0, 0.1);
-        }
-
-        .type-card i {
-            font-size: 1.8rem;
-            margin-bottom: 0.4rem;
+        .password-hint.show {
             display: block;
         }
 
-        .type-card span {
-            font-weight: 600;
-            font-size: 0.85rem;
+        .password-strength {
+            height: 4px;
+            border-radius: 2px;
+            background: var(--border);
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s;
+            border-radius: 2px;
+        }
+
+        .strength-weak {
+            background: var(--error);
+            width: 33%;
+        }
+
+        .strength-medium {
+            background: #FFA500;
+            width: 66%;
+        }
+
+        .strength-strong {
+            background: var(--success);
+            width: 100%;
         }
 
         .btn {
             width: 100%;
             padding: 0.9rem;
             border-radius: 12px;
-            font-weight: 700;
+            font-weight: 600;
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s;
@@ -213,7 +248,7 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            margin-top: 0.8rem;
+            margin-top: 0.5rem;
         }
 
         .btn-primary {
@@ -231,21 +266,9 @@
             cursor: not-allowed;
         }
 
-        .btn-secondary {
-            background: transparent;
-            color: #666;
-            border: 2px solid #e0e0e0;
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--dark-graphite);
-            color: var(--dark-graphite);
-        }
-
         .btn-google {
             background: var(--white);
-            border: 2px solid #e0e0e0;
-            margin-bottom: 1rem;
+            border: 2px solid var(--border);
             color: var(--dark-graphite);
         }
 
@@ -261,147 +284,72 @@
             font-size: 0.9rem;
         }
 
-        .divider::before, .divider::after {
+        .divider::before,
+        .divider::after {
             content: '';
             flex: 1;
             height: 1px;
-            background: #e0e0e0;
+            background: var(--border);
         }
 
         .divider span {
             padding: 0 1rem;
         }
 
-        .error {
-            background: #fee;
-            color: #c33;
-            padding: 0.8rem;
+        .error-message {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--error);
+            padding: 0.9rem;
             border-radius: 10px;
             margin-bottom: 1rem;
-            font-size: 0.85rem;
-            display: none;
-            border-left: 4px solid var(--busy);
-        }
-
-        .error.show {
-            display: block;
-        }
-
-        .login-link {
-            text-align: center;
-            margin-top: 1.5rem;
             font-size: 0.9rem;
-        }
-
-        .login-link a {
-            color: var(--taxi-yellow);
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        .step {
+            border-left: 4px solid var(--error);
             display: none;
         }
 
-        .step.active {
+        .error-message.show {
             display: block;
-            animation: fadeIn 0.4s;
+            animation: shake 0.5s;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
         }
 
-        .steps-indicator {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #ddd;
-        }
-
-        .dot.active {
-            background: var(--taxi-yellow);
-        }
-
-        .dot.done {
-            background: var(--available);
-        }
-
-        /* Password Requirements */
-        .password-requirements {
-            background: var(--light-gray);
-            padding: 1rem;
+        .success-message {
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--success);
+            padding: 0.9rem;
             border-radius: 10px;
-            margin-top: 0.5rem;
-            font-size: 0.8rem;
-        }
-
-        .password-requirements h4 {
-            margin-bottom: 0.5rem;
-            color: var(--dark-graphite);
-            font-size: 0.85rem;
-        }
-
-        .password-requirements ul {
-            list-style: none;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.3rem;
-        }
-
-        .password-requirements li {
-            color: #999;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .password-requirements li.met {
-            color: var(--available);
-        }
-
-        .password-requirements li.met::before {
-            content: '✓';
-            font-weight: bold;
-        }
-
-        .password-requirements li:not(.met)::before {
-            content: '○';
-            opacity: 0.5;
-        }
-
-        .password-match {
-            font-size: 0.8rem;
-            margin-top: 0.3rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            border-left: 4px solid var(--success);
             display: none;
         }
 
-        .password-match.show {
+        .success-message.show {
             display: block;
+            animation: slideIn 0.5s;
         }
 
-        .password-match.error {
-            color: var(--busy);
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .password-match.success {
-            color: var(--available);
-        }
-
-        /* Spinner */
         .spinner {
             display: none;
             width: 18px;
             height: 18px;
-            border: 2px solid rgba(0,0,0,0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: var(--dark-graphite);
             animation: spin 1s linear infinite;
@@ -419,201 +367,329 @@
             to { transform: rotate(360deg); }
         }
 
+        .forgot-link {
+            text-align: right;
+            margin-top: 0.5rem;
+        }
+
+        .forgot-link a {
+            color: #666;
+            font-size: 0.85rem;
+            text-decoration: none;
+        }
+
+        .forgot-link a:hover {
+            color: var(--taxi-yellow);
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .footer-links a {
+            color: var(--taxi-yellow);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Modal para redefinir senha */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+            animation: modalSlide 0.3s;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #999;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: var(--light-gray);
+        }
+
+        /* Responsividade */
         @media (max-width: 480px) {
-            body {
-                padding: 0;
-                align-items: flex-start;
-            }
-            
             .container {
-                border-radius: 0;
-                min-height: 100vh;
-                margin: 0;
+                max-width: 100%;
             }
             
-            .user-types {
-                grid-template-columns: 1fr;
+            .auth-card {
+                border-radius: 16px;
+            }
+            
+            .card-header {
+                padding: 2rem 1.5rem;
+            }
+            
+            .card-body {
+                padding: 1.5rem;
+            }
+            
+            .tab {
+                padding: 0.75rem;
+                font-size: 0.95rem;
+            }
+            
+            .form-input {
+                padding: 0.8rem;
+            }
+            
+            .btn {
+                padding: 0.8rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .logo-icon {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .card-body {
+                padding: 1.25rem;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <a href="index.html" class="logo">
-                <img src="logotaxibf.png" alt="TaxiBF">
-                <span>TaxiBF</span>
-            </a>
-        </div>
-
-        <div class="form-container">
-            <!-- Etapa 1: Tipo -->
-            <div id="step1" class="step active">
-                <div class="steps-indicator">
-                    <div class="dot active"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
+        <div class="auth-card">
+            <div class="card-header">
+                <a href="#" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-taxi"></i>
+                    </div>
+                    <span>TaxiBF</span>
+                </a>
+                <p class="tagline">Conectando passageiros e motoristas</p>
+            </div>
+            
+            <div class="card-body">
+                <div class="tab-container">
+                    <button class="tab active" data-tab="login">Entrar</button>
+                    <button class="tab" data-tab="register">Cadastrar</button>
                 </div>
                 
-                <h2>Você é...</h2>
-                <p class="subtitle">Escolha como quer usar o TaxiBF</p>
-
-                <div class="user-types">
-                    <div class="type-card" onclick="selectType('passageiro', this)">
-                        <i class="fas fa-user"></i>
-                        <span>Passageiro</span>
-                    </div>
-                    <div class="type-card" onclick="selectType('motorista', this)">
-                        <i class="fas fa-taxi"></i>
-                        <span>Motorista</span>
-                    </div>
-                    <div class="type-card" onclick="selectType('taxista', this)">
-                        <i class="fas fa-car"></i>
-                        <span>Taxista</span>
-                    </div>
-                    <div class="type-card" onclick="selectType('mototaxista', this)">
-                        <i class="fas fa-motorcycle"></i>
-                        <span>Mototaxista</span>
-                    </div>
-                </div>
-
-                <div id="error1" class="error">Selecione um tipo de usuário</div>
-
-                <button class="btn btn-primary" onclick="nextStep(1)">
-                    <span class="btn-text">Continuar</span>
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-            </div>
-
-            <!-- Etapa 2: Dados -->
-            <div id="step2" class="step">
-                <div class="steps-indicator">
-                    <div class="dot done"></div>
-                    <div class="dot active"></div>
-                    <div class="dot"></div>
-                </div>
-
-                <h2>Seus dados</h2>
-                <p class="subtitle">Informações para seu cadastro</p>
-
-                <div id="error2" class="error"></div>
-
-                <div class="form-group">
-                    <label>Nome completo *</label>
-                    <input type="text" id="fullName" placeholder="Digite seu nome completo">
-                </div>
-
-                <div class="form-group">
-                    <label>Como gostaria de ser chamado *</label>
-                    <input type="text" id="displayName" placeholder="Ex: Bruno, Bruninho">
-                </div>
-
-                <div class="form-group">
-                    <label>Seu ID único (7 números) *</label>
-                    <div class="id-box">
-                        <input type="text" id="userId" placeholder="1234567" maxlength="7" readonly>
-                        <button type="button" class="btn-icon" onclick="generateId()" title="Gerar ID">
-                            <i class="fas fa-random"></i>
-                        </button>
-                    </div>
-                    <div id="idStatus" class="id-status"></div>
-                    <p class="hint">Este será seu identificador único no sistema</p>
-                </div>
-
-                <div class="form-group">
-                    <label>Telefone (WhatsApp) *</label>
-                    <input type="tel" id="phone" placeholder="(11) 99999-9999" maxlength="15">
-                </div>
-
-                <div class="form-group">
-                    <label>Endereço</label>
-                    <input type="text" id="address" placeholder="Rua, número, bairro">
-                    <p class="hint">Opcional - pode completar depois</p>
-                </div>
-
-                <button type="button" class="btn btn-secondary" onclick="prevStep(2)">
-                    <i class="fas fa-arrow-left"></i>
-                    Voltar
-                </button>
-
-                <button type="button" class="btn btn-primary" onclick="nextStep(2)">
-                    <span class="btn-text">Continuar</span>
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-            </div>
-
-            <!-- Etapa 3: Acesso -->
-            <div id="step3" class="step">
-                <div class="steps-indicator">
-                    <div class="dot done"></div>
-                    <div class="dot done"></div>
-                    <div class="dot active"></div>
-                </div>
-
-                <h2>Dados de acesso</h2>
-                <p class="subtitle">Crie suas credenciais</p>
-
-                <button type="button" class="btn btn-google" onclick="signInWithGoogle()">
-                    <img src="https://www.google.com/favicon.ico" width="20" style="margin-right: 0.5rem;">
-                    <span class="btn-text">Cadastrar com Google</span>
-                    <div class="spinner"></div>
-                </button>
-
-                <div class="divider"><span>ou use e-mail</span></div>
-
-                <div id="error3" class="error"></div>
-
-                <form id="registerForm" onsubmit="handleRegister(event)">
-                    <div class="form-group">
-                        <label>E-mail *</label>
-                        <input type="email" id="email" placeholder="seu@email.com" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Senha *</label>
-                        <input type="password" id="password" placeholder="Crie uma senha segura" required>
+                <div class="form-container">
+                    <!-- Formulário de Login -->
+                    <form class="form active" id="loginForm">
+                        <div class="error-message" id="loginError"></div>
+                        <div class="success-message" id="loginSuccess"></div>
                         
-                        <div class="password-requirements">
-                            <h4>A senha deve conter:</h4>
-                            <ul>
-                                <li id="req-length">8 caracteres</li>
-                                <li id="req-upper">Letra maiúscula</li>
-                                <li id="req-lower">Letra minúscula</li>
-                                <li id="req-number">Número</li>
-                            </ul>
+                        <div class="form-group">
+                            <label class="form-label">E-mail</label>
+                            <input type="email" class="form-input" id="loginEmail" placeholder="seu@email.com" required>
                         </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Confirmar senha *</label>
-                        <input type="password" id="confirmPassword" placeholder="Digite a senha novamente" required>
-                        <div id="passwordMatch" class="password-match"></div>
-                    </div>
-
-                    <button type="button" class="btn btn-secondary" onclick="prevStep(3)">
-                        <i class="fas fa-arrow-left"></i>
-                        Voltar
-                    </button>
-
-                    <button type="submit" class="btn btn-primary" id="submitBtn">
-                        <span class="btn-text">Criar conta</span>
-                        <div class="spinner"></div>
-                    </button>
-                </form>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Senha</label>
+                            <div class="password-container">
+                                <input type="password" class="form-input" id="loginPassword" placeholder="Sua senha" required>
+                                <button type="button" class="toggle-password" data-target="loginPassword">
+                                    <i class="far fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="forgot-link">
+                                <a href="#" id="forgotPassword">Esqueci minha senha</a>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" id="loginBtn">
+                            <span class="btn-text">Entrar na conta</span>
+                            <div class="spinner"></div>
+                        </button>
+                        
+                        <div class="divider"><span>ou continue com</span></div>
+                        
+                        <button type="button" class="btn btn-google" id="googleLogin">
+                            <img src="https://www.google.com/favicon.ico" width="18" style="margin-right: 0.5rem;">
+                            <span class="btn-text">Google</span>
+                            <div class="spinner"></div>
+                        </button>
+                    </form>
+                    
+                    <!-- Formulário de Cadastro -->
+                    <form class="form" id="registerForm">
+                        <div class="error-message" id="registerError"></div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Nome completo</label>
+                            <input type="text" class="form-input" id="registerName" placeholder="Seu nome completo" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">E-mail</label>
+                            <input type="email" class="form-input" id="registerEmail" placeholder="seu@email.com" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Senha</label>
+                            <div class="password-container">
+                                <input type="password" class="form-input" id="registerPassword" placeholder="Crie uma senha forte" required>
+                                <button type="button" class="toggle-password" data-target="registerPassword">
+                                    <i class="far fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-hint" id="passwordHint">
+                                Use 8+ caracteres com letras maiúsculas, minúsculas e números
+                            </div>
+                            <div class="password-strength">
+                                <div class="password-strength-bar" id="passwordStrength"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Confirmar senha</label>
+                            <div class="password-container">
+                                <input type="password" class="form-input" id="registerConfirm" placeholder="Digite novamente" required>
+                                <button type="button" class="toggle-password" data-target="registerConfirm">
+                                    <i class="far fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Você é:</label>
+                            <select class="form-input" id="registerType">
+                                <option value="passenger">Passageiro</option>
+                                <option value="driver">Motorista</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" id="registerBtn">
+                            <span class="btn-text">Criar minha conta</span>
+                            <div class="spinner"></div>
+                        </button>
+                        
+                        <div class="divider"><span>ou cadastre-se com</span></div>
+                        
+                        <button type="button" class="btn btn-google" id="googleRegister">
+                            <img src="https://www.google.com/favicon.ico" width="18" style="margin-right: 0.5rem;">
+                            <span class="btn-text">Google</span>
+                            <div class="spinner"></div>
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="footer-links">
+                    Ao se cadastrar, você concorda com nossos 
+                    <a href="#">Termos de Uso</a> e 
+                    <a href="#">Política de Privacidade</a>
+                </div>
             </div>
+        </div>
+    </div>
 
-            <div class="login-link">
-                Já tem conta? <a href="login.html">Entrar</a>
+    <!-- Modal para redefinir senha -->
+    <div class="modal" id="resetModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="color: var(--dark-graphite);">Redefinir senha</h3>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
+            
+            <div class="error-message" id="resetError"></div>
+            <div class="success-message" id="resetSuccess"></div>
+            
+            <p style="margin-bottom: 1.5rem; color: #666;">
+                Digite seu e-mail para receber um link de redefinição de senha.
+            </p>
+            
+            <div class="form-group">
+                <label class="form-label">E-mail</label>
+                <input type="email" class="form-input" id="resetEmail" placeholder="seu@email.com">
+            </div>
+            
+            <button class="btn btn-primary" id="resetBtn">
+                <span class="btn-text">Enviar link</span>
+                <div class="spinner"></div>
+            </button>
         </div>
     </div>
 
     <!-- Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, query, collection, where, getDocs } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword,
+            signInWithPopup,
+            GoogleAuthProvider,
+            sendPasswordResetEmail,
+            updateProfile
+        } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            getDoc 
+        } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
+        // Configuração Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAHMFQ-QqtdFdcdOXvmRjbNeQvv0rvi2bw",
             authDomain: "taxibf-3a1fa.firebaseapp.com",
@@ -628,266 +704,302 @@
         const db = getFirestore(app);
         const googleProvider = new GoogleAuthProvider();
 
-        let userType = '';
-        let userIdGenerated = '';
+        // UI Controls
+        const tabs = document.querySelectorAll('.tab');
+        const forms = document.querySelectorAll('.form');
+        const togglePasswordBtns = document.querySelectorAll('.toggle-password');
+        const resetModal = document.getElementById('resetModal');
+        const closeModalBtn = document.getElementById('closeModal');
+        const forgotPasswordBtn = document.getElementById('forgotPassword');
+        const registerPasswordInput = document.getElementById('registerPassword');
 
-        // Selecionar tipo
-        window.selectType = function(type, element) {
-            userType = type;
-            document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
-            element.classList.add('selected');
-            document.getElementById('error1').classList.remove('show');
-        };
-
-        // Próxima etapa
-        window.nextStep = function(current) {
-            if (current === 1) {
-                if (!userType) {
-                    document.getElementById('error1').classList.add('show');
-                    return;
-                }
-                document.getElementById('step1').classList.remove('active');
-                document.getElementById('step2').classList.add('active');
-                if (!userIdGenerated) generateId();
-            } else if (current === 2) {
-                const name = document.getElementById('fullName').value.trim();
-                const display = document.getElementById('displayName').value.trim();
-                const phone = document.getElementById('phone').value.trim();
+        // Trocar entre login e cadastro
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
                 
-                if (!name || !display || !phone || phone.length < 14) {
-                    document.getElementById('error2').textContent = 'Preencha todos os campos obrigatórios corretamente';
-                    document.getElementById('error2').classList.add('show');
-                    return;
-                }
+                tabs.forEach(t => t.classList.remove('active'));
+                forms.forEach(f => f.classList.remove('active'));
                 
-                document.getElementById('step2').classList.remove('active');
-                document.getElementById('step3').classList.add('active');
-            }
-        };
-
-        // Voltar etapa
-        window.prevStep = function(current) {
-            if (current === 2) {
-                document.getElementById('step2').classList.remove('active');
-                document.getElementById('step1').classList.add('active');
-            } else if (current === 3) {
-                document.getElementById('step3').classList.remove('active');
-                document.getElementById('step2').classList.add('active');
-            }
-        };
-
-        // Gerar ID único
-        window.generateId = async function() {
-            const input = document.getElementById('userId');
-            const status = document.getElementById('idStatus');
-            
-            status.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
-            status.className = 'id-status';
-            
-            let id = '';
-            let unique = false;
-            let attempts = 0;
-            
-            while (!unique && attempts < 10) {
-                id = Math.floor(1000000 + Math.random() * 9000000).toString();
-                try {
-                    const q = query(collection(db, 'users'), where('userId', '==', id));
-                    const snap = await getDocs(q);
-                    if (snap.empty) unique = true;
-                } catch (e) {
-                    console.error('Erro ao verificar ID:', e);
-                }
-                attempts++;
-            }
-            
-            if (unique) {
-                userIdGenerated = id;
-                input.value = id;
-                status.innerHTML = '<i class="fas fa-check"></i> ID disponível';
-                status.className = 'id-status ok';
-            } else {
-                status.innerHTML = '<i class="fas fa-times"></i> Erro, clique novamente';
-                status.className = 'id-status error';
-            }
-        };
-
-        // Máscara telefone
-        document.getElementById('phone').addEventListener('input', function(e) {
-            let v = e.target.value.replace(/\D/g, '');
-            if (v.length > 11) v = v.slice(0, 11);
-            if (v.length > 7) v = v.slice(0, 7) + '-' + v.slice(7);
-            if (v.length > 2) v = '(' + v.slice(0, 2) + ') ' + v.slice(2);
-            e.target.value = v;
+                tab.classList.add('active');
+                document.getElementById(tabId + 'Form').classList.add('active');
+                
+                clearMessages();
+            });
         });
 
-        // Validação de senha em tempo real
-        document.getElementById('password').addEventListener('input', function(e) {
-            const password = e.target.value;
-            
-            // Verificar requisitos
-            const hasLength = password.length >= 8;
-            const hasUpper = /[A-Z]/.test(password);
-            const hasLower = /[a-z]/.test(password);
-            const hasNumber = /\d/.test(password);
-            
-            document.getElementById('req-length').classList.toggle('met', hasLength);
-            document.getElementById('req-upper').classList.toggle('met', hasUpper);
-            document.getElementById('req-lower').classList.toggle('met', hasLower);
-            document.getElementById('req-number').classList.toggle('met', hasNumber);
-            
-            // Verificar match se confirmPassword já tem valor
-            checkPasswordMatch();
+        // Mostrar/ocultar senha
+        togglePasswordBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                const icon = btn.querySelector('i');
+                
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
         });
 
-        // Verificar match das senhas
-        document.getElementById('confirmPassword').addEventListener('input', checkPasswordMatch);
-
-        function checkPasswordMatch() {
-            const password = document.getElementById('password').value;
-            const confirm = document.getElementById('confirmPassword').value;
-            const matchEl = document.getElementById('passwordMatch');
+        // Controle de força da senha
+        registerPasswordInput.addEventListener('input', function() {
+            const password = this.value;
+            const strengthBar = document.getElementById('passwordStrength');
+            const hint = document.getElementById('passwordHint');
             
-            if (!confirm) {
-                matchEl.classList.remove('show');
-                return;
-            }
+            // Mostrar dica
+            hint.classList.add('show');
             
-            matchEl.classList.add('show');
-            if (password !== confirm) {
-                matchEl.textContent = '❌ As senhas não coincidem';
-                matchEl.className = 'password-match show error';
+            // Calcular força
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/\d/.test(password)) strength++;
+            
+            // Atualizar barra
+            strengthBar.className = 'password-strength-bar';
+            if (password.length === 0) {
+                strengthBar.style.width = '0%';
+            } else if (strength <= 1) {
+                strengthBar.classList.add('strength-weak');
+            } else if (strength <= 2) {
+                strengthBar.classList.add('strength-medium');
             } else {
-                matchEl.textContent = '✓ Senhas coincidem';
-                matchEl.className = 'password-match show success';
+                strengthBar.classList.add('strength-strong');
+            }
+        });
+
+        // Modal de redefinição
+        forgotPasswordBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            resetModal.classList.add('show');
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            resetModal.classList.remove('show');
+            clearMessages();
+        });
+
+        resetModal.addEventListener('click', (e) => {
+            if (e.target === resetModal) {
+                resetModal.classList.remove('show');
+                clearMessages();
+            }
+        });
+
+        // Funções auxiliares
+        function clearMessages() {
+            document.querySelectorAll('.error-message, .success-message').forEach(el => {
+                el.classList.remove('show');
+                el.textContent = '';
+            });
+        }
+
+        function setLoading(button, loading) {
+            if (loading) {
+                button.classList.add('loading');
+                button.disabled = true;
+            } else {
+                button.classList.remove('loading');
+                button.disabled = false;
             }
         }
 
-        // Cadastro com email
-        window.handleRegister = async function(e) {
+        function showMessage(type, message, isSuccess = false) {
+            const element = document.getElementById(type);
+            element.textContent = message;
+            element.classList.add('show');
+            if (isSuccess) {
+                element.style.borderLeftColor = 'var(--success)';
+                element.style.background = 'rgba(46, 204, 113, 0.1)';
+                element.style.color = 'var(--success)';
+            }
+        }
+
+        // Login com email/senha
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            const confirm = document.getElementById('confirmPassword').value;
-            const errorEl = document.getElementById('error3');
-            const btn = document.getElementById('submitBtn');
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const submitBtn = document.getElementById('loginBtn');
+            
+            clearMessages();
+            setLoading(submitBtn, true);
+            
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                showMessage('loginSuccess', 'Login realizado com sucesso! Redirecionando...', true);
+                
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+                
+            } catch (error) {
+                let message = 'Erro ao fazer login. Verifique suas credenciais.';
+                if (error.code === 'auth/user-not-found') message = 'Usuário não encontrado.';
+                if (error.code === 'auth/wrong-password') message = 'Senha incorreta.';
+                if (error.code === 'auth/invalid-credential') message = 'Credenciais inválidas.';
+                showMessage('loginError', message);
+            } finally {
+                setLoading(submitBtn, false);
+            }
+        });
+
+        // Cadastro com email/senha
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirm = document.getElementById('registerConfirm').value;
+            const type = document.getElementById('registerType').value;
+            const submitBtn = document.getElementById('registerBtn');
+            
+            clearMessages();
             
             // Validações
             if (password !== confirm) {
-                errorEl.textContent = 'As senhas não coincidem';
-                errorEl.classList.add('show');
+                showMessage('registerError', 'As senhas não coincidem.');
                 return;
             }
             
-            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-            if (!regex.test(password)) {
-                errorEl.textContent = 'A senha não atende aos requisitos mínimos';
-                errorEl.classList.add('show');
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+            if (!passwordRegex.test(password)) {
+                showMessage('registerError', 'A senha precisa de 8+ caracteres com letras maiúsculas, minúsculas e números.');
                 return;
             }
             
-            setLoading(btn, true);
-            errorEl.classList.remove('show');
+            setLoading(submitBtn, true);
             
             try {
-                const cred = await createUserWithEmailAndPassword(auth, email, password);
-                const user = cred.user;
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
                 
-                const userData = {
-                    uid: user.uid,
-                    fullName: document.getElementById('fullName').value.trim(),
-                    displayName: document.getElementById('displayName').value.trim(),
-                    userId: userIdGenerated,
+                await updateProfile(user, { displayName: name });
+                
+                await setDoc(doc(db, 'users', user.uid), {
+                    name: name,
                     email: email,
-                    phone: document.getElementById('phone').value.trim(),
-                    address: document.getElementById('address').value.trim() || null,
-                    type: userType,
+                    type: type,
                     createdAt: new Date().toISOString(),
-                    profileComplete: false
-                };
+                    lastLogin: new Date().toISOString()
+                });
                 
-                await setDoc(doc(db, 'users', user.uid), userData);
-                
-                if (userType !== 'passageiro') {
+                if (type === 'driver') {
                     await setDoc(doc(db, 'drivers', user.uid), {
-                        ...userData,
+                        userId: user.uid,
+                        name: name,
                         status: 'offline',
-                        vehicleInfo: {},
                         rating: 0,
-                        totalRides: 0
+                        totalRides: 0,
+                        createdAt: new Date().toISOString()
                     });
                 }
                 
-                alert('Conta criada com sucesso!');
-                window.location.href = userType === 'passageiro' ? 'dashboard-passageiro.html' : 'completar-perfil.html';
+                showMessage('registerError', 'Conta criada com sucesso! Redirecionando...', true);
                 
-            } catch (err) {
-                console.error('Erro cadastro:', err);
-                let msg = 'Erro ao criar conta. Tente novamente.';
-                if (err.code === 'auth/email-already-in-use') msg = 'Este e-mail já está cadastrado.';
-                if (err.code === 'auth/invalid-email') msg = 'E-mail inválido.';
-                if (err.code === 'auth/weak-password') msg = 'Senha muito fraca.';
-                errorEl.textContent = msg;
-                errorEl.classList.add('show');
+                setTimeout(() => {
+                    window.location.href = type === 'driver' ? 'dashboard-motorista.html' : 'dashboard-passageiro.html';
+                }, 1500);
+                
+            } catch (error) {
+                let message = 'Erro ao criar conta. Tente novamente.';
+                if (error.code === 'auth/email-already-in-use') message = 'Este e-mail já está cadastrado.';
+                if (error.code === 'auth/invalid-email') message = 'E-mail inválido.';
+                if (error.code === 'auth/weak-password') message = 'Senha muito fraca.';
+                showMessage('registerError', message);
             } finally {
-                setLoading(btn, false);
+                setLoading(submitBtn, false);
             }
-        };
+        });
 
-        // Cadastro com Google
-        window.signInWithGoogle = async function() {
-            const btn = document.querySelector('.btn-google');
+        // Login com Google
+        async function signInWithGoogle(isRegister = false) {
+            const btn = isRegister ? document.getElementById('googleRegister') : document.getElementById('googleLogin');
+            
+            clearMessages();
             setLoading(btn, true);
             
             try {
                 const result = await signInWithPopup(auth, googleProvider);
                 const user = result.user;
+                
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
                 
                 if (!userDoc.exists()) {
-                    // Novo usuário - precisa completar cadastro
-                    const newId = Math.floor(1000000 + Math.random() * 9000000).toString();
                     await setDoc(doc(db, 'users', user.uid), {
-                        uid: user.uid,
-                        fullName: user.displayName || '',
-                        displayName: user.displayName?.split(' ')[0] || 'Usuário',
-                        userId: newId,
+                        name: user.displayName,
                         email: user.email,
-                        phone: '',
-                        address: '',
                         type: 'pending',
-                        photoURL: user.photoURL || null,
                         createdAt: new Date().toISOString(),
-                        profileComplete: false
+                        photoURL: user.photoURL,
+                        lastLogin: new Date().toISOString()
                     });
-                    window.location.href = 'escolher-tipo.html?google=true';
+                    
+                    window.location.href = 'escolher-tipo.html';
                 } else {
-                    // Usuário existente
-                    const data = userDoc.data();
-                    if (data.type === 'passageiro') {
-                        window.location.href = 'dashboard-passageiro.html';
-                    } else {
-                        window.location.href = 'dashboard-motorista.html';
-                    }
+                    const userData = userDoc.data();
+                    window.location.href = userData.type === 'driver' ? 'dashboard-motorista.html' : 'dashboard-passageiro.html';
                 }
-            } catch (err) {
-                console.error('Erro Google:', err);
-                document.getElementById('error3').textContent = 'Erro ao cadastrar com Google. Tente novamente.';
-                document.getElementById('error3').classList.add('show');
+                
+            } catch (error) {
+                const message = 'Erro ao autenticar com Google. Tente novamente.';
+                showMessage(isRegister ? 'registerError' : 'loginError', message);
             } finally {
                 setLoading(btn, false);
             }
-        };
-
-        function setLoading(btn, loading) {
-            if (loading) {
-                btn.classList.add('loading');
-                btn.disabled = true;
-            } else {
-                btn.classList.remove('loading');
-                btn.disabled = false;
-            }
         }
+
+        document.getElementById('googleLogin').addEventListener('click', () => signInWithGoogle(false));
+        document.getElementById('googleRegister').addEventListener('click', () => signInWithGoogle(true));
+
+        // Redefinir senha
+        document.getElementById('resetBtn').addEventListener('click', async () => {
+            const email = document.getElementById('resetEmail').value.trim();
+            const submitBtn = document.getElementById('resetBtn');
+            
+            if (!email) {
+                showMessage('resetError', 'Digite seu e-mail.');
+                return;
+            }
+            
+            setLoading(submitBtn, true);
+            clearMessages();
+            
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showMessage('resetSuccess', 'Link de redefinição enviado! Verifique seu e-mail.', true);
+                
+                setTimeout(() => {
+                    resetModal.classList.remove('show');
+                    clearMessages();
+                }, 3000);
+                
+            } catch (error) {
+                let message = 'Erro ao enviar e-mail. Tente novamente.';
+                if (error.code === 'auth/user-not-found') message = 'E-mail não cadastrado.';
+                if (error.code === 'auth/invalid-email') message = 'E-mail inválido.';
+                showMessage('resetError', message);
+            } finally {
+                setLoading(submitBtn, false);
+            }
+        });
+
+        // Limpar mensagens ao digitar
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('input', () => {
+                clearMessages();
+            });
+        });
     </script>
 </body>
 </html>
