@@ -7,14 +7,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Mantenha todo o CSS anterior */
         :root {
             --taxi-yellow: #FFC400;
             --dark-graphite: #1C1C1C;
             --white: #FFFFFF;
             --light-gray: #F5F5F5;
-            --success: #2ECC71;
             --error: #E74C3C;
+            --success: #2ECC71;
+            --input-border: #DDDDDD;
         }
 
         * {
@@ -25,148 +25,60 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #FFC400 0%, #FFD700 100%);
+            background: linear-gradient(135deg, var(--light-gray) 0%, var(--white) 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
+            padding: 1rem;
         }
 
-        .back-home {
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--taxi-yellow);
+            padding: 2.5rem;
+            text-align: center;
+            color: var(--dark-graphite);
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            opacity: 0.9;
+        }
+
+        .back-btn {
             position: absolute;
-            top: 2rem;
-            left: 2rem;
+            top: 1.5rem;
+            left: 1.5rem;
             color: var(--dark-graphite);
             text-decoration: none;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            transition: all 0.3s ease;
         }
 
-        .back-home:hover {
-            color: #333;
-            transform: translateX(-5px);
-        }
-
-        .login-container {
-            width: 100%;
-            max-width: 450px;
-            background: var(--white);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-
-        .login-header {
-            background: var(--dark-graphite);
-            color: var(--white);
-            padding: 2rem;
-            text-align: center;
-        }
-
-        .login-header h1 {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-        }
-
-        .login-header p {
-            color: #aaa;
-            font-size: 0.95rem;
-        }
-
-        .taxi-icon {
-            font-size: 3rem;
-            color: var(--taxi-yellow);
-            margin-bottom: 1rem;
-        }
-
-        .login-content {
-            padding: 2rem;
-        }
-
-        .error-message {
-            background: #fee;
-            color: var(--error);
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            display: none;
-            border: 1px solid #ffcccc;
-        }
-
-        .error-message.active {
-            display: block;
-        }
-
-        .success-message {
-            background: #e8f6ef;
-            color: var(--success);
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            display: none;
-            border: 1px solid #abebc6;
-        }
-
-        .success-message.active {
-            display: block;
-        }
-
-        .btn-google {
-            width: 100%;
-            padding: 1rem;
-            background: var(--white);
-            color: var(--dark-graphite);
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            font-size: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .btn-google:hover {
-            background: var(--light-gray);
-            border-color: #ccc;
-        }
-
-        .btn-google img {
-            width: 20px;
-            height: 20px;
-        }
-
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 1.5rem 0;
-            color: #999;
-            font-size: 0.9rem;
-        }
-
-        .divider::before, .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #e0e0e0;
-        }
-
-        .divider span {
-            padding: 0 1rem;
+        .form-container {
+            padding: 2.5rem;
         }
 
         .form-group {
             margin-bottom: 1.5rem;
+            position: relative;
         }
 
         .form-group label {
@@ -177,463 +89,426 @@
             font-size: 0.9rem;
         }
 
-        .form-group input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s;
-            font-family: 'Inter', sans-serif;
+        .input-wrapper {
+            position: relative;
         }
 
-        .form-group input:focus {
+        .input-wrapper i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 0.9rem 1rem 0.9rem 3rem;
+            border: 2px solid var(--input-border);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--white);
+        }
+
+        .input-wrapper input:focus {
             outline: none;
             border-color: var(--taxi-yellow);
             box-shadow: 0 0 0 3px rgba(255, 196, 0, 0.2);
         }
 
-        .form-group input.error {
+        .input-wrapper input.error {
             border-color: var(--error);
         }
 
-        .password-container {
-            position: relative;
+        .error-message {
+            color: var(--error);
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: none;
         }
 
-        .toggle-password {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             color: #666;
             cursor: pointer;
-            font-size: 1rem;
         }
 
-        .toggle-password:hover {
-            color: var(--dark-graphite);
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--taxi-yellow);
+            cursor: pointer;
         }
 
         .forgot-password {
-            text-align: right;
-            margin-top: 0.5rem;
-        }
-
-        .forgot-password a {
             color: var(--taxi-yellow);
             text-decoration: none;
-            font-size: 0.9rem;
             font-weight: 600;
         }
 
-        .forgot-password a:hover {
+        .forgot-password:hover {
             text-decoration: underline;
         }
 
-        .btn-submit {
+        .btn {
             width: 100%;
             padding: 1rem;
-            background: var(--taxi-yellow);
-            color: var(--dark-graphite);
             border: none;
             border-radius: 10px;
-            font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            margin-top: 0.5rem;
         }
 
-        .btn-submit:hover {
-            background: #FFB300;
+        .btn-primary {
+            background: var(--taxi-yellow);
+            color: var(--dark-graphite);
+            box-shadow: 0 4px 15px rgba(255, 196, 0, 0.3);
+        }
+
+        .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(255, 196, 0, 0.3);
+            box-shadow: 0 6px 20px rgba(255, 196, 0, 0.4);
         }
 
-        .btn-submit:disabled {
-            background: #ccc;
+        .btn-primary:disabled {
+            background: #FFE066;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
 
-        .spinner {
+        .btn-google {
+            background: var(--white);
+            color: var(--dark-graphite);
+            border: 2px solid var(--input-border);
+            margin-top: 1rem;
+        }
+
+        .btn-google:hover {
+            border-color: var(--taxi-yellow);
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .register-link a {
+            color: var(--taxi-yellow);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
             display: none;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
+            border: 3px solid rgba(28, 28, 28, 0.1);
             border-radius: 50%;
             border-top-color: var(--dark-graphite);
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        .btn-submit.loading .spinner {
-            display: inline-block;
-        }
-
-        .btn-submit.loading .btn-text {
-            display: none;
+            animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        .login-footer {
+        .success-message {
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--success);
+            padding: 1rem;
+            border-radius: 10px;
             text-align: center;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e0e0e0;
-            color: #666;
-            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: none;
         }
 
-        .login-footer a {
-            color: var(--taxi-yellow);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .login-footer a:hover {
-            text-decoration: underline;
+        @media (max-width: 640px) {
+            .container {
+                max-width: 100%;
+            }
+            
+            .header, .form-container {
+                padding: 1.5rem;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .form-options {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
 <body>
-    <a href="index.html" class="back-home">
-        <i class="fas fa-arrow-left"></i>
-        Voltar para Home
-    </a>
-
-    <div class="login-container">
-        <div class="login-header">
-            <div class="taxi-icon">
-                <i class="fas fa-taxi"></i>
-            </div>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Voltar
+            </a>
             <h1>Bem-vindo de volta</h1>
-            <p>Entre na sua conta para continuar</p>
+            <p>Entre na sua conta TaxiBF</p>
         </div>
 
-        <div class="login-content">
-            <div id="errorMessage" class="error-message"></div>
-            <div id="successMessage" class="success-message"></div>
-
-            <button id="googleSignIn" class="btn-google">
-                <img src="https://www.google.com/favicon.ico" alt="Google">
-                <span>Entrar com Google</span>
-            </button>
-
-            <div class="divider">
-                <span>ou entre com e-mail</span>
+        <div class="form-container">
+            <div class="success-message" id="successMessage">
+                Conta criada com sucesso! Faça login para continuar.
             </div>
 
             <form id="loginForm">
                 <div class="form-group">
                     <label for="email">E-mail</label>
-                    <input type="email" id="email" required placeholder="seu@email.com">
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" placeholder="seu@email.com" required>
+                    </div>
+                    <div class="error-message" id="emailError"></div>
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Senha</label>
-                    <div class="password-container">
-                        <input type="password" id="password" required placeholder="Digite sua senha">
-                        <button type="button" class="toggle-password" id="togglePassword">
-                            <i class="fas fa-eye"></i>
-                        </button>
+                    <label for="senha">Senha</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="senha" placeholder="Digite sua senha" required>
                     </div>
-                    <div class="forgot-password">
-                        <a href="#" id="forgotPasswordLink">Esqueceu sua senha?</a>
-                    </div>
+                    <div class="error-message" id="senhaError"></div>
                 </div>
 
-                <button type="submit" class="btn-submit">
-                    <span class="btn-text">Entrar</span>
-                    <div class="spinner"></div>
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe">
+                        Lembrar-me
+                    </label>
+                    <a href="recuperar-senha.html" class="forgot-password">Esqueci a senha</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="btnLogin">
+                    <span id="btnText">Entrar</span>
+                    <div class="loading" id="loadingSpinner"></div>
                 </button>
             </form>
 
-            <div class="login-footer">
-                Não tem uma conta? <a href="cadastro.html">Cadastre-se</a>
+            <div class="register-link">
+                Não tem uma conta? <a href="cadastro.html">Cadastre-se agora</a>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-        import { 
-            getAuth, 
-            signInWithEmailAndPassword,
-            signInWithPopup,
-            GoogleAuthProvider,
-            sendPasswordResetEmail
-        } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-        // Configuração do Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyAkTTLfsG5CcViF3mgB-xjws9dlsV-e_jg",
-            authDomain: "taxibf-98dfa.firebaseapp.com",
-            projectId: "taxibf-98dfa",
-            storageBucket: "taxibf-98dfa.firebasestorage.app",
-            messagingSenderId: "126605489339",
-            appId: "1:126605489339:web:25abd7caac6a2e816ba59e"
+            apiKey: "AIzaSyDsLnfKynKVsn66paVJjCnbHeH8pGBahCw",
+            authDomain: "taxibf-1f545.firebaseapp.com",
+            projectId: "taxibf-1f545",
+            storageBucket: "taxibf-1f545.firebasestorage.app",
+            messagingSenderId: "965457489049",
+            appId: "1:965457489049:web:cd0baf070944e3927bdc08"
         };
 
-        // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const googleProvider = new GoogleAuthProvider();
 
-        // Elementos DOM
-        const loginForm = document.getElementById('loginForm');
-        const googleSignInBtn = document.getElementById('googleSignIn');
-        const errorMessage = document.getElementById('errorMessage');
-        const successMessage = document.getElementById('successMessage');
-        const togglePasswordBtn = document.getElementById('togglePassword');
-        const passwordInput = document.getElementById('password');
-        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
-        const submitBtn = loginForm.querySelector('.btn-submit');
+        // Verificar se veio do cadastro
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('cadastro') === 'sucesso') {
+            document.getElementById('successMessage').style.display = 'block';
+        }
 
-        // Controle de redirecionamento
-        let isRedirecting = false;
+        // Restaurar email salvo
+        const savedEmail = localStorage.getItem('taxibf_email');
+        const rememberMe = localStorage.getItem('taxibf_remember') === 'true';
+        
+        if (savedEmail && rememberMe) {
+            document.getElementById('email').value = savedEmail;
+            document.getElementById('rememberMe').checked = true;
+        }
 
-        // Função simples para redirecionar
-        async function redirectUser(user) {
-            if (isRedirecting) return;
-            isRedirecting = true;
+        // Mostrar erro
+        function mostrarErro(campoId, mensagem) {
+            const campo = document.getElementById(campoId);
+            const errorElement = document.getElementById(campoId + 'Error');
+            
+            campo.classList.add('error');
+            errorElement.textContent = mensagem;
+            errorElement.style.display = 'block';
+        }
+
+        // Limpar erro
+        function limparErro(campoId) {
+            const campo = document.getElementById(campoId);
+            const errorElement = document.getElementById(campoId + 'Error');
+            
+            campo.classList.remove('error');
+            errorElement.style.display = 'none';
+        }
+
+        // Submit do formulário
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Limpar erros anteriores
+            ['email', 'senha'].forEach(campo => {
+                limparErro(campo);
+            });
+            
+            // Coletar dados
+            const email = document.getElementById('email').value.trim();
+            const senha = document.getElementById('senha').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            
+            // Validações básicas
+            let valido = true;
+            
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                mostrarErro('email', 'Digite um e-mail válido');
+                valido = false;
+            }
+            
+            if (!senha) {
+                mostrarErro('senha', 'Digite sua senha');
+                valido = false;
+            }
+            
+            if (!valido) return;
+            
+            // Salvar email se lembrar-me estiver marcado
+            if (rememberMe) {
+                localStorage.setItem('taxibf_email', email);
+                localStorage.setItem('taxibf_remember', 'true');
+            } else {
+                localStorage.removeItem('taxibf_email');
+                localStorage.removeItem('taxibf_remember');
+            }
+            
+            // Desabilitar botão e mostrar loading
+            const btnLogin = document.getElementById('btnLogin');
+            const btnText = document.getElementById('btnText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            
+            btnLogin.disabled = true;
+            btnText.style.display = 'none';
+            loadingSpinner.style.display = 'block';
             
             try {
-                // Buscar dados do usuário
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                // Fazer login
+                const userCredential = await signInWithEmailAndPassword(auth, email, senha);
+                const user = userCredential.user;
+                
+                // Verificar perfil do usuário
+                const userDoc = await getDoc(doc(db, "users", user.uid));
                 
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
                     
-                    // Verificar tipo de conta
-                    if (userData.accountType === 'passenger') {
-                        // Passageiro vai para dashboard
-                        setTimeout(() => {
-                            window.location.href = 'dashboard-passageiro.html';
-                        }, 1000);
-                    } else if (userData.accountType === 'driver') {
-                        // Motorista vai para dashboard quando criado
-                        // Por enquanto, vai para escolha
-                        setTimeout(() => {
-                            window.location.href = 'choose-profile.html';
-                        }, 1000);
-                    } else {
-                        // Sem tipo definido, vai para escolha
-                        setTimeout(() => {
-                            window.location.href = 'choose-profile.html';
-                        }, 1000);
-                    }
-                } else {
-                    // Usuário não existe no Firestore (Google novo)
-                    await setDoc(doc(db, 'users', user.uid), {
-                        fullName: user.displayName || '',
-                        email: user.email,
-                        photoURL: user.photoURL || '',
-                        createdAt: new Date(),
-                        lastLogin: new Date(),
-                        provider: user.providerId || 'email'
+                    // Atualizar último acesso
+                    await updateDoc(doc(db, "users", user.uid), {
+                        ultimoAcesso: new Date()
                     });
                     
-                    setTimeout(() => {
-                        window.location.href = 'choose-profile.html';
-                    }, 1000);
+                    // Verificar se já escolheu perfil
+                    if (!userData.tipoPerfil) {
+                        // Se não tem perfil, redirecionar para escolha
+                        window.location.href = "escolha-perfil.html";
+                    } else {
+                        // Se já tem perfil, redirecionar para dashboard apropriada
+                        if (userData.tipoPerfil === 'passageiro') {
+                            window.location.href = "dashboard-passageiro.html";
+                        } else {
+                            window.location.href = "dashboard-taxista.html";
+                        }
+                    }
+                } else {
+                    // Se não tem dados no Firestore, redirecionar para escolha de perfil
+                    window.location.href = "escolha-perfil.html";
                 }
+                
             } catch (error) {
-                console.error('Erro ao redirecionar:', error);
-                isRedirecting = false;
-                showError('Erro ao processar login. Tente novamente.');
-            }
-        }
-
-        // Alternar visibilidade da senha
-        togglePasswordBtn.addEventListener('click', function() {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            
-            const icon = this.querySelector('i');
-            if (type === 'text') {
-                icon.className = 'fas fa-eye-slash';
-            } else {
-                icon.className = 'fas fa-eye';
+                // Habilitar botão novamente
+                btnLogin.disabled = false;
+                btnText.style.display = 'block';
+                loadingSpinner.style.display = 'none';
+                
+                // Tratar erros do Firebase
+                let mensagemErro = "Erro ao fazer login. Tente novamente.";
+                
+                if (error.code === 'auth/invalid-credential') {
+                    mensagemErro = "E-mail ou senha incorretos.";
+                    mostrarErro('email', mensagemErro);
+                    mostrarErro('senha', mensagemErro);
+                } else if (error.code === 'auth/user-not-found') {
+                    mensagemErro = "Usuário não encontrado. Crie uma conta.";
+                    mostrarErro('email', mensagemErro);
+                } else if (error.code === 'auth/wrong-password') {
+                    mensagemErro = "Senha incorreta.";
+                    mostrarErro('senha', mensagemErro);
+                } else if (error.code === 'auth/too-many-requests') {
+                    mensagemErro = "Muitas tentativas. Tente novamente mais tarde.";
+                    mostrarErro('email', mensagemErro);
+                } else {
+                    mostrarErro('email', mensagemErro);
+                }
             }
         });
 
-        // Funções de UI
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.classList.add('active');
-            successMessage.classList.remove('active');
-        }
-
-        function hideError() {
-            errorMessage.classList.remove('active');
-        }
-
-        function showSuccess(message) {
-            successMessage.textContent = message;
-            successMessage.classList.add('active');
-            errorMessage.classList.remove('active');
-        }
-
-        function setLoading(loading) {
-            if (loading) {
-                submitBtn.classList.add('loading');
-                submitBtn.disabled = true;
-                googleSignInBtn.disabled = true;
-            } else {
-                submitBtn.classList.remove('loading');
-                submitBtn.disabled = false;
-                googleSignInBtn.disabled = false;
+        // Verificar se já está logado
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Se já está logado, verificar perfil e redirecionar
+                verificarERedirecionar(user.uid);
             }
-        }
+        });
 
-        // Login com e-mail/senha
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value.trim();
-            const password = passwordInput.value;
-
-            if (!email || !password) {
-                showError('Por favor, preencha todos os campos.');
-                return;
-            }
-
-            setLoading(true);
-            hideError();
-
+        async function verificarERedirecionar(uid) {
             try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
+                const userDoc = await getDoc(doc(db, "users", uid));
                 
-                showSuccess('Login realizado com sucesso! Redirecionando...');
-                
-                // Redirecionar após mostrar mensagem
-                setTimeout(() => {
-                    redirectUser(user);
-                }, 1500);
-
-            } catch (error) {
-                console.error('Erro no login:', error);
-                
-                let errorMessageText = 'Erro ao fazer login. Tente novamente.';
-                
-                switch (error.code) {
-                    case 'auth/user-not-found':
-                        errorMessageText = 'Usuário não encontrado. Verifique seu e-mail.';
-                        break;
-                    case 'auth/wrong-password':
-                        errorMessageText = 'Senha incorreta. Tente novamente.';
-                        break;
-                    case 'auth/invalid-email':
-                        errorMessageText = 'E-mail inválido.';
-                        break;
-                    case 'auth/user-disabled':
-                        errorMessageText = 'Esta conta foi desativada.';
-                        break;
-                    case 'auth/too-many-requests':
-                        errorMessageText = 'Muitas tentativas de login. Tente novamente mais tarde.';
-                        break;
-                    case 'auth/network-request-failed':
-                        errorMessageText = 'Erro de conexão. Verifique sua internet.';
-                        break;
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    
+                    if (userData.tipoPerfil === 'passageiro') {
+                        window.location.href = "dashboard-passageiro.html";
+                    } else if (userData.tipoPerfil === 'taxista') {
+                        window.location.href = "dashboard-taxista.html";
+                    } else {
+                        window.location.href = "escolha-perfil.html";
+                    }
                 }
-                
-                showError(errorMessageText);
-                setLoading(false);
-            }
-        });
-
-        // Login com Google
-        googleSignInBtn.addEventListener('click', async () => {
-            setLoading(true);
-            hideError();
-
-            try {
-                const result = await signInWithPopup(auth, googleProvider);
-                const user = result.user;
-                
-                showSuccess('Login com Google realizado com sucesso! Redirecionando...');
-                
-                // Redirecionar após mostrar mensagem
-                setTimeout(() => {
-                    redirectUser(user);
-                }, 1500);
-
             } catch (error) {
-                console.error('Erro no login com Google:', error);
-                
-                let errorMessageText = 'Erro ao fazer login com Google. Tente novamente.';
-                
-                switch (error.code) {
-                    case 'auth/popup-closed-by-user':
-                        errorMessageText = 'Login cancelado.';
-                        break;
-                    case 'auth/network-request-failed':
-                        errorMessageText = 'Erro de conexão. Verifique sua internet.';
-                        break;
-                }
-                
-                showError(errorMessageText);
-                setLoading(false);
+                // Se der erro, deixa na página de login
             }
-        });
-
-        // Recuperação de senha
-        forgotPasswordLink.addEventListener('click', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value.trim();
-            
-            if (!email) {
-                showError('Por favor, digite seu e-mail para recuperar a senha.');
-                return;
-            }
-
-            setLoading(true);
-            hideError();
-
-            try {
-                await sendPasswordResetEmail(auth, email);
-                showSuccess('E-mail de recuperação enviado! Verifique sua caixa de entrada.');
-            } catch (error) {
-                console.error('Erro ao enviar e-mail de recuperação:', error);
-                
-                let errorMessageText = 'Erro ao enviar e-mail de recuperação.';
-                
-                switch (error.code) {
-                    case 'auth/user-not-found':
-                        errorMessageText = 'Usuário não encontrado com este e-mail.';
-                        break;
-                    case 'auth/invalid-email':
-                        errorMessageText = 'E-mail inválido.';
-                        break;
-                    case 'auth/network-request-failed':
-                        errorMessageText = 'Erro de conexão. Verifique sua internet.';
-                        break;
-                }
-                
-                showError(errorMessageText);
-            } finally {
-                setLoading(false);
-            }
-        });
-
-        // Auto-focus no campo de e-mail
-        document.getElementById('email').focus();
+        }
     </script>
 </body>
 </html>

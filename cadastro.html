@@ -1,9 +1,9 @@
-=<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaxiBF - Cadastro</title>
+    <title>TaxiBF - Escolha seu Perfil</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -12,8 +12,8 @@
             --dark-graphite: #1C1C1C;
             --white: #FFFFFF;
             --light-gray: #F5F5F5;
-            --success: #2ECC71;
-            --error: #E74C3C;
+            --passageiro-blue: #3498DB;
+            --taxista-green: #2ECC71;
         }
 
         * {
@@ -24,7 +24,7 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #FFC400 0%, #FFD700 100%);
+            background: linear-gradient(135deg, var(--light-gray) 0%, var(--white) 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -32,723 +32,312 @@
             padding: 2rem;
         }
 
-        .back-home {
-            position: absolute;
-            top: 2rem;
-            left: 2rem;
-            color: var(--dark-graphite);
-            text-decoration: none;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .back-home:hover {
-            color: #333;
-            transform: translateX(-5px);
-        }
-
-        .register-container {
+        .container {
             width: 100%;
-            max-width: 500px;
-            background: var(--white);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-
-        .register-header {
-            background: var(--dark-graphite);
-            color: var(--white);
-            padding: 2rem;
+            max-width: 800px;
             text-align: center;
         }
 
-        .register-header h1 {
-            font-size: 2rem;
+        .header {
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            font-size: 2.5rem;
             font-weight: 800;
-            margin-bottom: 0.5rem;
-        }
-
-        .register-header p {
-            color: #aaa;
-            font-size: 0.95rem;
-        }
-
-        .taxi-icon {
-            font-size: 3rem;
             color: var(--taxi-yellow);
             margin-bottom: 1rem;
         }
 
-        .register-content {
-            padding: 2rem;
-        }
-
-        .error-message {
-            background: #fee;
-            color: var(--error);
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            display: none;
-            border: 1px solid #ffcccc;
-        }
-
-        .error-message.active {
-            display: block;
-        }
-
-        .success-message {
-            background: #e8f6ef;
-            color: var(--success);
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            display: none;
-            border: 1px solid #abebc6;
-        }
-
-        .success-message.active {
-            display: block;
-        }
-
-        .btn-google {
-            width: 100%;
-            padding: 1rem;
-            background: var(--white);
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
             color: var(--dark-graphite);
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .profile-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2.5rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            border: 3px solid transparent;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .profile-card.selected {
+            border-color: var(--taxi-yellow);
+        }
+
+        .profile-card.passageiro {
+            border-top: 5px solid var(--passageiro-blue);
+        }
+
+        .profile-card.taxista {
+            border-top: 5px solid var(--taxista-green);
+        }
+
+        .icon-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
-            font-size: 1rem;
+            margin: 0 auto 1.5rem;
+            font-size: 2.5rem;
+        }
+
+        .passageiro .icon-circle {
+            background: rgba(52, 152, 219, 0.1);
+            color: var(--passageiro-blue);
+        }
+
+        .taxista .icon-circle {
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--taxista-green);
+        }
+
+        .profile-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--dark-graphite);
+        }
+
+        .profile-card p {
+            color: #666;
+            line-height: 1.6;
             margin-bottom: 1.5rem;
         }
 
-        .btn-google:hover {
-            background: var(--light-gray);
-            border-color: #ccc;
-        }
-
-        .btn-google img {
-            width: 20px;
-            height: 20px;
-        }
-
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 1.5rem 0;
-            color: #999;
-            font-size: 0.9rem;
-        }
-
-        .divider::before, .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #e0e0e0;
-        }
-
-        .divider span {
-            padding: 0 1rem;
-        }
-
-        .form-group {
+        .features {
+            text-align: left;
             margin-bottom: 1.5rem;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--dark-graphite);
-            font-size: 0.9rem;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--taxi-yellow);
-            box-shadow: 0 0 0 3px rgba(255, 196, 0, 0.2);
-        }
-
-        .form-group input.error {
-            border-color: var(--error);
-        }
-
-        .password-requirements {
-            font-size: 0.8rem;
-            color: #999;
-            margin-top: 0.5rem;
-            line-height: 1.4;
-        }
-
-        .requirement {
+        .features li {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            margin: 0.3rem 0;
+            margin-bottom: 0.75rem;
+            color: #666;
         }
 
-        .requirement.valid {
-            color: var(--success);
+        .features li i {
+            color: var(--taxi-yellow);
         }
 
-        .requirement.invalid {
-            color: #999;
-        }
-
-        .requirement i {
-            font-size: 0.7rem;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 1rem;
-            background: var(--taxi-yellow);
-            color: var(--dark-graphite);
+        .btn {
+            padding: 1rem 2rem;
             border: none;
             border-radius: 10px;
-            font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            margin-top: 1rem;
+            width: 100%;
         }
 
-        .btn-submit:hover {
-            background: #FFB300;
+        .btn-primary {
+            background: var(--taxi-yellow);
+            color: var(--dark-graphite);
+            box-shadow: 0 4px 15px rgba(255, 196, 0, 0.3);
+        }
+
+        .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(255, 196, 0, 0.3);
+            box-shadow: 0 6px 20px rgba(255, 196, 0, 0.4);
         }
 
-        .btn-submit:disabled {
-            background: #ccc;
+        .btn-primary:disabled {
+            background: #FFE066;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
 
-        .spinner {
+        .loading {
             display: none;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
+            border: 3px solid rgba(28, 28, 28, 0.1);
             border-radius: 50%;
             border-top-color: var(--dark-graphite);
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        .btn-submit.loading .spinner {
-            display: inline-block;
-        }
-
-        .btn-submit.loading .btn-text {
-            display: none;
+            animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        .register-footer {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e0e0e0;
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .register-footer a {
-            color: var(--taxi-yellow);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .register-footer a:hover {
-            text-decoration: underline;
-        }
-
-        /* Responsive */
-        @media (max-width: 640px) {
-            body {
-                padding: 1rem;
+        @media (max-width: 768px) {
+            .cards-container {
+                grid-template-columns: 1fr;
             }
-
-            .back-home {
-                top: 1rem;
-                left: 1rem;
+            
+            .header h1 {
+                font-size: 2rem;
             }
-
-            .register-header {
-                padding: 1.5rem;
-            }
-
-            .register-header h1 {
-                font-size: 1.5rem;
-            }
-
-            .register-content {
-                padding: 1.5rem;
+            
+            .profile-card {
+                padding: 2rem;
             }
         }
     </style>
 </head>
 <body>
-    <a href="index.html" class="back-home">
-        <i class="fas fa-arrow-left"></i>
-        Voltar para Home
-    </a>
-
-    <div class="register-container">
-        <div class="register-header">
-            <div class="taxi-icon">
-                <i class="fas fa-taxi"></i>
-            </div>
-            <h1>Cadastre-se no TaxiBF</h1>
-            <p>Junte-se à nossa comunidade de motoristas e passageiros</p>
+    <div class="container">
+        <div class="header">
+            <div class="logo">TaxiBF</div>
+            <h1>Escolha seu Perfil</h1>
+            <p>Selecione como você deseja usar o TaxiBF. Você poderá alterar essa configuração depois.</p>
         </div>
 
-        <div class="register-content">
-            <div id="errorMessage" class="error-message"></div>
-            <div id="successMessage" class="success-message"></div>
-
-            <button id="googleSignUp" class="btn-google">
-                <img src="https://www.google.com/favicon.ico" alt="Google">
-                <span>Cadastrar com Google</span>
-            </button>
-
-            <div class="divider">
-                <span>ou cadastre-se com e-mail</span>
+        <div class="cards-container">
+            <div class="profile-card passageiro" onclick="selecionarPerfil('passageiro')">
+                <div class="icon-circle">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h2>Passageiro</h2>
+                <p>Encontre táxis rapidamente, agende viagens e acompanhe seus motoristas favoritos.</p>
+                
+                <ul class="features">
+                    <li><i class="fas fa-check"></i> Localize táxis em tempo real</li>
+                    <li><i class="fas fa-check"></i> Agende viagens com antecedência</li>
+                    <li><i class="fas fa-check"></i> Adicione motoristas aos favoritos</li>
+                    <li><i class="fas fa-check"></i> Veja histórico de corridas</li>
+                </ul>
             </div>
 
-            <form id="registerForm">
-                <div class="form-group">
-                    <label for="fullName">Nome completo *</label>
-                    <input type="text" id="fullName" required placeholder="Digite seu nome completo">
+            <div class="profile-card taxista" onclick="selecionarPerfil('taxista')">
+                <div class="icon-circle">
+                    <i class="fas fa-taxi"></i>
                 </div>
-
-                <div class="form-group">
-                    <label for="birthDate">Data de nascimento *</label>
-                    <input type="date" id="birthDate" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="phone">Telefone *</label>
-                    <input type="tel" id="phone" required placeholder="(11) 99999-9999">
-                </div>
-
-                <div class="form-group">
-                    <label for="email">E-mail *</label>
-                    <input type="email" id="email" required placeholder="seu@email.com">
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Senha *</label>
-                    <input type="password" id="password" required placeholder="Crie uma senha forte">
-                    <div class="password-requirements">
-                        <div class="requirement" id="reqLength">
-                            <i class="fas fa-circle"></i>
-                            <span>Mínimo 8 caracteres</span>
-                        </div>
-                        <div class="requirement" id="reqUppercase">
-                            <i class="fas fa-circle"></i>
-                            <span>Pelo menos 1 letra maiúscula</span>
-                        </div>
-                        <div class="requirement" id="reqLowercase">
-                            <i class="fas fa-circle"></i>
-                            <span>Pelo menos 1 letra minúscula</span>
-                        </div>
-                        <div class="requirement" id="reqNumber">
-                            <i class="fas fa-circle"></i>
-                            <span>Pelo menos 1 número</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="confirmPassword">Confirmar senha *</label>
-                    <input type="password" id="confirmPassword" required placeholder="Digite a senha novamente">
-                </div>
-
-                <button type="submit" class="btn-submit">
-                    <span class="btn-text">Criar conta</span>
-                    <div class="spinner"></div>
-                </button>
-            </form>
-
-            <div class="register-footer">
-                Já tem uma conta? <a href="login.html">Faça login</a>
+                <h2>Taxista</h2>
+                <p>Ofereça seus serviços, gerencie corridas e aumente sua renda com mais passageiros.</p>
+                
+                <ul class="features">
+                    <li><i class="fas fa-check"></i> Aumente sua clientela</li>
+                    <li><i class="fas fa-check"></i> Gerencie seu status online</li>
+                    <li><i class="fas fa-check"></i> Defina seu horário de trabalho</li>
+                    <li><i class="fas fa-check"></i> Receba avaliações dos passageiros</li>
+                </ul>
             </div>
         </div>
+
+        <button class="btn btn-primary" id="btnContinuar" disabled onclick="continuar()">
+            <span id="btnText">Continuar</span>
+            <div class="loading" id="loadingSpinner"></div>
+        </button>
     </div>
 
-    <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-        import { 
-            getAuth, 
-            createUserWithEmailAndPassword,
-            signInWithPopup,
-            GoogleAuthProvider,
-            updateProfile
-        } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+        import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-        // Configuração do Firebase - USE AS SUAS CREDENCIAIS
         const firebaseConfig = {
-            apiKey: "AIzaSyAkTTLfsG5CcViF3mgB-xjws9dlsV-e_jg",
-            authDomain: "taxibf-98dfa.firebaseapp.com",
-            projectId: "taxibf-98dfa",
-            storageBucket: "taxibf-98dfa.firebasestorage.app",
-            messagingSenderId: "126605489339",
-            appId: "1:126605489339:web:25abd7caac6a2e816ba59e"
+            apiKey: "AIzaSyDsLnfKynKVsn66paVJjCnbHeH8pGBahCw",
+            authDomain: "taxibf-1f545.firebaseapp.com",
+            projectId: "taxibf-1f545",
+            storageBucket: "taxibf-1f545.firebasestorage.app",
+            messagingSenderId: "965457489049",
+            appId: "1:965457489049:web:cd0baf070944e3927bdc08"
         };
 
-        // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const googleProvider = new GoogleAuthProvider();
 
-        // Elementos DOM
-        const registerForm = document.getElementById('registerForm');
-        const googleSignUpBtn = document.getElementById('googleSignUp');
-        const errorMessage = document.getElementById('errorMessage');
-        const successMessage = document.getElementById('successMessage');
-        const submitBtn = registerForm.querySelector('.btn-submit');
+        let perfilSelecionado = null;
+        let usuarioAtual = null;
 
-        // Validação da senha em tempo real
-        const passwordInput = document.getElementById('password');
-        const confirmPasswordInput = document.getElementById('confirmPassword');
-        const requirements = {
-            length: document.getElementById('reqLength'),
-            uppercase: document.getElementById('reqUppercase'),
-            lowercase: document.getElementById('reqLowercase'),
-            number: document.getElementById('reqNumber')
-        };
-
-        passwordInput.addEventListener('input', validatePassword);
-        confirmPasswordInput.addEventListener('input', validatePasswordConfirmation);
-
-        function validatePassword() {
-            const password = passwordInput.value;
-            
-            // Validar comprimento
-            if (password.length >= 8) {
-                requirements.length.classList.add('valid');
-                requirements.length.classList.remove('invalid');
-                requirements.length.querySelector('i').className = 'fas fa-check-circle';
+        // Verificar se usuário está logado
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                usuarioAtual = user;
             } else {
-                requirements.length.classList.remove('valid');
-                requirements.length.classList.add('invalid');
-                requirements.length.querySelector('i').className = 'fas fa-circle';
+                // Se não estiver logado, redirecionar para login
+                window.location.href = "login.html";
             }
-
-            // Validar maiúscula
-            if (/[A-Z]/.test(password)) {
-                requirements.uppercase.classList.add('valid');
-                requirements.uppercase.classList.remove('invalid');
-                requirements.uppercase.querySelector('i').className = 'fas fa-check-circle';
-            } else {
-                requirements.uppercase.classList.remove('valid');
-                requirements.uppercase.classList.add('invalid');
-                requirements.uppercase.querySelector('i').className = 'fas fa-circle';
-            }
-
-            // Validar minúscula
-            if (/[a-z]/.test(password)) {
-                requirements.lowercase.classList.add('valid');
-                requirements.lowercase.classList.remove('invalid');
-                requirements.lowercase.querySelector('i').className = 'fas fa-check-circle';
-            } else {
-                requirements.lowercase.classList.remove('valid');
-                requirements.lowercase.classList.add('invalid');
-                requirements.lowercase.querySelector('i').className = 'fas fa-circle';
-            }
-
-            // Validar número
-            if (/[0-9]/.test(password)) {
-                requirements.number.classList.add('valid');
-                requirements.number.classList.remove('invalid');
-                requirements.number.querySelector('i').className = 'fas fa-check-circle';
-            } else {
-                requirements.number.classList.remove('valid');
-                requirements.number.classList.add('invalid');
-                requirements.number.querySelector('i').className = 'fas fa-circle';
-            }
-        }
-
-        function validatePasswordConfirmation() {
-            const password = passwordInput.value;
-            const confirmPassword = confirmPasswordInput.value;
-            
-            if (confirmPassword && password !== confirmPassword) {
-                confirmPasswordInput.classList.add('error');
-                showError('As senhas não coincidem');
-                return false;
-            } else {
-                confirmPasswordInput.classList.remove('error');
-                hideError();
-                return true;
-            }
-        }
-
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.classList.add('active');
-            successMessage.classList.remove('active');
-        }
-
-        function hideError() {
-            errorMessage.classList.remove('active');
-        }
-
-        function showSuccess(message) {
-            successMessage.textContent = message;
-            successMessage.classList.add('active');
-            errorMessage.classList.remove('active');
-        }
-
-        function setLoading(loading) {
-            if (loading) {
-                submitBtn.classList.add('loading');
-                submitBtn.disabled = true;
-                googleSignUpBtn.disabled = true;
-            } else {
-                submitBtn.classList.remove('loading');
-                submitBtn.disabled = false;
-                googleSignUpBtn.disabled = false;
-            }
-        }
-
-        // Gerar ID único
-        function generateUserId() {
-            return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        }
-
-        // Formatar telefone
-        function formatPhone(phone) {
-            // Remove tudo que não é número
-            const numbers = phone.replace(/\D/g, '');
-            
-            // Formata para (XX) XXXXX-XXXX
-            if (numbers.length === 11) {
-                return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-            }
-            
-            return numbers;
-        }
-
-        // Máscara para telefone
-        const phoneInput = document.getElementById('phone');
-        phoneInput.addEventListener('input', function (e) {
-            let value = e.target.value.replace(/\D/g, '');
-            
-            if (value.length > 11) {
-                value = value.substring(0, 11);
-            }
-            
-            if (value.length > 10) {
-                value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-            } else if (value.length > 6) {
-                value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
-            } else if (value.length > 2) {
-                value = value.replace(/(\d{2})(\d{0,5})/, '($1) $2');
-            } else if (value.length > 0) {
-                value = value.replace(/(\d{0,2})/, '($1');
-            }
-            
-            e.target.value = value;
         });
 
-        // Configurar data máxima (mínimo 18 anos)
-        const today = new Date();
-        const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
-        document.getElementById('birthDate').max = maxDate.toISOString().split('T')[0];
-
-        // Cadastro com e-mail/senha
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        function selecionarPerfil(perfil) {
+            perfilSelecionado = perfil;
             
-            const fullName = document.getElementById('fullName').value.trim();
-            const birthDate = document.getElementById('birthDate').value;
-            const phone = document.getElementById('phone').value;
-            const email = document.getElementById('email').value.trim();
-            const password = passwordInput.value;
-            const confirmPassword = confirmPasswordInput.value;
+            // Remover seleção anterior
+            document.querySelectorAll('.profile-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Adicionar seleção atual
+            document.querySelector(`.profile-card.${perfil}`).classList.add('selected');
+            
+            // Habilitar botão continuar
+            document.getElementById('btnContinuar').disabled = false;
+        }
 
-            // Validações
-            if (!fullName || !birthDate || !phone || !email || !password || !confirmPassword) {
-                showError('Por favor, preencha todos os campos obrigatórios.');
-                return;
-            }
-
-            if (password !== confirmPassword) {
-                showError('As senhas não coincidem.');
-                return;
-            }
-
-            // Validar força da senha
-            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-            if (!passwordRegex.test(password)) {
-                showError('A senha deve ter no mínimo 8 caracteres, incluindo pelo menos uma letra maiúscula, uma minúscula e um número.');
-                return;
-            }
-
-            // Validar telefone
-            const phoneNumbers = phone.replace(/\D/g, '');
-            if (phoneNumbers.length !== 11) {
-                showError('Telefone inválido. Use o formato: (11) 99999-9999');
-                return;
-            }
-
-            setLoading(true);
-            hideError();
-
+        async function continuar() {
+            if (!perfilSelecionado || !usuarioAtual) return;
+            
+            // Desabilitar botão e mostrar loading
+            const btnContinuar = document.getElementById('btnContinuar');
+            const btnText = document.getElementById('btnText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            
+            btnContinuar.disabled = true;
+            btnText.style.display = 'none';
+            loadingSpinner.style.display = 'block';
+            
             try {
-                // Criar usuário no Firebase Auth
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                // Atualizar perfil com nome
-                await updateProfile(user, {
-                    displayName: fullName
+                // Atualizar perfil no Firestore
+                await updateDoc(doc(db, "users", usuarioAtual.uid), {
+                    tipoPerfil: perfilSelecionado,
+                    ultimoAcesso: new Date()
                 });
-
-                // Gerar ID único
-                const userId = generateUserId();
                 
-                // Formatar telefone
-                const formattedPhone = formatPhone(phone);
-
-                // Salvar dados adicionais no Firestore
-                await setDoc(doc(db, 'users', user.uid), {
-                    userId: userId,
-                    fullName: fullName,
-                    email: email,
-                    birthDate: birthDate,
-                    phone: formattedPhone,
-                    createdAt: serverTimestamp(),
-                    lastLogin: serverTimestamp(),
-                    accountType: null, // Será definido no login
-                    status: 'active',
-                    provider: 'email'
-                });
-
-                // Limpar formulário
-                registerForm.reset();
-                
-                // Mostrar mensagem de sucesso
-                showSuccess('Conta criada com sucesso! Redirecionando para login...');
-
-                // Redirecionar para login após 2 segundos
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 2000);
-
-            } catch (error) {
-                console.error('Erro no cadastro:', error);
-                
-                let errorMsg = 'Erro ao criar conta. Tente novamente.';
-                
-                switch (error.code) {
-                    case 'auth/email-already-in-use':
-                        errorMsg = 'Este e-mail já está cadastrado.';
-                        break;
-                    case 'auth/invalid-email':
-                        errorMsg = 'E-mail inválido.';
-                        break;
-                    case 'auth/weak-password':
-                        errorMsg = 'Senha muito fraca. Use pelo menos 8 caracteres com letras maiúsculas, minúsculas e números.';
-                        break;
-                    case 'auth/network-request-failed':
-                        errorMsg = 'Erro de conexão. Verifique sua internet.';
-                        break;
+                // Redirecionar para dashboard apropriada
+                if (perfilSelecionado === 'passageiro') {
+                    window.location.href = "dashboard-passageiro.html";
+                } else {
+                    window.location.href = "dashboard-taxista.html";
                 }
                 
-                showError(errorMsg);
-            } finally {
-                setLoading(false);
-            }
-        });
-
-        // Cadastro com Google
-        googleSignUpBtn.addEventListener('click', async () => {
-            setLoading(true);
-            hideError();
-
-            try {
-                const result = await signInWithPopup(auth, googleProvider);
-                const user = result.user;
-
-                // Gerar ID único
-                const userId = generateUserId();
-
-                // Salvar dados no Firestore
-                await setDoc(doc(db, 'users', user.uid), {
-                    userId: userId,
-                    fullName: user.displayName,
-                    email: user.email,
-                    photoURL: user.photoURL,
-                    createdAt: serverTimestamp(),
-                    lastLogin: serverTimestamp(),
-                    accountType: null, // Será definido no login
-                    status: 'active',
-                    provider: 'google'
-                }, { merge: true });
-
-                showSuccess('Cadastro com Google realizado! Redirecionando...');
-
-                // Redirecionar para login
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 2000);
-
             } catch (error) {
-                console.error('Erro no cadastro com Google:', error);
+                // Habilitar botão novamente
+                btnContinuar.disabled = false;
+                btnText.style.display = 'block';
+                loadingSpinner.style.display = 'none';
                 
-                let errorMsg = 'Erro ao cadastrar com Google. Tente novamente.';
-                
-                switch (error.code) {
-                    case 'auth/popup-closed-by-user':
-                        errorMsg = 'Cadastro cancelado.';
-                        break;
-                    case 'auth/network-request-failed':
-                        errorMsg = 'Erro de conexão. Verifique sua internet.';
-                        break;
-                }
-                
-                showError(errorMsg);
-            } finally {
-                setLoading(false);
+                alert("Erro ao salvar perfil. Tente novamente.");
             }
-        });
+        }
     </script>
 </body>
 </html>
