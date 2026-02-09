@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaxiBF - Escolha seu Perfil</title>
+    <title>TaxiBF - Cadastro</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -12,8 +12,9 @@
             --dark-graphite: #1C1C1C;
             --white: #FFFFFF;
             --light-gray: #F5F5F5;
-            --passageiro-blue: #3498DB;
-            --taxista-green: #2ECC71;
+            --error: #E74C3C;
+            --success: #2ECC71;
+            --input-border: #DDDDDD;
         }
 
         * {
@@ -29,157 +30,172 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
+            padding: 1rem;
         }
 
         .container {
             width: 100%;
-            max-width: 800px;
-            text-align: center;
-        }
-
-        .header {
-            margin-bottom: 3rem;
-        }
-
-        .logo {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--taxi-yellow);
-            margin-bottom: 1rem;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--dark-graphite);
-            margin-bottom: 1rem;
-        }
-
-        .header p {
-            color: #666;
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .profile-card {
+            max-width: 500px;
             background: var(--white);
             border-radius: 20px;
-            padding: 2.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 3px solid transparent;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
-        .profile-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-
-        .profile-card.selected {
-            border-color: var(--taxi-yellow);
-        }
-
-        .profile-card.passageiro {
-            border-top: 5px solid var(--passageiro-blue);
-        }
-
-        .profile-card.taxista {
-            border-top: 5px solid var(--taxista-green);
-        }
-
-        .icon-circle {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            font-size: 2.5rem;
-        }
-
-        .passageiro .icon-circle {
-            background: rgba(52, 152, 219, 0.1);
-            color: var(--passageiro-blue);
-        }
-
-        .taxista .icon-circle {
-            background: rgba(46, 204, 113, 0.1);
-            color: var(--taxista-green);
-        }
-
-        .profile-card h2 {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
+        .header {
+            background: var(--taxi-yellow);
+            padding: 2.5rem;
+            text-align: center;
             color: var(--dark-graphite);
+            position: relative;
         }
 
-        .profile-card p {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
         }
 
-        .features {
-            text-align: left;
-            margin-bottom: 1.5rem;
+        .header p {
+            opacity: 0.9;
         }
 
-        .features li {
+        .back-btn {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            color: var(--dark-graphite);
+            text-decoration: none;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            margin-bottom: 0.75rem;
+        }
+
+        .form-container {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-graphite);
+            font-size: 0.9rem;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
             color: #666;
         }
 
-        .features li i {
-            color: var(--taxi-yellow);
+        .input-with-icon input {
+            width: 100%;
+            padding: 0.9rem 1rem 0.9rem 3rem;
+            border: 2px solid var(--input-border);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-with-icon input:focus {
+            outline: none;
+            border-color: var(--taxi-yellow);
+            box-shadow: 0 0 0 3px rgba(255, 196, 0, 0.2);
+        }
+
+        .input-with-icon input.error {
+            border-color: var(--error);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .password-rules {
+            background: var(--light-gray);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 0.5rem;
+        }
+
+        .password-rule {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .password-rule.valid {
+            color: var(--success);
+        }
+
+        .password-rule i {
+            width: 20px;
+            text-align: center;
         }
 
         .btn {
-            padding: 1rem 2rem;
+            width: 100%;
+            padding: 1rem;
             border: none;
             border-radius: 10px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            width: 100%;
-        }
-
-        .btn-primary {
             background: var(--taxi-yellow);
             color: var(--dark-graphite);
-            box-shadow: 0 4px 15px rgba(255, 196, 0, 0.3);
+            margin-top: 1rem;
         }
 
-        .btn-primary:hover {
+        .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(255, 196, 0, 0.4);
         }
 
-        .btn-primary:disabled {
-            background: #FFE066;
+        .btn:disabled {
+            opacity: 0.6;
             cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .login-link a {
+            color: var(--taxi-yellow);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
         }
 
         .loading {
@@ -196,17 +212,17 @@
             to { transform: rotate(360deg); }
         }
 
-        @media (max-width: 768px) {
-            .cards-container {
-                grid-template-columns: 1fr;
+        @media (max-width: 640px) {
+            .container {
+                max-width: 100%;
+            }
+            
+            .header, .form-container {
+                padding: 1.5rem;
             }
             
             .header h1 {
-                font-size: 2rem;
-            }
-            
-            .profile-card {
-                padding: 2rem;
+                font-size: 1.5rem;
             }
         }
     </style>
@@ -214,54 +230,108 @@
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo">TaxiBF</div>
-            <h1>Escolha seu Perfil</h1>
-            <p>Selecione como você deseja usar o TaxiBF. Você poderá alterar essa configuração depois.</p>
+            <a href="index.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Voltar
+            </a>
+            <h1>Criar Conta</h1>
+            <p>Junte-se ao TaxiBF em menos de 2 minutos</p>
         </div>
 
-        <div class="cards-container">
-            <div class="profile-card passageiro" onclick="selecionarPerfil('passageiro')">
-                <div class="icon-circle">
-                    <i class="fas fa-user"></i>
+        <div class="form-container">
+            <form id="cadastroForm">
+                <div class="form-group">
+                    <label for="nomeCompleto">Nome Completo *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="nomeCompleto" placeholder="Seu nome completo" required>
+                    </div>
+                    <div class="error-message" id="nomeError"></div>
                 </div>
-                <h2>Passageiro</h2>
-                <p>Encontre táxis rapidamente, agende viagens e acompanhe seus motoristas favoritos.</p>
-                
-                <ul class="features">
-                    <li><i class="fas fa-check"></i> Localize táxis em tempo real</li>
-                    <li><i class="fas fa-check"></i> Agende viagens com antecedência</li>
-                    <li><i class="fas fa-check"></i> Adicione motoristas aos favoritos</li>
-                    <li><i class="fas fa-check"></i> Veja histórico de corridas</li>
-                </ul>
-            </div>
 
-            <div class="profile-card taxista" onclick="selecionarPerfil('taxista')">
-                <div class="icon-circle">
-                    <i class="fas fa-taxi"></i>
+                <div class="form-group">
+                    <label for="email">E-mail *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" placeholder="seu@email.com" required>
+                    </div>
+                    <div class="error-message" id="emailError"></div>
                 </div>
-                <h2>Taxista</h2>
-                <p>Ofereça seus serviços, gerencie corridas e aumente sua renda com mais passageiros.</p>
-                
-                <ul class="features">
-                    <li><i class="fas fa-check"></i> Aumente sua clientela</li>
-                    <li><i class="fas fa-check"></i> Gerencie seu status online</li>
-                    <li><i class="fas fa-check"></i> Defina seu horário de trabalho</li>
-                    <li><i class="fas fa-check"></i> Receba avaliações dos passageiros</li>
-                </ul>
+
+                <div class="form-group">
+                    <label for="telefone">Telefone/WhatsApp *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" id="telefone" placeholder="(11) 99999-9999" required>
+                    </div>
+                    <div class="error-message" id="telefoneError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="dataNascimento">Data de Nascimento *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-calendar"></i>
+                        <input type="date" id="dataNascimento" required>
+                    </div>
+                    <div class="error-message" id="dataError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="senha">Senha *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="senha" placeholder="Mínimo 8 caracteres" required>
+                    </div>
+                    
+                    <div class="password-rules">
+                        <div class="password-rule" id="ruleLength">
+                            <i class="fas fa-circle"></i>
+                            <span>Mínimo 8 caracteres</span>
+                        </div>
+                        <div class="password-rule" id="ruleUpper">
+                            <i class="fas fa-circle"></i>
+                            <span>Pelo menos 1 letra maiúscula</span>
+                        </div>
+                        <div class="password-rule" id="ruleLower">
+                            <i class="fas fa-circle"></i>
+                            <span>Pelo menos 1 letra minúscula</span>
+                        </div>
+                        <div class="password-rule" id="ruleNumber">
+                            <i class="fas fa-circle"></i>
+                            <span>Pelo menos 1 número</span>
+                        </div>
+                    </div>
+                    
+                    <div class="error-message" id="senhaError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmarSenha">Confirmar Senha *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="confirmarSenha" placeholder="Digite a senha novamente" required>
+                    </div>
+                    <div class="error-message" id="confirmarError"></div>
+                </div>
+
+                <button type="submit" class="btn" id="btnCadastrar">
+                    <span id="btnText">Criar Conta</span>
+                    <div class="loading" id="loadingSpinner"></div>
+                </button>
+            </form>
+
+            <div class="login-link">
+                Já tem uma conta? <a href="login.html">Faça login</a>
             </div>
         </div>
-
-        <button class="btn btn-primary" id="btnContinuar" disabled onclick="continuar()">
-            <span id="btnText">Continuar</span>
-            <div class="loading" id="loadingSpinner"></div>
-        </button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-        import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
+        // CONFIGURAÇÃO FIREBASE (SUAS CREDENCIAIS)
         const firebaseConfig = {
             apiKey: "AIzaSyDsLnfKynKVsn66paVJjCnbHeH8pGBahCw",
             authDomain: "taxibf-1f545.firebaseapp.com",
@@ -275,69 +345,199 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let perfilSelecionado = null;
-        let usuarioAtual = null;
+        // 1. FUNÇÃO PARA GERAR ID ÚNICO
+        function gerarIDUnico() {
+            const prefixo = "TXBF-";
+            const numero = Math.floor(100000 + Math.random() * 900000);
+            return prefixo + numero;
+        }
 
-        // Verificar se usuário está logado
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                usuarioAtual = user;
-            } else {
-                // Se não estiver logado, redirecionar para login
-                window.location.href = "login.html";
+        // 2. FORMATAÇÃO DE TELEFONE
+        function formatarTelefone(input) {
+            let valor = input.value.replace(/\D/g, '');
+            
+            if (valor.length > 11) {
+                valor = valor.substring(0, 11);
             }
+            
+            if (valor.length > 10) {
+                valor = valor.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+            } else if (valor.length > 6) {
+                valor = valor.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+            } else if (valor.length > 2) {
+                valor = valor.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+            }
+            
+            input.value = valor;
+        }
+
+        // 3. VALIDAÇÃO DE SENHA
+        function validarSenha(senha) {
+            const regras = {
+                length: senha.length >= 8,
+                upper: /[A-Z]/.test(senha),
+                lower: /[a-z]/.test(senha),
+                number: /[0-9]/.test(senha)
+            };
+            
+            // Atualizar interface
+            document.getElementById('ruleLength').className = regras.length ? 'password-rule valid' : 'password-rule';
+            document.getElementById('ruleUpper').className = regras.upper ? 'password-rule valid' : 'password-rule';
+            document.getElementById('ruleLower').className = regras.lower ? 'password-rule valid' : 'password-rule';
+            document.getElementById('ruleNumber').className = regras.number ? 'password-rule valid' : 'password-rule';
+            
+            return regras.length && regras.upper && regras.lower && regras.number;
+        }
+
+        // 4. VALIDAR DATA (18+ ANOS)
+        function validarDataNascimento(data) {
+            const hoje = new Date();
+            const nascimento = new Date(data);
+            
+            let idade = hoje.getFullYear() - nascimento.getFullYear();
+            const mes = hoje.getMonth() - nascimento.getMonth();
+            
+            if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+                idade--;
+            }
+            
+            return idade >= 18;
+        }
+
+        // 5. MOSTRAR ERRO
+        function mostrarErro(campo, mensagem) {
+            document.getElementById(campo).classList.add('error');
+            document.getElementById(campo + 'Error').textContent = mensagem;
+            document.getElementById(campo + 'Error').style.display = 'block';
+        }
+
+        // 6. LIMPAR ERRO
+        function limparErro(campo) {
+            document.getElementById(campo).classList.remove('error');
+            document.getElementById(campo + 'Error').style.display = 'none';
+        }
+
+        // 7. EVENT LISTENERS
+        document.getElementById('telefone').addEventListener('input', function(e) {
+            formatarTelefone(e.target);
         });
 
-        function selecionarPerfil(perfil) {
-            perfilSelecionado = perfil;
-            
-            // Remover seleção anterior
-            document.querySelectorAll('.profile-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            
-            // Adicionar seleção atual
-            document.querySelector(`.profile-card.${perfil}`).classList.add('selected');
-            
-            // Habilitar botão continuar
-            document.getElementById('btnContinuar').disabled = false;
-        }
+        document.getElementById('senha').addEventListener('input', function(e) {
+            validarSenha(e.target.value);
+        });
 
-        async function continuar() {
-            if (!perfilSelecionado || !usuarioAtual) return;
+        // 8. SUBMIT DO FORMULÁRIO
+        document.getElementById('cadastroForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
             
-            // Desabilitar botão e mostrar loading
-            const btnContinuar = document.getElementById('btnContinuar');
-            const btnText = document.getElementById('btnText');
-            const loadingSpinner = document.getElementById('loadingSpinner');
+            // Coletar dados
+            const dados = {
+                nome: document.getElementById('nomeCompleto').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                telefone: document.getElementById('telefone').value,
+                dataNasc: document.getElementById('dataNascimento').value,
+                senha: document.getElementById('senha').value,
+                confirmar: document.getElementById('confirmarSenha').value
+            };
             
-            btnContinuar.disabled = true;
-            btnText.style.display = 'none';
-            loadingSpinner.style.display = 'block';
+            // Limpar erros
+            ['nomeCompleto', 'email', 'telefone', 'dataNascimento', 'senha', 'confirmarSenha'].forEach(limparErro);
+            
+            // Validações
+            let valido = true;
+            
+            if (!dados.nome || dados.nome.split(' ').length < 2) {
+                mostrarErro('nomeCompleto', 'Digite nome e sobrenome');
+                valido = false;
+            }
+            
+            if (!dados.email || !dados.email.includes('@')) {
+                mostrarErro('email', 'Digite um e-mail válido');
+                valido = false;
+            }
+            
+            if (!dados.telefone || dados.telefone.replace(/\D/g, '').length < 10) {
+                mostrarErro('telefone', 'Digite um telefone válido');
+                valido = false;
+            }
+            
+            if (!dados.dataNasc) {
+                mostrarErro('dataNascimento', 'Selecione sua data de nascimento');
+                valido = false;
+            } else if (!validarDataNascimento(dados.dataNasc)) {
+                mostrarErro('dataNascimento', 'Você deve ter 18 anos ou mais');
+                valido = false;
+            }
+            
+            if (!validarSenha(dados.senha)) {
+                mostrarErro('senha', 'A senha não atende todos os requisitos');
+                valido = false;
+            }
+            
+            if (dados.senha !== dados.confirmar) {
+                mostrarErro('confirmarSenha', 'As senhas não coincidem');
+                valido = false;
+            }
+            
+            if (!valido) return;
+            
+            // Mostrar loading
+            const btn = document.getElementById('btnCadastrar');
+            const texto = document.getElementById('btnText');
+            const spinner = document.getElementById('loadingSpinner');
+            
+            btn.disabled = true;
+            texto.style.display = 'none';
+            spinner.style.display = 'block';
             
             try {
-                // Atualizar perfil no Firestore
-                await updateDoc(doc(db, "users", usuarioAtual.uid), {
-                    tipoPerfil: perfilSelecionado,
-                    ultimoAcesso: new Date()
-                });
+                // GERAR ID ÚNICO
+                const idUnico = gerarIDUnico();
+                console.log('ID Gerado:', idUnico);
                 
-                // Redirecionar para dashboard apropriada
-                if (perfilSelecionado === 'passageiro') {
-                    window.location.href = "dashboard-passageiro.html";
-                } else {
-                    window.location.href = "dashboard-taxista.html";
-                }
+                // Criar usuário no Firebase Auth
+                const userCredential = await createUserWithEmailAndPassword(auth, dados.email, dados.senha);
+                const user = userCredential.user;
+                
+                // Salvar dados no Firestore
+                const userData = {
+                    uid: user.uid,
+                    email: dados.email,
+                    nomeCompleto: dados.nome,
+                    telefone: dados.telefone,
+                    dataNascimento: dados.dataNasc,
+                    idUnico: idUnico, // ← ID ÚNICO SALVO AQUI
+                    dataCadastro: serverTimestamp(),
+                    tipoPerfil: null, // Será definido depois
+                    ultimoAcesso: serverTimestamp()
+                };
+                
+                await setDoc(doc(db, "users", user.uid), userData);
+                
+                // REDIRECIONAMENTO CORRETO
+                window.location.href = "escolha-perfil.html";
                 
             } catch (error) {
-                // Habilitar botão novamente
-                btnContinuar.disabled = false;
-                btnText.style.display = 'block';
-                loadingSpinner.style.display = 'none';
+                // Tratar erros
+                btn.disabled = false;
+                texto.style.display = 'block';
+                spinner.style.display = 'none';
                 
-                alert("Erro ao salvar perfil. Tente novamente.");
+                let mensagem = 'Erro ao criar conta. Tente novamente.';
+                
+                if (error.code === 'auth/email-already-in-use') {
+                    mensagem = 'Este e-mail já está cadastrado. Faça login.';
+                    mostrarErro('email', mensagem);
+                } else if (error.code === 'auth/weak-password') {
+                    mensagem = 'Senha muito fraca. Use uma senha mais forte.';
+                    mostrarErro('senha', mensagem);
+                } else {
+                    alert(mensagem);
+                }
+                
+                console.error('Erro Firebase:', error);
             }
-        }
+        });
     </script>
 </body>
 </html>
