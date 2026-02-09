@@ -372,7 +372,8 @@
             signInWithEmailAndPassword,
             signInWithPopup,
             GoogleAuthProvider,
-            sendPasswordResetEmail
+            sendPasswordResetEmail,
+            onAuthStateChanged
         } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
@@ -401,6 +402,61 @@
         const passwordInput = document.getElementById('password');
         const forgotPasswordLink = document.getElementById('forgotPasswordLink');
         const submitBtn = loginForm.querySelector('.btn-submit');
+
+        // Controle de redirecionamento
+        let isRedirecting = false;
+        let isProcessingLogin = false;
+
+        // Verificar se usuário já está logado
+        onAuthStateChanged(auth, async (user) => {
+            if (user && !isProcessingLogin) {
+                console.log('Usuário já autenticado, verificando tipo de conta...');
+                await checkUserAndRedirect(user);
+            }
+        });
+
+        // Função para verificar e redirecionar usuário
+        async function checkUserAndRedirect(user) {
+            if (isRedirecting) return;
+            isRedirecting = true;
+            
+            try {
+                console.log('Verificando tipo de conta para:', user.email);
+                
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    console.log('Dados encontrados:', userData);
+                    
+                    // Verificar se tem accountType definido
+                    if (userData.accountType && (userData.accountType === 'passenger' || userData.accountType === 'driver')) {
+                        console.log('Tipo de conta encontrado:', userData.accountType);
+                        
+                        // Pequeno delay para evitar problemas
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        
+                        if (userData.accountType === 'passenger') {
+                            window.location.href = 'dashboard-passageiro.html';
+                        } else if (userData.accountType === 'driver') {
+                            // Por enquanto vai para choose-profile se for motorista
+                            window.location.href = 'choose-profile.html';
+                        }
+                    } else {
+                        console.log('Sem tipo de conta definido, redirecionando para escolha...');
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        window.location.href = 'choose-profile.html';
+                    }
+                } else {
+                    console.log('Usuário não encontrado no Firestore, redirecionando para escolha...');
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    window.location.href = 'choose-profile.html';
+                }
+            } catch (error) {
+                console.error('Erro ao verificar conta:', error);
+                isRedirecting = false;
+            }
+        }
 
         // Alternar visibilidade da senha
         togglePasswordBtn.addEventListener('click', function() {
@@ -445,49 +501,6 @@
             }
         }
 
-        // Função para redirecionar usuário baseado no tipo de conta
-        async function redirectUserBasedOnAccountType(user) {
-            try {
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    
-                    // Verificar se já tem tipo de conta definido
-                    if (userData.accountType === 'passenger' || userData.accountType === 'driver') {
-                        // Se já tem tipo definido, redireciona para o dashboard correto
-                        if (userData.accountType === 'passenger') {
-                            window.location.href = 'dashboard-passageiro.html';
-                        } else if (userData.accountType === 'driver') {
-                            // Redirecionar para dashboard do motorista quando criado
-                            // Por enquanto, vamos para choose-profile para o usuário escolher
-                            window.location.href = 'choose-profile.html';
-                        }
-                    } else {
-                        // Se não tem tipo definido, vai para página de escolha
-                        window.location.href = 'choose-profile.html';
-                    }
-                } else {
-                    // Usuário não existe no Firestore (novo usuário Google)
-                    // Criar documento básico e redirecionar para escolha de perfil
-                    await setDoc(doc(db, 'users', user.uid), {
-                        fullName: user.displayName || '',
-                        email: user.email,
-                        photoURL: user.photoURL || '',
-                        createdAt: new Date(),
-                        lastLogin: new Date(),
-                        provider: user.providerId || 'email'
-                    });
-                    
-                    window.location.href = 'choose-profile.html';
-                }
-            } catch (error) {
-                console.error('Erro ao verificar tipo de conta:', error);
-                // Em caso de erro, vai para página de escolha
-                window.location.href = 'choose-profile.html';
-            }
-        }
-
         // Login com e-mail/senha
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -501,6 +514,7 @@
                 return;
             }
 
+            isProcessingLogin = true;
             setLoading(true);
             hideError();
 
@@ -512,13 +526,14 @@
                 // Mostrar mensagem de sucesso
                 showSuccess('Login realizado com sucesso! Redirecionando...');
                 
-                // Verificar e redirecionar baseado no tipo de conta
-                setTimeout(() => {
-                    redirectUserBasedOnAccountType(user);
+                // Pequeno delay para mostrar mensagem
+                setTimeout(async () => {
+                    await checkUserAndRedirect(user);
                 }, 1500);
 
             } catch (error) {
                 console.error('Erro no login:', error);
+                isProcessingLogin = false;
                 
                 let errorMessageText = 'Erro ao fazer login. Tente novamente.';
                 
@@ -544,13 +559,13 @@
                 }
                 
                 showError(errorMessageText);
-            } finally {
                 setLoading(false);
             }
         });
 
         // Login com Google
         googleSignInBtn.addEventListener('click', async () => {
+            isProcessingLogin = true;
             setLoading(true);
             hideError();
 
@@ -561,13 +576,34 @@
                 // Mostrar mensagem de sucesso
                 showSuccess('Login com Google realizado com sucesso! Redirecionando...');
                 
-                // Verificar e redirecionar baseado no tipo de conta
-                setTimeout(() => {
-                    redirectUserBasedOnAccountType(user);
+                // Verificar se usuário já existe no Firestore
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    
+                    if (!userDoc.exists()) {
+                        // Criar novo usuário no Firestore
+                        await setDoc(doc(db, 'users', user.uid), {
+                            fullName: user.displayName || '',
+                            email: user.email,
+                            photoURL: user.photoURL || '',
+                            createdAt: new Date(),
+                            lastLogin: new Date(),
+                            provider: user.providerId || 'google'
+                        });
+                        console.log('Novo usuário Google criado no Firestore');
+                    }
+                } catch (firestoreError) {
+                    console.error('Erro ao verificar/criar usuário no Firestore:', firestoreError);
+                }
+                
+                // Pequeno delay para mostrar mensagem
+                setTimeout(async () => {
+                    await checkUserAndRedirect(user);
                 }, 1500);
 
             } catch (error) {
                 console.error('Erro no login com Google:', error);
+                isProcessingLogin = false;
                 
                 let errorMessageText = 'Erro ao fazer login com Google. Tente novamente.';
                 
@@ -581,7 +617,6 @@
                 }
                 
                 showError(errorMessageText);
-            } finally {
                 setLoading(false);
             }
         });
@@ -628,6 +663,12 @@
 
         // Auto-focus no campo de e-mail
         document.getElementById('email').focus();
+
+        // Limpar flag ao sair da página
+        window.addEventListener('beforeunload', () => {
+            isRedirecting = false;
+            isProcessingLogin = false;
+        });
     </script>
 </body>
 </html>
