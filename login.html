@@ -312,7 +312,6 @@
     </div>
 
     <script type="module">
-        // Configuração Firebase ÚNICA para todos os arquivos
         const firebaseConfig = {
             apiKey: "AIzaSyDsLnfKynKVsn66paVJjCnbHeH8pGBahCw",
             authDomain: "taxibf-1f545.firebaseapp.com",
@@ -322,33 +321,19 @@
             appId: "1:965457489049:web:cd0baf070944e3927bdc08"
         };
 
-        // Importações Firebase (versão 12.9.0)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-        import { 
-            getAuth, 
-            signInWithEmailAndPassword 
-        } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-        import { 
-            getFirestore, 
-            doc, 
-            getDoc, 
-            updateDoc 
-        } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-        // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        console.log("Firebase Login inicializado!");
-
-        // Verificar se veio do cadastro
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('cadastro') === 'sucesso') {
             document.getElementById('successMessage').style.display = 'block';
         }
 
-        // Restaurar email salvo
         const savedEmail = localStorage.getItem('taxibf_email');
         const rememberMe = localStorage.getItem('taxibf_remember') === 'true';
         
@@ -357,7 +342,6 @@
             document.getElementById('rememberMe').checked = true;
         }
 
-        // Mostrar erro
         function mostrarErro(campoId, mensagem) {
             const campo = document.getElementById(campoId);
             const errorElement = document.getElementById(campoId + 'Error');
@@ -369,7 +353,6 @@
             }
         }
 
-        // Limpar erro
         function limparErro(campoId) {
             const campo = document.getElementById(campoId);
             const errorElement = document.getElementById(campoId + 'Error');
@@ -378,19 +361,15 @@
             if (errorElement) errorElement.style.display = 'none';
         }
 
-        // Submit do formulário - SIMPLIFICADO
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // Limpar erros anteriores
             ['email', 'senha'].forEach(limparErro);
             
-            // Coletar dados
             const email = document.getElementById('email').value.trim();
             const senha = document.getElementById('senha').value;
             const rememberMe = document.getElementById('rememberMe').checked;
             
-            // Validações básicas
             let valido = true;
             
             if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -405,7 +384,6 @@
             
             if (!valido) return;
             
-            // Salvar email se lembrar-me estiver marcado
             if (rememberMe) {
                 localStorage.setItem('taxibf_email', email);
                 localStorage.setItem('taxibf_remember', 'true');
@@ -414,7 +392,6 @@
                 localStorage.removeItem('taxibf_remember');
             }
             
-            // Desabilitar botão e mostrar loading
             const btnLogin = document.getElementById('btnLogin');
             const btnText = document.getElementById('btnText');
             const loadingSpinner = document.getElementById('loadingSpinner');
@@ -424,68 +401,40 @@
             loadingSpinner.style.display = 'block';
             
             try {
-                console.log("Tentando login com:", email);
-                
-                // Fazer login
                 const userCredential = await signInWithEmailAndPassword(auth, email, senha);
                 const user = userCredential.user;
                 
-                console.log("Login bem-sucedido! UID:", user.uid);
-                
-                // Verificar se usuário tem perfil no Firestore
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
-                    console.log("Dados do usuário:", userData);
                     
-                    // Atualizar último acesso
                     await updateDoc(doc(db, "users", user.uid), {
                         ultimoAcesso: new Date()
                     });
                     
-                    // VERIFICAR CAMPO CORRETO (tipoPerfil)
                     const tipoPerfil = userData.tipoPerfil || userData.accountType;
                     
                     if (!tipoPerfil) {
-                        // Se não tem perfil, redirecionar para escolha
-                        console.log("Usuário sem perfil, redirecionando para escolha-perfil");
                         window.location.href = "escolha-perfil.html";
                     } else {
-                        // Se já tem perfil, redirecionar para dashboard apropriada
-                        console.log("Usuário tem perfil:", tipoPerfil);
                         if (tipoPerfil === 'passageiro') {
                             window.location.href = "dashboard-passageiro.html";
-                        } else if (tipoPerfil === 'taxista' || tipoPerfil === 'driver') {
+                        } else if (tipoPerfil === 'taxista') {
                             window.location.href = "dashboard-taxista.html";
                         } else {
-                            // Perfil desconhecido, voltar para escolha
                             window.location.href = "escolha-perfil.html";
                         }
                     }
                 } else {
-                    // Se não tem dados no Firestore, criar documento básico
-                    console.log("Usuário sem dados no Firestore, criando...");
-                    await setDoc(doc(db, "users", user.uid), {
-                        uid: user.uid,
-                        email: email,
-                        dataCadastro: new Date(),
-                        ultimoAcesso: new Date()
-                    });
-                    
-                    // Redirecionar para escolha de perfil
                     window.location.href = "escolha-perfil.html";
                 }
                 
             } catch (error) {
-                console.error("Erro no login:", error);
-                
-                // Habilitar botão novamente
                 btnLogin.disabled = false;
                 btnText.style.display = 'block';
                 loadingSpinner.style.display = 'none';
                 
-                // Tratar erros do Firebase
                 let mensagemErro = "Erro ao fazer login. Tente novamente.";
                 
                 switch(error.code) {
@@ -512,11 +461,6 @@
                 }
             }
         });
-
-        // IMPORTANTE: Não usar onAuthStateChanged no login.html
-        // Isso evita o loop com a página de escolha-perfil
-        
-        console.log("Sistema de login pronto!");
     </script>
 </body>
 </html>

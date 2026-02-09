@@ -488,7 +488,6 @@
     </div>
 
     <script type="module">
-        // Configuração Firebase ÚNICA
         const firebaseConfig = {
             apiKey: "AIzaSyDsLnfKynKVsn66paVJjCnbHeH8pGBahCw",
             authDomain: "taxibf-1f545.firebaseapp.com",
@@ -498,34 +497,17 @@
             appId: "1:965457489049:web:cd0baf070944e3927bdc08"
         };
 
-        // Importações Firebase (versão 12.9.0)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-        import { 
-            getAuth, 
-            signOut,
-            onAuthStateChanged
-        } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-        import { 
-            getFirestore, 
-            doc, 
-            getDoc, 
-            updateDoc,
-            setDoc
-        } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-        // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        console.log("Firebase Escolha-Perfil inicializado!");
-
-        // Variáveis globais
         let selectedProfile = null;
         let currentUser = null;
-        let userData = null;
 
-        // Elementos DOM
         const passengerCard = document.getElementById('passengerCard');
         const driverCard = document.getElementById('driverCard');
         const confirmBtn = document.getElementById('confirmBtn');
@@ -535,64 +517,51 @@
         const userInfo = document.getElementById('userInfo');
         const logoutBtn = document.getElementById('logoutBtn');
 
-        // Observador de estado de autenticação
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
-                console.log("Usuário autenticado:", user.uid);
                 
                 try {
-                    // Buscar dados do usuário no Firestore
                     const userDoc = await getDoc(doc(db, 'users', user.uid));
                     
                     if (userDoc.exists()) {
-                        userData = userDoc.data();
-                        console.log("Dados do usuário:", userData);
+                        const userData = userDoc.data();
                         
-                        // Atualizar UI com dados do usuário
                         updateUserUI(userData);
                         
-                        // Verificar se já tem tipo de conta definido
                         const tipoPerfil = userData.tipoPerfil || userData.accountType;
                         
                         if (tipoPerfil) {
-                            // Se já tem tipo definido, redirecionar direto
-                            console.log("Usuário já tem perfil:", tipoPerfil);
-                            redirectToDashboard(tipoPerfil);
+                            if (tipoPerfil === 'passageiro') {
+                                window.location.href = 'dashboard-passageiro.html';
+                            } else if (tipoPerfil === 'taxista') {
+                                window.location.href = 'dashboard-taxista.html';
+                            }
                             return;
                         }
                         
-                        // Se não tem tipo definido, mostrar opções
                         showProfileOptions();
                         
                     } else {
-                        // Usuário não encontrado no Firestore
-                        console.log("Usuário não encontrado no Firestore");
                         showError('Erro ao carregar seus dados. Por favor, faça login novamente.');
                         setTimeout(() => {
                             window.location.href = 'login.html';
                         }, 2000);
                     }
                 } catch (error) {
-                    console.error('Erro ao buscar dados do usuário:', error);
                     showError('Erro ao carregar seus dados. Tente novamente.');
                 }
             } else {
-                // Usuário não autenticado, redirecionar para login
-                console.log("Usuário não autenticado, redirecionando para login");
                 window.location.href = 'login.html';
             }
         });
 
-        // Atualizar UI com dados do usuário
         function updateUserUI(data) {
-            const displayName = data.nomeCompleto || data.fullName || data.displayName || 
+            const displayName = data.nomeCompleto || data.fullName || 
                               (currentUser ? currentUser.email.split('@')[0] : 'Usuário');
             
-            // Atualizar nome no título
             userName.textContent = displayName;
             
-            // Criar elemento de informações do usuário
             const initials = displayName.substring(0, 2).toUpperCase();
             userInfo.innerHTML = `
                 <div class="user-avatar">
@@ -605,35 +574,27 @@
             `;
         }
 
-        // Mostrar opções de perfil
         function showProfileOptions() {
-            // Auto-selecionar passageiro por padrão
             setTimeout(() => {
                 selectProfile('passageiro');
             }, 300);
         }
 
-        // Selecionar perfil
         window.selectProfile = function(profile) {
-            console.log("Perfil selecionado:", profile);
             selectedProfile = profile;
             
-            // Remover seleção de ambos
             passengerCard.classList.remove('selected');
             driverCard.classList.remove('selected');
             
-            // Adicionar seleção ao escolhido
             if (profile === 'passageiro') {
                 passengerCard.classList.add('selected');
             } else {
                 driverCard.classList.add('selected');
             }
             
-            // Habilitar botão de confirmação
             confirmBtn.disabled = false;
         };
 
-        // Confirmar seleção de perfil
         window.confirmProfile = async function() {
             if (!selectedProfile || !currentUser) {
                 showError('Por favor, selecione um perfil para continuar.');
@@ -644,66 +605,38 @@
             hideError();
 
             try {
-                console.log("Salvando perfil:", selectedProfile, "para usuário:", currentUser.uid);
-                
-                // Preparar dados para atualização
                 const updateData = {
                     tipoPerfil: selectedProfile,
                     ultimoAcesso: new Date()
                 };
                 
-                // Se não tem nome, usar email
-                if (!userData || !userData.nomeCompleto) {
-                    updateData.nomeCompleto = currentUser.email.split('@')[0];
-                }
-                
-                // Atualizar tipo de conta no Firestore
                 await updateDoc(doc(db, 'users', currentUser.uid), updateData);
                 
-                console.log("Perfil salvo com sucesso!");
-                
-                // Mostrar mensagem de sucesso
                 showSuccess('Perfil atualizado com sucesso! Redirecionando...');
                 
-                // Redirecionar após 1.5 segundos
                 setTimeout(() => {
-                    redirectToDashboard(selectedProfile);
+                    if (selectedProfile === 'passageiro') {
+                        window.location.href = 'dashboard-passageiro.html';
+                    } else {
+                        window.location.href = 'dashboard-taxista.html';
+                    }
                 }, 1500);
 
             } catch (error) {
-                console.error('Erro ao atualizar perfil:', error);
                 showError('Erro ao salvar sua escolha. Tente novamente.');
                 setLoading(false);
             }
         };
 
-        // Redirecionar para dashboard apropriada
-        function redirectToDashboard(profileType) {
-            console.log("Redirecionando para dashboard do tipo:", profileType);
-            
-            // Use os valores consistentes: 'passageiro' ou 'taxista'
-            if (profileType === 'passageiro' || profileType === 'passenger') {
-                window.location.href = 'dashboard-passageiro.html';
-            } else if (profileType === 'taxista' || profileType === 'driver') {
-                window.location.href = 'dashboard-taxista.html';
-            } else {
-                // Default para passageiro
-                window.location.href = 'dashboard-passageiro.html';
-            }
-        }
-
-        // Logout
         logoutBtn.addEventListener('click', async () => {
             try {
                 await signOut(auth);
                 window.location.href = 'index.html';
             } catch (error) {
-                console.error('Erro ao fazer logout:', error);
                 showError('Erro ao sair da conta. Tente novamente.');
             }
         });
 
-        // Funções auxiliares
         function showError(message) {
             errorMessage.textContent = message;
             errorMessage.classList.add('active');
@@ -731,9 +664,6 @@
                 logoutBtn.disabled = false;
             }
         }
-
-        // Inicializar
-        console.log("Sistema de escolha de perfil pronto!");
     </script>
 </body>
 </html>
