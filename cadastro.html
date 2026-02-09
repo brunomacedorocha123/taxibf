@@ -326,200 +326,237 @@
         </div>
     </div>
 
-   <script type="module">
-    // IMPORT CORRETO DOS MÓDULOS FIREBASE
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+    <!-- ALTERAÇÃO AQUI: Firebase SDK v9+ compatível -->
+    <script type="module">
+        // Importação correta do Firebase v9+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            updateProfile 
+        } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 
-    // CONFIGURAÇÃO FIREBASE
-    const firebaseConfig = {
-        apiKey: "AIzaSyDsLnfKynKVsn66paVJjCnbHeH8pGBahCw",
-        authDomain: "taxibf-1f545.firebaseapp.com",
-        projectId: "taxibf-1f545",
-        storageBucket: "taxibf-1f545.firebasestorage.app",
-        messagingSenderId: "965457489049",
-        appId: "1:965457489049:web:cd0baf070944e3927bdc08"
-    };
-
-    // INICIALIZAR FIREBASE
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    console.log("Firebase inicializado!");
-
-    // FUNÇÕES AUXILIARES (mantenha as mesmas)
-    function gerarIDUnico() {
-        const prefixo = "TXBF-";
-        const numero = Math.floor(100000 + Math.random() * 900000);
-        return prefixo + numero;
-    }
-
-    function formatarTelefone(input) {
-        let valor = input.value.replace(/\D/g, '');
-        if (valor.length > 11) valor = valor.substring(0, 11);
-        if (valor.length > 10) {
-            valor = valor.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
-        } else if (valor.length > 6) {
-            valor = valor.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
-        } else if (valor.length > 2) {
-            valor = valor.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
-        }
-        input.value = valor;
-    }
-
-    function validarSenha(senha) {
-        const regras = {
-            length: senha.length >= 8,
-            upper: /[A-Z]/.test(senha),
-            lower: /[a-z]/.test(senha),
-            number: /[0-9]/.test(senha)
+        // Configuração Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDsLnfKynKVsn66paVJjCnbHeH8pGBahCw",
+            authDomain: "taxibf-1f545.firebaseapp.com",
+            projectId: "taxibf-1f545",
+            storageBucket: "taxibf-1f545.firebasestorage.app",
+            messagingSenderId: "965457489049",
+            appId: "1:965457489049:web:cd0baf070944e3927bdc08"
         };
-        
-        document.getElementById('ruleLength').className = regras.length ? 'password-rule valid' : 'password-rule';
-        document.getElementById('ruleUpper').className = regras.upper ? 'password-rule valid' : 'password-rule';
-        document.getElementById('ruleLower').className = regras.lower ? 'password-rule valid' : 'password-rule';
-        document.getElementById('ruleNumber').className = regras.number ? 'password-rule valid' : 'password-rule';
-        
-        return regras.length && regras.upper && regras.lower && regras.number;
-    }
 
-    function validarDataNascimento(data) {
-        const hoje = new Date();
-        const nascimento = new Date(data);
-        let idade = hoje.getFullYear() - nascimento.getFullYear();
-        const mes = hoje.getMonth() - nascimento.getMonth();
-        if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
-            idade--;
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Funções auxiliares
+        function gerarIDUnico() {
+            const prefixo = "TXBF-";
+            const numero = Math.floor(100000 + Math.random() * 900000);
+            return prefixo + numero;
         }
-        return idade >= 18;
-    }
 
-    function mostrarErro(campo, mensagem) {
-        document.getElementById(campo).classList.add('error');
-        const errorEl = document.getElementById(campo + 'Error');
-        errorEl.textContent = mensagem;
-        errorEl.style.display = 'block';
-    }
-
-    function limparErro(campo) {
-        document.getElementById(campo).classList.remove('error');
-        document.getElementById(campo + 'Error').style.display = 'none';
-    }
-
-    // EVENT LISTENERS
-    document.getElementById('telefone').addEventListener('input', function(e) {
-        formatarTelefone(e.target);
-    });
-
-    document.getElementById('senha').addEventListener('input', function(e) {
-        validarSenha(e.target.value);
-    });
-
-    // SUBMIT DO FORMULÁRIO - VERSÃO SIMPLIFICADA E FUNCIONAL
-    document.getElementById('cadastroForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        console.log("Formulário submetido!");
-        
-        // Limpar erros
-        ['nomeCompleto', 'email', 'telefone', 'dataNascimento', 'senha', 'confirmarSenha'].forEach(limparErro);
-        
-        // Coletar dados
-        const dados = {
-            nome: document.getElementById('nomeCompleto').value.trim(),
-            email: document.getElementById('email').value.trim(),
-            telefone: document.getElementById('telefone').value,
-            dataNasc: document.getElementById('dataNascimento').value,
-            senha: document.getElementById('senha').value,
-            confirmar: document.getElementById('confirmarSenha').value
-        };
-        
-        // Validações básicas
-        if (!dados.nome || dados.nome.split(' ').length < 2) {
-            mostrarErro('nomeCompleto', 'Digite nome e sobrenome');
-            return;
+        function formatarTelefone(input) {
+            let valor = input.value.replace(/\D/g, '');
+            if (valor.length > 11) valor = valor.substring(0, 11);
+            if (valor.length > 10) {
+                valor = valor.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+            } else if (valor.length > 6) {
+                valor = valor.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+            } else if (valor.length > 2) {
+                valor = valor.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+            }
+            input.value = valor;
         }
-        
-        if (!dados.email || !dados.email.includes('@')) {
-            mostrarErro('email', 'Digite um e-mail válido');
-            return;
-        }
-        
-        if (!validarSenha(dados.senha)) {
-            mostrarErro('senha', 'A senha não atende todos os requisitos');
-            return;
-        }
-        
-        if (dados.senha !== dados.confirmar) {
-            mostrarErro('confirmarSenha', 'As senhas não coincidem');
-            return;
-        }
-        
-        // Mostrar loading
-        const btn = document.getElementById('btnCadastrar');
-        const texto = document.getElementById('btnText');
-        const spinner = document.getElementById('loadingSpinner');
-        
-        btn.disabled = true;
-        texto.style.display = 'none';
-        spinner.style.display = 'block';
-        
-        try {
-            console.log("Tentando criar usuário...");
-            
-            // GERAR ID ÚNICO
-            const idUnico = gerarIDUnico();
-            console.log('ID Gerado:', idUnico);
-            
-            // Criar usuário no Firebase Auth
-            const userCredential = await createUserWithEmailAndPassword(auth, dados.email, dados.senha);
-            const user = userCredential.user;
-            console.log("Usuário criado no Auth:", user.uid);
-            
-            // Salvar dados no Firestore
-            const userData = {
-                uid: user.uid,
-                email: dados.email,
-                nomeCompleto: dados.nome,
-                telefone: dados.telefone || '',
-                dataNascimento: dados.dataNasc || '',
-                idUnico: idUnico,
-                dataCadastro: serverTimestamp(),
-                tipoPerfil: null,
-                ultimoAcesso: serverTimestamp()
+
+        function validarSenha(senha) {
+            const regras = {
+                length: senha.length >= 8,
+                upper: /[A-Z]/.test(senha),
+                lower: /[a-z]/.test(senha),
+                number: /[0-9]/.test(senha)
             };
             
-            await setDoc(doc(db, "users", user.uid), userData);
-            console.log("Dados salvos no Firestore!");
+            document.getElementById('ruleLength').className = regras.length ? 'password-rule valid' : 'password-rule';
+            document.getElementById('ruleUpper').className = regras.upper ? 'password-rule valid' : 'password-rule';
+            document.getElementById('ruleLower').className = regras.lower ? 'password-rule valid' : 'password-rule';
+            document.getElementById('ruleNumber').className = regras.number ? 'password-rule valid' : 'password-rule';
             
-            // REDIRECIONAMENTO
-            alert("Cadastro realizado com sucesso! ID: " + idUnico);
-            window.location.href = "escolha-perfil.html";
+            return regras.length && regras.upper && regras.lower && regras.number;
+        }
+
+        function validarDataNascimento(data) {
+            const hoje = new Date();
+            const nascimento = new Date(data);
+            let idade = hoje.getFullYear() - nascimento.getFullYear();
+            const mes = hoje.getMonth() - nascimento.getMonth();
+            if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+                idade--;
+            }
+            return idade >= 18;
+        }
+
+        function mostrarErro(campo, mensagem) {
+            const inputElement = document.getElementById(campo);
+            const errorEl = document.getElementById(campo + 'Error');
             
-        } catch (error) {
-            console.error("Erro completo:", error);
-            
-            // Reativar botão
-            btn.disabled = false;
-            texto.style.display = 'block';
-            spinner.style.display = 'none';
-            
-            // Tratar erros específicos
-            if (error.code === 'auth/email-already-in-use') {
-                alert('Este e-mail já está cadastrado. Faça login.');
-            } else if (error.code === 'auth/weak-password') {
-                alert('Senha muito fraca. Use pelo menos 6 caracteres.');
-            } else if (error.code === 'auth/invalid-email') {
-                alert('E-mail inválido. Verifique o formato.');
-            } else {
-                alert('Erro: ' + error.message);
+            if (inputElement) inputElement.classList.add('error');
+            if (errorEl) {
+                errorEl.textContent = mensagem;
+                errorEl.style.display = 'block';
             }
         }
-    });
 
-    // Teste rápido do Firebase
-    console.log("Script carregado!");
-</script>
+        function limparErro(campo) {
+            const inputElement = document.getElementById(campo);
+            const errorEl = document.getElementById(campo + 'Error');
+            
+            if (inputElement) inputElement.classList.remove('error');
+            if (errorEl) errorEl.style.display = 'none';
+        }
+
+        // Event Listeners
+        document.getElementById('telefone').addEventListener('input', function(e) {
+            formatarTelefone(e.target);
+        });
+
+        document.getElementById('senha').addEventListener('input', function(e) {
+            validarSenha(e.target.value);
+        });
+
+        // Submit do formulário
+        document.getElementById('cadastroForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Limpar todos os erros
+            ['nomeCompleto', 'email', 'telefone', 'dataNascimento', 'senha', 'confirmarSenha'].forEach(limparErro);
+            
+            // Coletar dados
+            const nome = document.getElementById('nomeCompleto').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const telefone = document.getElementById('telefone').value;
+            const dataNasc = document.getElementById('dataNascimento').value;
+            const senha = document.getElementById('senha').value;
+            const confirmarSenha = document.getElementById('confirmarSenha').value;
+            
+            // Validações
+            let valid = true;
+            
+            if (!nome || nome.split(' ').length < 2) {
+                mostrarErro('nomeCompleto', 'Digite nome e sobrenome completos');
+                valid = false;
+            }
+            
+            if (!email || !email.includes('@') || !email.includes('.')) {
+                mostrarErro('email', 'Digite um e-mail válido');
+                valid = false;
+            }
+            
+            if (!telefone || telefone.replace(/\D/g, '').length < 10) {
+                mostrarErro('telefone', 'Digite um telefone válido com DDD');
+                valid = false;
+            }
+            
+            if (!dataNasc) {
+                mostrarErro('dataNascimento', 'Digite sua data de nascimento');
+                valid = false;
+            } else if (!validarDataNascimento(dataNasc)) {
+                mostrarErro('dataNascimento', 'Você deve ter pelo menos 18 anos');
+                valid = false;
+            }
+            
+            if (!validarSenha(senha)) {
+                mostrarErro('senha', 'A senha não atende todos os requisitos');
+                valid = false;
+            }
+            
+            if (senha !== confirmarSenha) {
+                mostrarErro('confirmarSenha', 'As senhas não coincidem');
+                valid = false;
+            }
+            
+            if (!valid) return;
+            
+            // Preparar botão para loading
+            const btn = document.getElementById('btnCadastrar');
+            const texto = document.getElementById('btnText');
+            const spinner = document.getElementById('loadingSpinner');
+            
+            btn.disabled = true;
+            texto.style.display = 'none';
+            spinner.style.display = 'block';
+            
+            try {
+                // Gerar ID único
+                const idUnico = gerarIDUnico();
+                
+                // Criar usuário no Firebase Authentication
+                const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+                const user = userCredential.user;
+                
+                // Atualizar display name
+                await updateProfile(user, {
+                    displayName: nome
+                });
+                
+                // Preparar dados para Firestore
+                const userData = {
+                    uid: user.uid,
+                    email: email,
+                    nomeCompleto: nome,
+                    telefone: telefone,
+                    dataNascimento: dataNasc,
+                    idUnico: idUnico,
+                    dataCadastro: serverTimestamp(),
+                    tipoPerfil: null,
+                    ultimoAcesso: serverTimestamp(),
+                    displayName: nome
+                };
+                
+                // Salvar dados no Firestore
+                await setDoc(doc(db, "users", user.uid), userData);
+                
+                // Sucesso - redirecionar
+                alert(`Cadastro realizado com sucesso!\nSeu ID TaxiBF: ${idUnico}`);
+                window.location.href = "escolha-perfil.html";
+                
+            } catch (error) {
+                console.error("Erro no cadastro:", error);
+                
+                // Reativar botão
+                btn.disabled = false;
+                texto.style.display = 'block';
+                spinner.style.display = 'none';
+                
+                // Tratar erros comuns
+                switch(error.code) {
+                    case 'auth/email-already-in-use':
+                        mostrarErro('email', 'Este e-mail já está cadastrado');
+                        break;
+                    case 'auth/invalid-email':
+                        mostrarErro('email', 'E-mail inválido');
+                        break;
+                    case 'auth/weak-password':
+                        mostrarErro('senha', 'A senha é muito fraca');
+                        break;
+                    case 'auth/network-request-failed':
+                        alert('Erro de conexão. Verifique sua internet');
+                        break;
+                    default:
+                        alert('Erro ao cadastrar: ' + error.message);
+                }
+            }
+        });
+
+        console.log('Sistema de cadastro TaxiBF carregado!');
+    </script>
 </body>
 </html>
