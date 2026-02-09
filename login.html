@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Mantenha todo o CSS anterior */
         :root {
             --taxi-yellow: #FFC400;
             --dark-graphite: #1C1C1C;
@@ -372,8 +373,7 @@
             signInWithEmailAndPassword,
             signInWithPopup,
             GoogleAuthProvider,
-            sendPasswordResetEmail,
-            onAuthStateChanged
+            sendPasswordResetEmail
         } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
@@ -405,56 +405,56 @@
 
         // Controle de redirecionamento
         let isRedirecting = false;
-        let isProcessingLogin = false;
 
-        // Verificar se usuário já está logado
-        onAuthStateChanged(auth, async (user) => {
-            if (user && !isProcessingLogin) {
-                console.log('Usuário já autenticado, verificando tipo de conta...');
-                await checkUserAndRedirect(user);
-            }
-        });
-
-        // Função para verificar e redirecionar usuário
-        async function checkUserAndRedirect(user) {
+        // Função simples para redirecionar
+        async function redirectUser(user) {
             if (isRedirecting) return;
             isRedirecting = true;
             
             try {
-                console.log('Verificando tipo de conta para:', user.email);
-                
+                // Buscar dados do usuário
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
                 
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
-                    console.log('Dados encontrados:', userData);
                     
-                    // Verificar se tem accountType definido
-                    if (userData.accountType && (userData.accountType === 'passenger' || userData.accountType === 'driver')) {
-                        console.log('Tipo de conta encontrado:', userData.accountType);
-                        
-                        // Pequeno delay para evitar problemas
-                        await new Promise(resolve => setTimeout(resolve, 500));
-                        
-                        if (userData.accountType === 'passenger') {
+                    // Verificar tipo de conta
+                    if (userData.accountType === 'passenger') {
+                        // Passageiro vai para dashboard
+                        setTimeout(() => {
                             window.location.href = 'dashboard-passageiro.html';
-                        } else if (userData.accountType === 'driver') {
-                            // Por enquanto vai para choose-profile se for motorista
+                        }, 1000);
+                    } else if (userData.accountType === 'driver') {
+                        // Motorista vai para dashboard quando criado
+                        // Por enquanto, vai para escolha
+                        setTimeout(() => {
                             window.location.href = 'choose-profile.html';
-                        }
+                        }, 1000);
                     } else {
-                        console.log('Sem tipo de conta definido, redirecionando para escolha...');
-                        await new Promise(resolve => setTimeout(resolve, 500));
-                        window.location.href = 'choose-profile.html';
+                        // Sem tipo definido, vai para escolha
+                        setTimeout(() => {
+                            window.location.href = 'choose-profile.html';
+                        }, 1000);
                     }
                 } else {
-                    console.log('Usuário não encontrado no Firestore, redirecionando para escolha...');
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    window.location.href = 'choose-profile.html';
+                    // Usuário não existe no Firestore (Google novo)
+                    await setDoc(doc(db, 'users', user.uid), {
+                        fullName: user.displayName || '',
+                        email: user.email,
+                        photoURL: user.photoURL || '',
+                        createdAt: new Date(),
+                        lastLogin: new Date(),
+                        provider: user.providerId || 'email'
+                    });
+                    
+                    setTimeout(() => {
+                        window.location.href = 'choose-profile.html';
+                    }, 1000);
                 }
             } catch (error) {
-                console.error('Erro ao verificar conta:', error);
+                console.error('Erro ao redirecionar:', error);
                 isRedirecting = false;
+                showError('Erro ao processar login. Tente novamente.');
             }
         }
 
@@ -463,7 +463,6 @@
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
             
-            // Alterar ícone
             const icon = this.querySelector('i');
             if (type === 'text') {
                 icon.className = 'fas fa-eye-slash';
@@ -508,32 +507,27 @@
             const email = document.getElementById('email').value.trim();
             const password = passwordInput.value;
 
-            // Validações básicas
             if (!email || !password) {
                 showError('Por favor, preencha todos os campos.');
                 return;
             }
 
-            isProcessingLogin = true;
             setLoading(true);
             hideError();
 
             try {
-                // Fazer login no Firebase Auth
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
                 
-                // Mostrar mensagem de sucesso
                 showSuccess('Login realizado com sucesso! Redirecionando...');
                 
-                // Pequeno delay para mostrar mensagem
-                setTimeout(async () => {
-                    await checkUserAndRedirect(user);
+                // Redirecionar após mostrar mensagem
+                setTimeout(() => {
+                    redirectUser(user);
                 }, 1500);
 
             } catch (error) {
                 console.error('Erro no login:', error);
-                isProcessingLogin = false;
                 
                 let errorMessageText = 'Erro ao fazer login. Tente novamente.';
                 
@@ -565,7 +559,6 @@
 
         // Login com Google
         googleSignInBtn.addEventListener('click', async () => {
-            isProcessingLogin = true;
             setLoading(true);
             hideError();
 
@@ -573,37 +566,15 @@
                 const result = await signInWithPopup(auth, googleProvider);
                 const user = result.user;
                 
-                // Mostrar mensagem de sucesso
                 showSuccess('Login com Google realizado com sucesso! Redirecionando...');
                 
-                // Verificar se usuário já existe no Firestore
-                try {
-                    const userDoc = await getDoc(doc(db, 'users', user.uid));
-                    
-                    if (!userDoc.exists()) {
-                        // Criar novo usuário no Firestore
-                        await setDoc(doc(db, 'users', user.uid), {
-                            fullName: user.displayName || '',
-                            email: user.email,
-                            photoURL: user.photoURL || '',
-                            createdAt: new Date(),
-                            lastLogin: new Date(),
-                            provider: user.providerId || 'google'
-                        });
-                        console.log('Novo usuário Google criado no Firestore');
-                    }
-                } catch (firestoreError) {
-                    console.error('Erro ao verificar/criar usuário no Firestore:', firestoreError);
-                }
-                
-                // Pequeno delay para mostrar mensagem
-                setTimeout(async () => {
-                    await checkUserAndRedirect(user);
+                // Redirecionar após mostrar mensagem
+                setTimeout(() => {
+                    redirectUser(user);
                 }, 1500);
 
             } catch (error) {
                 console.error('Erro no login com Google:', error);
-                isProcessingLogin = false;
                 
                 let errorMessageText = 'Erro ao fazer login com Google. Tente novamente.';
                 
@@ -663,12 +634,6 @@
 
         // Auto-focus no campo de e-mail
         document.getElementById('email').focus();
-
-        // Limpar flag ao sair da página
-        window.addEventListener('beforeunload', () => {
-            isRedirecting = false;
-            isProcessingLogin = false;
-        });
     </script>
 </body>
 </html>
