@@ -7,6 +7,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --taxi-yellow: #FFC400;
+            --dark-graphite: #1C1C1C;
+            --white: #FFFFFF;
+            --light-gray: #F5F5F5;
+            --error: #E74C3C;
+            --success: #2ECC71;
+            --input-border: #DDDDDD;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -15,7 +25,7 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #F5F5F5 0%, #FFFFFF 100%);
+            background: linear-gradient(135deg, var(--light-gray) 0%, var(--white) 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -26,17 +36,17 @@
         .container {
             width: 100%;
             max-width: 450px;
-            background: #FFFFFF;
+            background: var(--white);
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
         .header {
-            background: #FFC400;
+            background: var(--taxi-yellow);
             padding: 2.5rem;
             text-align: center;
-            color: #1C1C1C;
+            color: var(--dark-graphite);
             position: relative;
         }
 
@@ -46,11 +56,15 @@
             margin-bottom: 0.5rem;
         }
 
+        .header p {
+            opacity: 0.9;
+        }
+
         .back-btn {
             position: absolute;
             top: 1.5rem;
             left: 1.5rem;
-            color: #1C1C1C;
+            color: var(--dark-graphite);
             text-decoration: none;
             font-weight: 600;
             display: flex;
@@ -64,6 +78,15 @@
 
         .form-group {
             margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-graphite);
+            font-size: 0.9rem;
         }
 
         .input-wrapper {
@@ -81,54 +104,176 @@
         .input-wrapper input {
             width: 100%;
             padding: 0.9rem 1rem 0.9rem 3rem;
-            border: 2px solid #DDDDDD;
+            border: 2px solid var(--input-border);
             border-radius: 10px;
             font-size: 1rem;
             transition: all 0.3s ease;
+            background: var(--white);
         }
 
         .input-wrapper input:focus {
             outline: none;
-            border-color: #FFC400;
+            border-color: var(--taxi-yellow);
+            box-shadow: 0 0 0 3px rgba(255, 196, 0, 0.2);
+        }
+
+        .input-wrapper input.error {
+            border-color: var(--error);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--taxi-yellow);
+            cursor: pointer;
+        }
+
+        .forgot-password {
+            color: var(--taxi-yellow);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
         }
 
         .btn {
             width: 100%;
             padding: 1rem;
-            background: #FFC400;
-            color: #1C1C1C;
             border: none;
             border-radius: 10px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
-        .btn:disabled {
-            opacity: 0.7;
+        .btn-primary {
+            background: var(--taxi-yellow);
+            color: var(--dark-graphite);
+            box-shadow: 0 4px 15px rgba(255, 196, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 196, 0, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: #FFE066;
             cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .register-link {
             text-align: center;
             margin-top: 1.5rem;
             color: #666;
+            font-size: 0.9rem;
         }
 
         .register-link a {
-            color: #FFC400;
+            color: var(--taxi-yellow);
             text-decoration: none;
             font-weight: 600;
         }
 
-        .error-message {
-            background: #fee;
-            color: #E74C3C;
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(28, 28, 28, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--dark-graphite);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--success);
             padding: 1rem;
             border-radius: 10px;
+            text-align: center;
             margin-bottom: 1rem;
             display: none;
+        }
+
+        .debug-info {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: monospace;
+            font-size: 12px;
+            color: #666;
+            display: none;
+        }
+
+        .debug-toggle {
+            background: none;
+            border: none;
+            color: var(--taxi-yellow);
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                max-width: 100%;
+            }
+            
+            .header, .form-container {
+                padding: 1.5rem;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .form-options {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
@@ -139,52 +284,58 @@
                 <i class="fas fa-arrow-left"></i>
                 Voltar
             </a>
-            <h1>Login</h1>
+            <h1>Bem-vindo de volta</h1>
             <p>Entre na sua conta TaxiBF</p>
         </div>
 
         <div class="form-container">
-            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage">
+                Conta criada com sucesso! Faça login para continuar.
+            </div>
 
             <form id="loginForm">
                 <div class="form-group">
+                    <label for="email">E-mail</label>
                     <div class="input-wrapper">
                         <i class="fas fa-envelope"></i>
-                        <input type="email" id="email" placeholder="Seu e-mail" required>
+                        <input type="email" id="email" placeholder="seu@email.com" required>
                     </div>
+                    <div class="error-message" id="emailError"></div>
                 </div>
 
                 <div class="form-group">
+                    <label for="senha">Senha</label>
                     <div class="input-wrapper">
                         <i class="fas fa-lock"></i>
-                        <input type="password" id="senha" placeholder="Sua senha" required>
+                        <input type="password" id="senha" placeholder="Digite sua senha" required>
                     </div>
+                    <div class="error-message" id="senhaError"></div>
                 </div>
 
-                <button type="submit" class="btn" id="btnLogin">
-                    Entrar
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe">
+                        Lembrar-me
+                    </label>
+                    <a href="recuperar-senha.html" class="forgot-password">Esqueci a senha</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="btnLogin">
+                    <span id="btnText">Entrar</span>
+                    <div class="loading" id="loadingSpinner"></div>
                 </button>
             </form>
 
             <div class="register-link">
-                Não tem conta? <a href="cadastro.html">Cadastre-se</a>
+                Não tem uma conta? <a href="cadastro.html">Cadastre-se agora</a>
             </div>
+
+            <button class="debug-toggle" onclick="toggleDebug()">Mostrar Debug</button>
+            <div class="debug-info" id="debugInfo"></div>
         </div>
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-        import { 
-            getAuth, 
-            signInWithEmailAndPassword,
-            onAuthStateChanged 
-        } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-        import { 
-            getFirestore, 
-            doc, 
-            getDoc 
-        } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-
         const firebaseConfig = {
             apiKey: "AIzaSyDsLnfKynKVsn66paVJjCnbHeH8pGBahCw",
             authDomain: "taxibf-1f545.firebaseapp.com",
@@ -194,117 +345,251 @@
             appId: "1:965457489049:web:cd0baf070944e3927bdc08"
         };
 
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Verificar se já está logado
+        // DEBUG: Mostrar status do Firebase
+        console.log('🔥 Firebase inicializado');
+        addDebug('Firebase inicializado com sucesso');
+
+        // Verificar se usuário já está logado
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Usuário já está logado, verificar perfil
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    const perfil = userData.tipoPerfil || userData.accountType;
+                addDebug(`Usuário já logado: ${user.email}`);
+                console.log('Usuário já logado:', user.email);
+                
+                try {
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    addDebug(`Documento do usuário existe: ${userDoc.exists()}`);
                     
-                    if (perfil === 'passageiro') {
-                        window.location.href = "dashboard-passageiro.html";
-                    } else if (perfil === 'taxista') {
-                        window.location.href = "dashboard-taxista.html";
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        addDebug(`Dados do usuário: ${JSON.stringify(userData)}`);
+                        
+                        const tipoPerfil = userData.tipoPerfil || userData.accountType;
+                        addDebug(`Tipo de perfil encontrado: ${tipoPerfil}`);
+                        
+                        if (!tipoPerfil) {
+                            addDebug('Sem perfil definido, redirecionando para escolha-perfil.html');
+                            window.location.href = "escolha-perfil.html";
+                        } else if (tipoPerfil === 'passageiro') {
+                            addDebug('Perfil passageiro, redirecionando para dashboard-passageiro.html');
+                            window.location.href = "dashboard-passageiro.html";
+                        } else if (tipoPerfil === 'taxista') {
+                            addDebug('Perfil taxista, redirecionando para dashboard-taxista.html');
+                            window.location.href = "dashboard-taxista.html";
+                        } else {
+                            addDebug('Perfil inválido, redirecionando para escolha-perfil.html');
+                            window.location.href = "escolha-perfil.html";
+                        }
                     } else {
+                        addDebug('Documento não encontrado, redirecionando para escolha-perfil.html');
                         window.location.href = "escolha-perfil.html";
                     }
-                } else {
-                    window.location.href = "escolha-perfil.html";
+                } catch (error) {
+                    addDebug(`Erro ao verificar perfil: ${error.message}`);
+                    console.error('Erro ao verificar perfil:', error);
                 }
+            } else {
+                addDebug('Nenhum usuário logado');
             }
         });
 
-        // Login
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        // Mostrar mensagem de cadastro bem sucedido
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('cadastro') === 'sucesso') {
+            document.getElementById('successMessage').style.display = 'block';
+            addDebug('Cadastro realizado com sucesso');
+        }
+
+        // Carregar e-mail salvo
+        const savedEmail = localStorage.getItem('taxibf_email');
+        const rememberMe = localStorage.getItem('taxibf_remember') === 'true';
+        
+        if (savedEmail && rememberMe) {
+            document.getElementById('email').value = savedEmail;
+            document.getElementById('rememberMe').checked = true;
+            addDebug(`E-mail carregado do localStorage: ${savedEmail}`);
+        }
+
+        // Funções de erro
+        function mostrarErro(campoId, mensagem) {
+            const campo = document.getElementById(campoId);
+            const errorElement = document.getElementById(campoId + 'Error');
+            
+            if (campo) campo.classList.add('error');
+            if (errorElement) {
+                errorElement.textContent = mensagem;
+                errorElement.style.display = 'block';
+            }
+            addDebug(`Erro no campo ${campoId}: ${mensagem}`);
+        }
+
+        function limparErro(campoId) {
+            const campo = document.getElementById(campoId);
+            const errorElement = document.getElementById(campoId + 'Error');
+            
+            if (campo) campo.classList.remove('error');
+            if (errorElement) errorElement.style.display = 'none';
+        }
+
+        // Submissão do formulário
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            addDebug('=== INICIANDO LOGIN ===');
+            
+            // Limpar erros
+            ['email', 'senha'].forEach(limparErro);
+            
+            // Pegar valores
             const email = document.getElementById('email').value.trim();
             const senha = document.getElementById('senha').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            
+            addDebug(`E-mail: ${email}`);
+            addDebug(`Senha: ${senha ? '***' : 'vazia'}`);
+            addDebug(`Lembrar: ${rememberMe}`);
+            
+            // Validação
+            let valido = true;
+            
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                mostrarErro('email', 'Digite um e-mail válido');
+                valido = false;
+                addDebug('E-mail inválido');
+            }
+            
+            if (!senha) {
+                mostrarErro('senha', 'Digite sua senha');
+                valido = false;
+                addDebug('Senha vazia');
+            }
+            
+            if (!valido) {
+                addDebug('Validação falhou, abortando login');
+                return;
+            }
+            
+            // Salvar e-mail se marcado
+            if (rememberMe) {
+                localStorage.setItem('taxibf_email', email);
+                localStorage.setItem('taxibf_remember', 'true');
+                addDebug('E-mail salvo no localStorage');
+            } else {
+                localStorage.removeItem('taxibf_email');
+                localStorage.removeItem('taxibf_remember');
+                addDebug('E-mail removido do localStorage');
+            }
+            
+            // Configurar loading
             const btnLogin = document.getElementById('btnLogin');
-            const errorDiv = document.getElementById('errorMessage');
+            const btnText = document.getElementById('btnText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
             
-            // Limpar erro
-            errorDiv.style.display = 'none';
-            errorDiv.textContent = '';
-            
-            // Validar
-            if (!email || !senha) {
-                showError('Preencha todos os campos');
-                return;
-            }
-            
-            if (!email.includes('@')) {
-                showError('E-mail inválido');
-                return;
-            }
-            
-            // Desabilitar botão
             btnLogin.disabled = true;
-            btnLogin.textContent = 'Entrando...';
+            btnText.style.display = 'none';
+            loadingSpinner.style.display = 'block';
+            
+            addDebug('Tentando login no Firebase...');
             
             try {
-                // Fazer login
+                // Login no Firebase
                 const userCredential = await signInWithEmailAndPassword(auth, email, senha);
                 const user = userCredential.user;
                 
+                addDebug(`✅ Login bem sucedido! UID: ${user.uid}`);
+                addDebug(`Email verificado: ${user.emailVerified}`);
+                
                 // Buscar dados do usuário
+                addDebug('Buscando dados do usuário no Firestore...');
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
-                    const perfil = userData.tipoPerfil || userData.accountType;
+                    addDebug(`📄 Documento encontrado: ${JSON.stringify(userData)}`);
+                    
+                    // Verificar tipo de perfil
+                    const tipoPerfil = userData.tipoPerfil || userData.accountType;
+                    addDebug(`🔍 Tipo de perfil encontrado: ${tipoPerfil}`);
                     
                     // Redirecionar baseado no perfil
-                    if (!perfil) {
+                    if (!tipoPerfil) {
+                        addDebug('⚠️ Sem perfil definido, redirecionando para escolha-perfil.html');
                         window.location.href = "escolha-perfil.html";
-                    } else if (perfil === 'passageiro') {
+                    } else if (tipoPerfil === 'passageiro') {
+                        addDebug('🚶 Perfil passageiro, redirecionando para dashboard-passageiro.html');
                         window.location.href = "dashboard-passageiro.html";
-                    } else if (perfil === 'taxista') {
+                    } else if (tipoPerfil === 'taxista') {
+                        addDebug('🚕 Perfil taxista, redirecionando para dashboard-taxista.html');
                         window.location.href = "dashboard-taxista.html";
                     } else {
+                        addDebug('❓ Perfil inválido, redirecionando para escolha-perfil.html');
                         window.location.href = "escolha-perfil.html";
                     }
                 } else {
-                    // Usuário não tem perfil definido
+                    addDebug('📭 Documento não encontrado, redirecionando para escolha-perfil.html');
                     window.location.href = "escolha-perfil.html";
                 }
                 
             } catch (error) {
-                console.error('Erro login:', error);
-                
-                // Re-habilitar botão
+                // Reativar botão
                 btnLogin.disabled = false;
-                btnLogin.textContent = 'Entrar';
+                btnText.style.display = 'block';
+                loadingSpinner.style.display = 'none';
+                
+                addDebug(`❌ ERRO NO LOGIN: ${error.code} - ${error.message}`);
+                console.error('Erro no login:', error);
                 
                 // Mostrar erro apropriado
-                let mensagem = 'Erro ao fazer login';
+                let mensagemErro = "Erro ao fazer login. Tente novamente.";
                 
-                if (error.code === 'auth/invalid-credential' || 
-                    error.code === 'auth/wrong-password') {
-                    mensagem = 'E-mail ou senha incorretos';
-                } else if (error.code === 'auth/user-not-found') {
-                    mensagem = 'Usuário não encontrado. Cadastre-se primeiro.';
-                } else if (error.code === 'auth/too-many-requests') {
-                    mensagem = 'Muitas tentativas. Tente mais tarde.';
-                } else if (error.code === 'auth/network-request-failed') {
-                    mensagem = 'Sem conexão com a internet';
+                switch(error.code) {
+                    case 'auth/invalid-credential':
+                    case 'auth/wrong-password':
+                        mensagemErro = "E-mail ou senha incorretos.";
+                        mostrarErro('email', mensagemErro);
+                        mostrarErro('senha', mensagemErro);
+                        break;
+                    case 'auth/user-not-found':
+                        mensagemErro = "Usuário não encontrado. Crie uma conta.";
+                        mostrarErro('email', mensagemErro);
+                        break;
+                    case 'auth/too-many-requests':
+                        mensagemErro = "Muitas tentativas. Tente novamente mais tarde.";
+                        mostrarErro('email', mensagemErro);
+                        break;
+                    case 'auth/network-request-failed':
+                        mensagemErro = "Erro de conexão. Verifique sua internet.";
+                        mostrarErro('email', mensagemErro);
+                        break;
+                    default:
+                        mostrarErro('email', mensagemErro);
                 }
                 
-                showError(mensagem);
+                addDebug(`Mensagem de erro exibida: ${mensagemErro}`);
             }
         });
-        
-        function showError(mensagem) {
-            const errorDiv = document.getElementById('errorMessage');
-            errorDiv.textContent = mensagem;
-            errorDiv.style.display = 'block';
+
+        // Funções de debug
+        function addDebug(message) {
+            const debugInfo = document.getElementById('debugInfo');
+            const timestamp = new Date().toLocaleTimeString();
+            debugInfo.innerHTML += `[${timestamp}] ${message}<br>`;
         }
+
+        function toggleDebug() {
+            const debugInfo = document.getElementById('debugInfo');
+            debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none';
+        }
+
+        addDebug('Sistema de login carregado e pronto');
+        addDebug('Use o botão "Mostrar Debug" para ver detalhes');
     </script>
 </body>
 </html>
