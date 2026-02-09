@@ -303,11 +303,6 @@
         .login-footer a:hover {
             text-decoration: underline;
         }
-
-        /* Account Type Modal - REMOVIDO (não é mais necessário aqui) */
-        .modal {
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -460,8 +455,14 @@
                     
                     // Verificar se já tem tipo de conta definido
                     if (userData.accountType === 'passenger' || userData.accountType === 'driver') {
-                        // SEMPRE redireciona para dashboard do passageiro (temporariamente)
-                        window.location.href = 'dashboard-passageiro.html';
+                        // Se já tem tipo definido, redireciona para o dashboard correto
+                        if (userData.accountType === 'passenger') {
+                            window.location.href = 'dashboard-passageiro.html';
+                        } else if (userData.accountType === 'driver') {
+                            // Redirecionar para dashboard do motorista quando criado
+                            // Por enquanto, vamos para choose-profile para o usuário escolher
+                            window.location.href = 'choose-profile.html';
+                        }
                     } else {
                         // Se não tem tipo definido, vai para página de escolha
                         window.location.href = 'choose-profile.html';
