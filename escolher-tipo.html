@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxiBF - Escolha seu perfil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --taxi-yellow: #FFC400;
+            --dark-graphite: #1C1C1C;
+            --white: #FFFFFF;
+            --light-gray: #F5F5F5;
+            --success: #2ECC71;
+            --error: #E74C3C;
+            --passenger-blue: #3498DB;
+            --driver-green: #27AE60;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #FFC400 0%, #FFD700 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .back-logout {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .back-btn, .logout-btn {
+            background: var(--dark-graphite);
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .back-btn:hover, .logout-btn:hover {
+            background: #333;
+            transform: translateY(-2px);
+        }
+
+        .logout-btn {
+            background: var(--error);
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .header {
+            background: var(--dark-graphite);
+            color: var(--white);
+            padding: 3rem 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #aaa;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .taxi-icon {
+            font-size: 4rem;
+            color: var(--taxi-yellow);
+            margin-bottom: 1rem;
+        }
+
+        .content {
+            padding: 3rem 2rem;
+        }
+
+        .welcome-message {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .highlight {
+            color: var(--taxi-yellow);
+            font-weight: 700;
+        }
+
+        .profile-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .profile-options {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .profile-card {
+            padding: 2.5rem;
+            border: 3px solid #e0e0e0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .profile-card.selected {
+            border-color: var(--taxi-yellow);
+            background: rgba(255, 196, 0, 0.05);
+            box-shadow: 0 20px 40px rgba(255, 196, 0, 0.15);
+        }
+
+        .profile-card.selected.passenger {
+            border-color: var(--passenger-blue);
+            background: rgba(52, 152, 219, 0.05);
+        }
+
+        .profile-card.selected.driver {
+            border-color: var(--driver-green);
+            background: rgba(39, 174, 96, 0.05);
+        }
+
+        .profile-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .passenger .profile-icon {
+            background: var(--passenger-blue);
+            color: var(--white);
+        }
+
+        .driver .profile-icon {
+            background: var(--driver-green);
+            color: var(--white);
+        }
+
+        .profile-content {
+            text-align: center;
+        }
+
+        .profile-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--dark-graphite);
+        }
+
+        .profile-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-features {
+            text-align: left;
+            margin-top: 1rem;
+        }
+
+        .profile-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+            color: #666;
+        }
+
+        .profile-features i {
+            color: var(--taxi-yellow);
+            font-size: 0.9rem;
+        }
+
+        .selected-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--taxi-yellow);
+            color: var(--dark-graphite);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            display: none;
+        }
+
+        .profile-card.selected .selected-badge {
+            display: block;
+            animation: bounce 0.5s;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 60%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            80% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .action-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .btn-confirm {
+            background: var(--taxi-yellow);
+            color: var(--dark-graphite);
+            border: none;
+            padding: 1.2rem 3rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: 0 10px 30px rgba(255, 196, 0, 0.4);
+        }
+
+        .btn-confirm:hover:not(:disabled) {
+            background: #FFB300;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 196, 0, 0.6);
+        }
+
+        .btn-confirm:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .note {
+            margin-top: 1.5rem;
+            color: #999;
+            font-size: 0.9rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .note i {
+            color: var(--taxi-yellow);
+            margin-right: 0.5rem;
+        }
+
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: var(--dark-graphite);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        .btn-confirm.loading .spinner {
+            display: inline-block;
+        }
+
+        .btn-confirm.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #fee;
+            color: var(--error);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            display: none;
+            border: 1px solid #ffcccc;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        .success-message {
+            background: #e8f6ef;
+            color: var(--success);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            display: none;
+            border: 1px solid #abebc6;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .success-message.active {
+            display: block;
+        }
+
+        .user-info {
+            background: var(--light-gray);
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--taxi-yellow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .user-details h3 {
+            margin-bottom: 0.2rem;
+        }
+
+        .user-details p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-logout">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-home"></i>
+            Voltar para Home
+        </a>
+        <button class="logout-btn" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i>
+            Sair
+        </button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="taxi-icon">
+                <i class="fas fa-taxi"></i>
+            </div>
+            <h1>Escolha seu perfil no TaxiBF</h1>
+            <p>Selecione como você vai usar nossa plataforma</p>
+        </div>
+
+        <div class="content">
+            <div id="userInfo" class="user-info">
+                <!-- Será preenchido pelo JavaScript -->
+            </div>
+
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+
+            <div class="welcome-message">
+                Olá <span id="userName" class="highlight">Usuário</span>! Para continuar, escolha se você é um <span class="highlight">passageiro</span> procurando táxis, ou um <span class="highlight">motorista</span> oferecendo seus serviços.
+            </div>
+
+            <div class="profile-options">
+                <!-- Passenger Card -->
+                <div class="profile-card passenger" onclick="selectProfile('passenger')" id="passengerCard">
+                    <div class="selected-badge">
+                        <i class="fas fa-check"></i> Selecionado
+                    </div>
+                    <div class="profile-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="profile-content">
+                        <h2 class="profile-title">Passageiro</h2>
+                        <p class="profile-description">
+                            Encontre táxis e motoristas disponíveis próximos a você, agende viagens e tenha seus motoristas favoritos sempre à mão.
+                        </p>
+                        <ul class="profile-features">
+                            <li><i class="fas fa-check-circle"></i> Localize táxis em tempo real</li>
+                            <li><i class="fas fa-check-circle"></i> Agende suas viagens</li>
+                            <li><i class="fas fa-check-circle"></i> Adicione motoristas favoritos</li>
+                            <li><i class="fas fa-check-circle"></i> Contato direto via WhatsApp</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Driver Card -->
+                <div class="profile-card driver" onclick="selectProfile('driver')" id="driverCard">
+                    <div class="selected-badge">
+                        <i class="fas fa-check"></i> Selecionado
+                    </div>
+                    <div class="profile-icon">
+                        <i class="fas fa-taxi"></i>
+                    </div>
+                    <div class="profile-content">
+                        <h2 class="profile-title">Motorista</h2>
+                        <p class="profile-description">
+                            Ofereça seus serviços como taxista ou mototaxista, aumente sua clientela e gerencie suas corridas de forma eficiente.
+                        </p>
+                        <ul class="profile-features">
+                            <li><i class="fas fa-check-circle"></i> Mostre sua disponibilidade</li>
+                            <li><i class="fas fa-check-circle"></i> Receba solicitações de passageiros</li>
+                            <li><i class="fas fa-check-circle"></i> Gerencie seu horário de trabalho</li>
+                            <li><i class="fas fa-check-circle"></i> Aumente sua renda</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-section">
+                <button class="btn-confirm" id="confirmBtn" onclick="confirmProfile()" disabled>
+                    <span class="btn-text">Confirmar e Continuar</span>
+                    <div class="spinner"></div>
+                </button>
+                
+                <p class="note">
+                    <i class="fas fa-info-circle"></i>
+                    Você poderá alterar esta escolha mais tarde nas configurações da sua conta.
+                </p>
+            </div>
+        </div>
+    </div>
+
+   // Firebase SDK
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { 
+        getAuth, 
+        signOut,
+        onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+    import { 
+        getFirestore, 
+        doc, 
+        getDoc, 
+        updateDoc 
+    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+    // Configuração do Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyAkTTLfsG5CcViF3mgB-xjws9dlsV-e_jg",
+        authDomain: "taxibf-98dfa.firebaseapp.com",
+        projectId: "taxibf-98dfa",
+        storageBucket: "taxibf-98dfa.firebasestorage.app",
+        messagingSenderId: "126605489339",
+        appId: "1:126605489339:web:25abd7caac6a2e816ba59e"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Variáveis globais
+    let selectedProfile = null;
+    let currentUser = null;
+    let userData = null;
+
+    // Elementos DOM
+    const passengerCard = document.getElementById('passengerCard');
+    const driverCard = document.getElementById('driverCard');
+    const confirmBtn = document.getElementById('confirmBtn');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+    const userName = document.getElementById('userName');
+    const userInfo = document.getElementById('userInfo');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    // Observador de estado de autenticação
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            currentUser = user;
+            try {
+                // Buscar dados do usuário no Firestore
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                
+                if (userDoc.exists()) {
+                    userData = userDoc.data();
+                    
+                    // Atualizar UI com dados do usuário
+                    updateUserUI(userData);
+                    
+                    // Verificar se já tem tipo de conta definido
+                    if (userData.accountType === 'passenger' || userData.accountType === 'driver') {
+                        // Se já tem tipo definido, redirecionar direto
+                        redirectToDashboard(userData.accountType);
+                    } else {
+                        // Se não tem tipo definido, mostrar opções
+                        showProfileOptions();
+                    }
+                } else {
+                    // Usuário não encontrado no Firestore (pode ser novo usuário Google)
+                    showError('Perfil não encontrado. Por favor, faça cadastro primeiro.');
+                }
+            } catch (error) {
+                console.error('Erro ao buscar dados do usuário:', error);
+                showError('Erro ao carregar seus dados. Tente novamente.');
+            }
+        } else {
+            // Usuário não autenticado, redirecionar para login
+            window.location.href = 'login.html';
+        }
+    });
+
+    // Atualizar UI com dados do usuário
+    function updateUserUI(data) {
+        // Atualizar nome
+        const displayName = data.fullName || data.displayName || currentUser.email.split('@')[0];
+        userName.textContent = displayName;
+        
+        // Criar elemento de informações do usuário
+        userInfo.innerHTML = `
+            <div class="user-avatar">
+                ${displayName.substring(0, 2).toUpperCase()}
+            </div>
+            <div class="user-details">
+                <h3>${displayName}</h3>
+                <p>${currentUser.email}</p>
+            </div>
+        `;
+    }
+
+    // Mostrar opções de perfil
+    function showProfileOptions() {
+        // Nada a fazer aqui, as opções já estão visíveis
+    }
+
+    // Selecionar perfil
+    window.selectProfile = function(profile) {
+        selectedProfile = profile;
+        
+        // Remover seleção de ambos
+        passengerCard.classList.remove('selected');
+        driverCard.classList.remove('selected');
+        
+        // Adicionar seleção ao escolhido
+        if (profile === 'passenger') {
+            passengerCard.classList.add('selected');
+        } else {
+            driverCard.classList.add('selected');
+        }
+        
+        // Habilitar botão de confirmação
+        confirmBtn.disabled = false;
+    };
+
+    // Confirmar seleção de perfil
+    window.confirmProfile = async function() {
+        if (!selectedProfile) {
+            showError('Por favor, selecione um perfil para continuar.');
+            return;
+        }
+
+        setLoading(true);
+        hideError();
+
+        try {
+            // Atualizar tipo de conta no Firestore
+            await updateDoc(doc(db, 'users', currentUser.uid), {
+                accountType: selectedProfile,
+                updatedAt: new Date()
+            });
+
+            // Mostrar mensagem de sucesso
+            showSuccess('Perfil atualizado com sucesso! Redirecionando...');
+            
+            // Redirecionar após 1.5 segundos
+            setTimeout(() => {
+                redirectToDashboard(selectedProfile);
+            }, 1500);
+
+        } catch (error) {
+            console.error('Erro ao atualizar perfil:', error);
+            showError('Erro ao salvar sua escolha. Tente novamente.');
+            setLoading(false);
+        }
+    };
+
+    // FUNÇÃO CORRIGIDA - Sempre redireciona para dashboard do passageiro
+    function redirectToDashboard(profileType) {
+        // Temporariamente: sempre vai para dashboard do passageiro
+        window.location.href = 'dashboard-passageiro.html';
+        
+        // Salva o tipo escolhido no localStorage para uso futuro
+        localStorage.setItem('userProfileType', profileType);
+        
+        // Opcional: log para depuração
+        console.log('Redirecionando para dashboard. Tipo escolhido:', profileType);
+    }
+
+    // Logout
+    logoutBtn.addEventListener('click', async () => {
+        try {
+            await signOut(auth);
+            window.location.href = 'index.html';
+        } catch (error) {
+            console.error('Erro ao fazer logout:', error);
+            showError('Erro ao sair da conta. Tente novamente.');
+        }
+    });
+
+    // Funções auxiliares
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.classList.add('active');
+        successMessage.classList.remove('active');
+    }
+
+    function hideError() {
+        errorMessage.classList.remove('active');
+    }
+
+    function showSuccess(message) {
+        successMessage.textContent = message;
+        successMessage.classList.add('active');
+        errorMessage.classList.remove('active');
+    }
+
+    function setLoading(loading) {
+        if (loading) {
+            confirmBtn.classList.add('loading');
+            confirmBtn.disabled = true;
+            logoutBtn.disabled = true;
+        } else {
+            confirmBtn.classList.remove('loading');
+            confirmBtn.disabled = false;
+            logoutBtn.disabled = false;
+        }
+    }
+
+    // Auto-selecionar passageiro por padrão
+    setTimeout(() => {
+        if (!selectedProfile) {
+            selectProfile('passenger');
+        }
+    }, 500);
+</script>
+</body>
+</html>
