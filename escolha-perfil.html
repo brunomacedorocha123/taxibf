@@ -507,6 +507,7 @@
 
         let selectedProfile = null;
         let currentUser = null;
+        let userData = null;
 
         const passengerCard = document.getElementById('passengerCard');
         const driverCard = document.getElementById('driverCard');
@@ -518,67 +519,43 @@
         const logoutBtn = document.getElementById('logoutBtn');
 
         onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                
-                try {
-                    const userDoc = await getDoc(doc(db, 'users', user.uid));
-                    
-                    if (userDoc.exists()) {
-                        const userData = userDoc.data();
-                        
-                        updateUserUI(userData);
-                        
-                        const tipoPerfil = userData.tipoPerfil || userData.accountType;
-                        
-                        if (tipoPerfil) {
-                            if (tipoPerfil === 'passageiro') {
-                                window.location.href = 'dashboard-passageiro.html';
-                            } else if (tipoPerfil === 'taxista') {
-                                window.location.href = 'dashboard-taxista.html';
-                            }
-                            return;
-                        }
-                        
-                        showProfileOptions();
-                        
-                    } else {
-                        showError('Erro ao carregar seus dados. Por favor, faça login novamente.');
-                        setTimeout(() => {
-                            window.location.href = 'login.html';
-                        }, 2000);
-                    }
-                } catch (error) {
-                    showError('Erro ao carregar seus dados. Tente novamente.');
-                }
-            } else {
+            if (!user) {
                 window.location.href = 'login.html';
+                return;
+            }
+            
+            currentUser = user;
+            
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                
+                if (userDoc.exists()) {
+                    userData = userDoc.data();
+                    
+                    const displayName = userData.nomeCompleto || userData.displayName || user.email.split('@')[0];
+                    userName.textContent = displayName;
+                    
+                    const initials = displayName.substring(0, 2).toUpperCase();
+                    userInfo.innerHTML = `
+                        <div class="user-avatar">
+                            ${initials}
+                        </div>
+                        <div class="user-details">
+                            <h3>${displayName}</h3>
+                            <p>${user.email}</p>
+                        </div>
+                    `;
+                    
+                    if (!userData.tipoPerfil && !userData.accountType) {
+                        selectProfile('passageiro');
+                    }
+                } else {
+                    showError('Erro ao carregar seus dados. Por favor, recarregue a página.');
+                }
+            } catch (error) {
+                showError('Erro ao carregar seus dados. Tente novamente.');
             }
         });
-
-        function updateUserUI(data) {
-            const displayName = data.nomeCompleto || data.fullName || 
-                              (currentUser ? currentUser.email.split('@')[0] : 'Usuário');
-            
-            userName.textContent = displayName;
-            
-            const initials = displayName.substring(0, 2).toUpperCase();
-            userInfo.innerHTML = `
-                <div class="user-avatar">
-                    ${initials}
-                </div>
-                <div class="user-details">
-                    <h3>${displayName}</h3>
-                    <p>${currentUser.email}</p>
-                </div>
-            `;
-        }
-
-        function showProfileOptions() {
-            setTimeout(() => {
-                selectProfile('passageiro');
-            }, 300);
-        }
 
         window.selectProfile = function(profile) {
             selectedProfile = profile;
@@ -664,6 +641,8 @@
                 logoutBtn.disabled = false;
             }
         }
+
+        selectProfile('passageiro');
     </script>
 </body>
 </html>
