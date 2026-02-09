@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - TaxiBF</title>
+    <title>TaxiBF - Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -12,8 +12,8 @@
             --dark-graphite: #1C1C1C;
             --white: #FFFFFF;
             --light-gray: #F5F5F5;
-            --available: #2ECC71;
-            --busy: #E74C3C;
+            --success: #2ECC71;
+            --error: #E74C3C;
         }
 
         * {
@@ -24,84 +24,114 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, var(--light-gray) 0%, var(--white) 100%);
+            background: linear-gradient(135deg, #FFC400 0%, #FFD700 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1rem;
+            padding: 2rem;
         }
 
-        .container {
-            background: var(--white);
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        .back-home {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            color: var(--dark-graphite);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-home:hover {
+            color: #333;
+            transform: translateX(-5px);
+        }
+
+        .login-container {
             width: 100%;
-            max-width: 420px;
+            max-width: 450px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
         }
 
-        .header {
+        .login-header {
             background: var(--dark-graphite);
-            padding: 2.5rem 2rem;
+            color: var(--white);
+            padding: 2rem;
             text-align: center;
         }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            color: var(--white);
+        .login-header h1 {
             font-size: 2rem;
             font-weight: 800;
-            text-decoration: none;
             margin-bottom: 0.5rem;
         }
 
-        .logo img {
-            height: 45px;
-        }
-
-        .header p {
+        .login-header p {
             color: #aaa;
             font-size: 0.95rem;
         }
 
-        .form-container {
-            padding: 2.5rem 2rem;
+        .taxi-icon {
+            font-size: 3rem;
+            color: var(--taxi-yellow);
+            margin-bottom: 1rem;
         }
 
-        h2 {
-            font-size: 1.6rem;
-            color: var(--dark-graphite);
-            margin-bottom: 0.5rem;
-            text-align: center;
+        .login-content {
+            padding: 2rem;
         }
 
-        .subtitle {
-            text-align: center;
-            color: #666;
-            font-size: 0.95rem;
-            margin-bottom: 2rem;
+        .error-message {
+            background: #fee;
+            color: var(--error);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            display: none;
+            border: 1px solid #ffcccc;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        .success-message {
+            background: #e8f6ef;
+            color: var(--success);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            display: none;
+            border: 1px solid #abebc6;
+        }
+
+        .success-message.active {
+            display: block;
         }
 
         .btn-google {
             width: 100%;
             padding: 1rem;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid #e0e0e0;
             background: var(--white);
             color: var(--dark-graphite);
-            font-family: 'Inter', sans-serif;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.8rem;
+            gap: 0.5rem;
+            font-size: 1rem;
             margin-bottom: 1.5rem;
         }
 
@@ -118,7 +148,7 @@
         .divider {
             display: flex;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin: 1.5rem 0;
             color: #999;
             font-size: 0.9rem;
         }
@@ -148,120 +178,106 @@
 
         .form-group input {
             width: 100%;
-            padding: 1rem 1.2rem;
+            padding: 1rem;
             border: 2px solid #e0e0e0;
-            border-radius: 12px;
+            border-radius: 10px;
             font-size: 1rem;
-            font-family: 'Inter', sans-serif;
             transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
         }
 
         .form-group input:focus {
             outline: none;
             border-color: var(--taxi-yellow);
-            box-shadow: 0 0 0 4px rgba(255, 196, 0, 0.15);
+            box-shadow: 0 0 0 3px rgba(255, 196, 0, 0.2);
+        }
+
+        .form-group input.error {
+            border-color: var(--error);
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .toggle-password:hover {
+            color: var(--dark-graphite);
         }
 
         .forgot-password {
             text-align: right;
-            margin-bottom: 1.5rem;
+            margin-top: 0.5rem;
         }
 
         .forgot-password a {
-            color: #666;
-            font-size: 0.85rem;
+            color: var(--taxi-yellow);
             text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
         }
 
         .forgot-password a:hover {
-            color: var(--taxi-yellow);
+            text-decoration: underline;
         }
 
-        .btn-primary {
+        .btn-submit {
             width: 100%;
             padding: 1rem;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: none;
             background: var(--taxi-yellow);
             color: var(--dark-graphite);
-            font-family: 'Inter', sans-serif;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            box-shadow: 0 4px 15px rgba(255, 196, 0, 0.4);
+            margin-top: 0.5rem;
         }
 
-        .btn-primary:hover:not(:disabled) {
+        .btn-submit:hover {
+            background: #FFB300;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 196, 0, 0.6);
+            box-shadow: 0 10px 20px rgba(255, 196, 0, 0.3);
         }
 
-        .btn-primary:disabled {
-            opacity: 0.6;
+        .btn-submit:disabled {
+            background: #ccc;
             cursor: not-allowed;
-        }
-
-        .error-message {
-            background: #fee;
-            color: #c33;
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            display: none;
-            border-left: 4px solid var(--busy);
-        }
-
-        .error-message.show {
-            display: block;
-            animation: shake 0.5s;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-
-        .register-link {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid #eee;
-            font-size: 0.95rem;
-            color: #666;
-        }
-
-        .register-link a {
-            color: var(--taxi-yellow);
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        .register-link a:hover {
-            text-decoration: underline;
+            transform: none;
+            box-shadow: none;
         }
 
         .spinner {
             display: none;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(28,28,28,0.3);
+            border: 3px solid rgba(255,255,255,0.3);
             border-radius: 50%;
             border-top-color: var(--dark-graphite);
-            animation: spin 1s linear infinite;
+            animation: spin 1s ease-in-out infinite;
         }
 
-        .btn-primary.loading .spinner {
+        .btn-submit.loading .spinner {
             display: inline-block;
         }
 
-        .btn-primary.loading .btn-text {
+        .btn-submit.loading .btn-text {
             display: none;
         }
 
@@ -269,230 +285,653 @@
             to { transform: rotate(360deg); }
         }
 
-        @media (max-width: 480px) {
-            .container {
-                border-radius: 0;
-                min-height: 100vh;
+        .login-footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e0e0e0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .login-footer a {
+            color: var(--taxi-yellow);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Account Type Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
             }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: var(--light-gray);
+            color: var(--dark-graphite);
+        }
+
+        .modal h2 {
+            text-align: center;
+            margin-bottom: 0.5rem;
+            color: var(--dark-graphite);
+            font-size: 1.8rem;
+        }
+
+        .modal-subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .account-types {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .account-card {
+            padding: 2rem 1.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .account-card:hover {
+            border-color: var(--taxi-yellow);
+            background: rgba(255, 196, 0, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .account-card.selected {
+            border-color: var(--taxi-yellow);
+            background: rgba(255, 196, 0, 0.1);
+            box-shadow: 0 10px 20px rgba(255, 196, 0, 0.2);
+        }
+
+        .account-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--taxi-yellow);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--dark-graphite);
+        }
+
+        .account-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .account-card p {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-modal {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn-modal-secondary {
+            background: var(--light-gray);
+            color: var(--dark-graphite);
+        }
+
+        .btn-modal-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-modal-primary {
+            background: var(--taxi-yellow);
+            color: var(--dark-graphite);
+        }
+
+        .btn-modal-primary:hover {
+            background: #FFB300;
+        }
+
+        .btn-modal-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
             body {
-                padding: 0;
+                padding: 1rem;
+            }
+
+            .back-home {
+                top: 1rem;
+                left: 1rem;
+            }
+
+            .login-header {
+                padding: 1.5rem;
+            }
+
+            .login-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .login-content {
+                padding: 1.5rem;
+            }
+
+            .account-types {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <a href="index.html" class="logo">
-                <img src="logotaxibf.png" alt="TaxiBF">
-                <span>TaxiBF</span>
-            </a>
-            <p>Bem-vindo de volta!</p>
+    <a href="index.html" class="back-home">
+        <i class="fas fa-arrow-left"></i>
+        Voltar para Home
+    </a>
+
+    <div class="login-container">
+        <div class="login-header">
+            <div class="taxi-icon">
+                <i class="fas fa-taxi"></i>
+            </div>
+            <h1>Bem-vindo de volta</h1>
+            <p>Entre na sua conta para continuar</p>
         </div>
 
-        <div class="form-container">
-            <h2>Entrar na conta</h2>
-            <p class="subtitle">Acesse sua conta para continuar</p>
+        <div class="login-content">
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
 
-            <button class="btn-google" onclick="signInWithGoogle()">
+            <button id="googleSignIn" class="btn-google">
                 <img src="https://www.google.com/favicon.ico" alt="Google">
-                <span class="btn-text">Entrar com Google</span>
-                <div class="spinner" style="display: none; width: 18px; height: 18px; border-color: rgba(0,0,0,0.2); border-top-color: #333;"></div>
+                <span>Entrar com Google</span>
             </button>
 
             <div class="divider">
-                <span>ou use e-mail</span>
+                <span>ou entre com e-mail</span>
             </div>
 
-            <div id="errorMessage" class="error-message"></div>
-
-            <form onsubmit="handleLogin(event)">
+            <form id="loginForm">
                 <div class="form-group">
                     <label for="email">E-mail</label>
-                    <input type="email" id="email" placeholder="seu@email.com" required>
+                    <input type="email" id="email" required placeholder="seu@email.com">
                 </div>
 
                 <div class="form-group">
                     <label for="password">Senha</label>
-                    <input type="password" id="password" placeholder="Digite sua senha" required>
+                    <div class="password-container">
+                        <input type="password" id="password" required placeholder="Digite sua senha">
+                        <button type="button" class="toggle-password" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="forgot-password">
+                        <a href="#" id="forgotPasswordLink">Esqueceu sua senha?</a>
+                    </div>
                 </div>
 
-                <div class="forgot-password">
-                    <a href="#" onclick="resetPassword()">Esqueceu a senha?</a>
-                </div>
-
-                <button type="submit" class="btn-primary" id="loginBtn">
+                <button type="submit" class="btn-submit">
                     <span class="btn-text">Entrar</span>
                     <div class="spinner"></div>
                 </button>
             </form>
 
-            <div class="register-link">
-                Ainda não tem conta? <a href="cadastro.html">Cadastre-se grátis</a>
+            <div class="login-footer">
+                Não tem uma conta? <a href="cadastro.html">Cadastre-se</a>
             </div>
         </div>
     </div>
 
-    <!-- Firebase -->
+    <!-- Account Type Modal -->
+    <div id="accountTypeModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeAccountTypeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2>Qual é o seu perfil?</h2>
+            <p class="modal-subtitle">Escolha como você vai usar o TaxiBF</p>
+            
+            <div class="account-types">
+                <div class="account-card" onclick="selectAccountType('passenger')" id="passengerCard">
+                    <div class="account-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3>Passageiro</h3>
+                    <p>Quero encontrar táxis e motoristas para minhas viagens</p>
+                </div>
+                
+                <div class="account-card" onclick="selectAccountType('driver')" id="driverCard">
+                    <div class="account-icon">
+                        <i class="fas fa-taxi"></i>
+                    </div>
+                    <h3>Motorista</h3>
+                    <p>Sou taxista ou mototaxista e quero oferecer meus serviços</p>
+                </div>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="btn-modal btn-modal-secondary" onclick="closeAccountTypeModal()">
+                    Cancelar
+                </button>
+                <button class="btn-modal btn-modal-primary" onclick="confirmAccountType()" id="confirmTypeBtn" disabled>
+                    Confirmar e Continuar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
         import { 
             getAuth, 
-            signInWithEmailAndPassword, 
-            signInWithPopup, 
+            signInWithEmailAndPassword,
+            signInWithPopup,
             GoogleAuthProvider,
-            sendPasswordResetEmail
+            sendPasswordResetEmail,
+            onAuthStateChanged
         } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
+        // Configuração do Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyAHMFQ-QqtdFdcdOXvmRjbNeQvv0rvi2bw",
-            authDomain: "taxibf-3a1fa.firebaseapp.com",
-            projectId: "taxibf-3a1fa",
-            storageBucket: "taxibf-3a1fa.firebasestorage.app",
-            messagingSenderId: "845069797456",
-            appId: "1:845069797456:web:84c61d126f204f945ba955"
+            apiKey: "AIzaSyAkTTLfsG5CcViF3mgB-xjws9dlsV-e_jg",
+            authDomain: "taxibf-98dfa.firebaseapp.com",
+            projectId: "taxibf-98dfa",
+            storageBucket: "taxibf-98dfa.firebasestorage.app",
+            messagingSenderId: "126605489339",
+            appId: "1:126605489339:web:25abd7caac6a2e816ba59e"
         };
 
+        // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const googleProvider = new GoogleAuthProvider();
 
-        // Login com e-mail
-        window.handleLogin = async function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            const btn = document.getElementById('loginBtn');
-            const errorEl = document.getElementById('errorMessage');
-            
-            setLoading(btn, true);
-            errorEl.classList.remove('show');
-            
-            try {
-                const cred = await signInWithEmailAndPassword(auth, email, password);
-                const user = cred.user;
-                
-                // Buscar tipo de usuário
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    
-                    if (userData.type === 'passageiro') {
-                        window.location.href = 'dashboard-passageiro.html';
-                    } else {
-                        window.location.href = 'dashboard-motorista.html';
+        // Variáveis globais
+        let selectedAccountType = null;
+        let currentUserId = null;
+
+        // Elementos DOM
+        const loginForm = document.getElementById('loginForm');
+        const googleSignInBtn = document.getElementById('googleSignIn');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const togglePasswordBtn = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        const submitBtn = loginForm.querySelector('.btn-submit');
+        const accountTypeModal = document.getElementById('accountTypeModal');
+        const passengerCard = document.getElementById('passengerCard');
+        const driverCard = document.getElementById('driverCard');
+        const confirmTypeBtn = document.getElementById('confirmTypeBtn');
+
+        // Observador de estado de autenticação
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Usuário já está logado, verificar se já tem tipo de conta definido
+                currentUserId = user.uid;
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        
+                        // Atualizar último login
+                        await updateDoc(doc(db, 'users', user.uid), {
+                            lastLogin: new Date()
+                        });
+                        
+                        // Verificar se já tem tipo de conta definido
+                        if (userData.accountType === 'passenger' || userData.accountType === 'driver') {
+                            // Redirecionar para o dashboard apropriado
+                            if (userData.accountType === 'passenger') {
+                                window.location.href = 'dashboard-passageiro.html';
+                            } else {
+                                window.location.href = 'dashboard-motorista.html';
+                            }
+                        } else {
+                            // Mostrar modal para escolher tipo de conta
+                            openAccountTypeModal();
+                        }
                     }
-                } else {
-                    // Usuário não tem dados no Firestore (erro)
-                    errorEl.textContent = 'Erro ao carregar dados do usuário';
-                    errorEl.classList.add('show');
+                } catch (error) {
+                    console.error('Erro ao verificar tipo de conta:', error);
                 }
-                
-            } catch (err) {
-                let msg = 'Erro ao fazer login. Tente novamente.';
-                if (err.code === 'auth/user-not-found') msg = 'Usuário não encontrado.';
-                if (err.code === 'auth/wrong-password') msg = 'Senha incorreta.';
-                if (err.code === 'auth/invalid-email') msg = 'E-mail inválido.';
-                if (err.code === 'auth/too-many-requests') msg = 'Muitas tentativas. Tente mais tarde.';
-                
-                errorEl.textContent = msg;
-                errorEl.classList.add('show');
-            } finally {
-                setLoading(btn, false);
+            }
+        });
+
+        // Alternar visibilidade da senha
+        togglePasswordBtn.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Alterar ícone
+            const icon = this.querySelector('i');
+            if (type === 'text') {
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                icon.className = 'fas fa-eye';
+            }
+        });
+
+        // Funções de UI
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('active');
+            successMessage.classList.remove('active');
+        }
+
+        function hideError() {
+            errorMessage.classList.remove('active');
+        }
+
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.classList.add('active');
+            errorMessage.classList.remove('active');
+        }
+
+        function setLoading(loading) {
+            if (loading) {
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
+                googleSignInBtn.disabled = true;
+            } else {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                googleSignInBtn.disabled = false;
+            }
+        }
+
+        // Modal functions
+        window.openAccountTypeModal = function() {
+            accountTypeModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeAccountTypeModal = function() {
+            accountTypeModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            // Limpar seleção
+            selectedAccountType = null;
+            passengerCard.classList.remove('selected');
+            driverCard.classList.remove('selected');
+            confirmTypeBtn.disabled = true;
+        };
+
+        window.selectAccountType = function(type) {
+            selectedAccountType = type;
+            
+            // Remover seleção de ambos
+            passengerCard.classList.remove('selected');
+            driverCard.classList.remove('selected');
+            
+            // Adicionar seleção ao escolhido
+            if (type === 'passenger') {
+                passengerCard.classList.add('selected');
+            } else {
+                driverCard.classList.add('selected');
+            }
+            
+            // Habilitar botão de confirmação
+            confirmTypeBtn.disabled = false;
+        };
+
+        window.confirmAccountType = async function() {
+            if (!selectedAccountType || !currentUserId) {
+                showError('Selecione um tipo de conta para continuar.');
+                return;
+            }
+
+            try {
+                // Salvar tipo de conta no Firestore
+                await updateDoc(doc(db, 'users', currentUserId), {
+                    accountType: selectedAccountType,
+                    updatedAt: new Date()
+                });
+
+                // Redirecionar para o dashboard apropriado
+                if (selectedAccountType === 'passenger') {
+                    window.location.href = 'dashboard-passageiro.html';
+                } else {
+                    window.location.href = 'dashboard-motorista.html';
+                }
+
+            } catch (error) {
+                console.error('Erro ao salvar tipo de conta:', error);
+                showError('Erro ao salvar sua escolha. Tente novamente.');
             }
         };
 
+        // Login com e-mail/senha
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = passwordInput.value;
+
+            // Validações básicas
+            if (!email || !password) {
+                showError('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            setLoading(true);
+            hideError();
+
+            try {
+                // Fazer login no Firebase Auth
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Mostrar mensagem de sucesso
+                showSuccess('Login realizado com sucesso! Verificando seu perfil...');
+
+            } catch (error) {
+                console.error('Erro no login:', error);
+                
+                let errorMessageText = 'Erro ao fazer login. Tente novamente.';
+                
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        errorMessageText = 'Usuário não encontrado. Verifique seu e-mail.';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessageText = 'Senha incorreta. Tente novamente.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessageText = 'E-mail inválido.';
+                        break;
+                    case 'auth/user-disabled':
+                        errorMessageText = 'Esta conta foi desativada.';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessageText = 'Muitas tentativas de login. Tente novamente mais tarde.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessageText = 'Erro de conexão. Verifique sua internet.';
+                        break;
+                }
+                
+                showError(errorMessageText);
+            } finally {
+                setLoading(false);
+            }
+        });
+
         // Login com Google
-        window.signInWithGoogle = async function() {
-            const btn = document.querySelector('.btn-google');
-            const spinner = btn.querySelector('.spinner');
-            const text = btn.querySelector('.btn-text');
-            
-            spinner.style.display = 'inline-block';
-            text.style.display = 'none';
-            btn.disabled = true;
-            
+        googleSignInBtn.addEventListener('click', async () => {
+            setLoading(true);
+            hideError();
+
             try {
                 const result = await signInWithPopup(auth, googleProvider);
                 const user = result.user;
                 
+                // Verificar se é um novo usuário
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
                 
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    if (userData.type === 'passageiro') {
-                        window.location.href = 'dashboard-passageiro.html';
-                    } else {
-                        window.location.href = 'dashboard-motorista.html';
-                    }
-                } else {
-                    // Novo usuário Google - redirecionar para completar cadastro
-                    window.location.href = 'escolher-tipo.html?google=true';
+                if (!userDoc.exists()) {
+                    // Novo usuário via Google - criar documento
+                    await updateDoc(doc(db, 'users', user.uid), {
+                        fullName: user.displayName,
+                        email: user.email,
+                        photoURL: user.photoURL,
+                        createdAt: new Date(),
+                        lastLogin: new Date(),
+                        provider: 'google'
+                    }, { merge: true });
                 }
                 
-            } catch (err) {
-                const errorEl = document.getElementById('errorMessage');
-                errorEl.textContent = 'Erro ao entrar com Google. Tente novamente.';
-                errorEl.classList.add('show');
+                // Mostrar mensagem de sucesso
+                showSuccess('Login com Google realizado com sucesso! Verificando seu perfil...');
+
+            } catch (error) {
+                console.error('Erro no login com Google:', error);
                 
-                spinner.style.display = 'none';
-                text.style.display = 'inline';
-                btn.disabled = false;
-            }
-        };
-
-        // Recuperar senha
-        window.resetPassword = async function() {
-            const email = document.getElementById('email').value.trim();
-            const errorEl = document.getElementById('errorMessage');
-            
-            if (!email) {
-                errorEl.textContent = 'Digite seu e-mail para recuperar a senha';
-                errorEl.classList.add('show');
-                return;
-            }
-            
-            try {
-                await sendPasswordResetEmail(auth, email);
-                alert('E-mail de recuperação enviado! Verifique sua caixa de entrada.');
-                errorEl.classList.remove('show');
-            } catch (err) {
-                errorEl.textContent = 'Erro ao enviar e-mail. Verifique se o e-mail está correto.';
-                errorEl.classList.add('show');
-            }
-        };
-
-        function setLoading(btn, loading) {
-            if (loading) {
-                btn.classList.add('loading');
-                btn.disabled = true;
-            } else {
-                btn.classList.remove('loading');
-                btn.disabled = false;
-            }
-        }
-
-        // Verificar se já está logado
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    if (userData.type !== 'pending') {
-                        // Já completou cadastro, redirecionar
-                        if (userData.type === 'passageiro') {
-                            window.location.href = 'dashboard-passageiro.html';
-                        } else {
-                            window.location.href = 'dashboard-motorista.html';
-                        }
-                    }
+                let errorMessageText = 'Erro ao fazer login com Google. Tente novamente.';
+                
+                switch (error.code) {
+                    case 'auth/popup-closed-by-user':
+                        errorMessageText = 'Login cancelado.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessageText = 'Erro de conexão. Verifique sua internet.';
+                        break;
                 }
+                
+                showError(errorMessageText);
+            } finally {
+                setLoading(false);
             }
         });
+
+        // Recuperação de senha
+        forgotPasswordLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            
+            if (!email) {
+                showError('Por favor, digite seu e-mail para recuperar a senha.');
+                return;
+            }
+
+            setLoading(true);
+            hideError();
+
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showSuccess('E-mail de recuperação enviado! Verifique sua caixa de entrada.');
+            } catch (error) {
+                console.error('Erro ao enviar e-mail de recuperação:', error);
+                
+                let errorMessageText = 'Erro ao enviar e-mail de recuperação.';
+                
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        errorMessageText = 'Usuário não encontrado com este e-mail.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessageText = 'E-mail inválido.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessageText = 'Erro de conexão. Verifique sua internet.';
+                        break;
+                }
+                
+                showError(errorMessageText);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Auto-focus no campo de e-mail
+        document.getElementById('email').focus();
     </script>
 </body>
 </html>
