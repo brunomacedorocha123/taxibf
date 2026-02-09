@@ -107,18 +107,6 @@
             box-shadow: 0 6px 20px rgba(255, 196, 0, 0.6);
         }
 
-        .btn-google {
-            background: var(--white);
-            color: var(--dark-graphite);
-            border: 2px solid #ddd;
-            width: 100%;
-            justify-content: center;
-        }
-
-        .btn-google:hover {
-            background: var(--light-gray);
-        }
-
         /* Hero Section */
         .hero {
             margin-top: 80px;
@@ -439,167 +427,6 @@
             font-size: 0.9rem;
         }
 
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--white);
-            border-radius: 20px;
-            padding: 2.5rem;
-            max-width: 450px;
-            width: 100%;
-            position: relative;
-            animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #666;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .modal-close:hover {
-            background: var(--light-gray);
-            color: var(--dark-graphite);
-        }
-
-        .modal h2 {
-            text-align: center;
-            margin-bottom: 0.5rem;
-            color: var(--dark-graphite);
-        }
-
-        .modal-subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 2rem;
-            font-size: 0.95rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--dark-graphite);
-            font-size: 0.9rem;
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: var(--taxi-yellow);
-            box-shadow: 0 0 0 3px rgba(255, 196, 0, 0.2);
-        }
-
-        .password-hint {
-            font-size: 0.8rem;
-            color: #999;
-            margin-top: 0.5rem;
-        }
-
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 1.5rem 0;
-            color: #999;
-            font-size: 0.9rem;
-        }
-
-        .divider::before, .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #e0e0e0;
-        }
-
-        .divider span {
-            padding: 0 1rem;
-        }
-
-        .modal-footer {
-            text-align: center;
-            margin-top: 1.5rem;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .modal-footer a {
-            color: var(--taxi-yellow);
-            text-decoration: none;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .modal-footer a:hover {
-            text-decoration: underline;
-        }
-
-        .error-message {
-            background: #fee;
-            color: #c33;
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-            display: none;
-        }
-
-        .error-message.active {
-            display: block;
-        }
-
         /* Mobile Menu */
         .mobile-menu-btn {
             display: none;
@@ -684,33 +511,6 @@
                 grid-template-columns: 1fr;
                 gap: 2rem;
             }
-
-            .modal-content {
-                padding: 1.5rem;
-            }
-        }
-
-        /* Loading Spinner */
-        .spinner {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: var(--white);
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        .btn.loading .spinner {
-            display: inline-block;
-        }
-
-        .btn.loading .btn-text {
-            display: none;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -723,8 +523,8 @@
                 <span>TaxiBF</span>
             </a>
             <div class="nav-buttons">
-                <button class="btn btn-outline" onclick="openModal('login')">Entrar</button>
-                <button class="btn btn-primary" onclick="openModal('register')">Cadastrar</button>
+                <a href="login.html" class="btn btn-outline">Entrar</a>
+                <a href="cadastro.html" class="btn btn-primary">Cadastrar</a>
             </div>
             <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
                 <i class="fas fa-bars"></i>
@@ -739,10 +539,10 @@
                 <h1>Seu táxi <span>na palma</span> da mão</h1>
                 <p>Conectamos passageiros a motoristas de forma rápida, segura e transparente. Encontre táxis disponíveis em tempo real, agende viagens e tenha seus motoristas favoritos sempre à mão.</p>
                 <div class="hero-buttons">
-                    <button class="btn btn-primary" onclick="openModal('register')">
+                    <a href="cadastro.html" class="btn btn-primary">
                         <i class="fas fa-user-plus"></i>
                         Começar Agora
-                    </button>
+                    </a>
                     <button class="btn btn-outline" onclick="document.querySelector('.features').scrollIntoView({behavior: 'smooth'})">
                         <i class="fas fa-info-circle"></i>
                         Saiba Mais
@@ -845,14 +645,14 @@
         <h2>Pronto para começar?</h2>
         <p>Junte-se a milhares de passageiros e motoristas que já estão usando o TaxiBF</p>
         <div class="cta-buttons">
-            <button class="btn btn-dark" onclick="openModal('register')">
+            <a href="cadastro.html" class="btn btn-dark">
                 <i class="fas fa-user-plus"></i>
                 Criar Conta Grátis
-            </button>
-            <button class="btn btn-white" onclick="openModal('login')">
+            </a>
+            <a href="login.html" class="btn btn-white">
                 <i class="fas fa-sign-in-alt"></i>
                 Já tenho conta
-            </button>
+            </a>
         </div>
     </section>
 
@@ -873,327 +673,42 @@
         </div>
     </footer>
 
-    <!-- Login Modal -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('login')">
-                <i class="fas fa-times"></i>
-            </button>
-            <h2>Bem-vindo de volta</h2>
-            <p class="modal-subtitle">Entre na sua conta para continuar</p>
-            
-            <div id="loginError" class="error-message"></div>
-            
-            <button class="btn btn-google" onclick="signInWithGoogle()">
-                <img src="https://www.google.com/favicon.ico" alt="Google" style="width: 20px; height: 20px;">
-                <span class="btn-text">Entrar com Google</span>
-                <div class="spinner"></div>
-            </button>
-            
-            <div class="divider">
-                <span>ou</span>
-            </div>
-            
-            <form id="loginForm" onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label for="loginEmail">E-mail</label>
-                    <input type="email" id="loginEmail" required placeholder="seu@email.com">
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">Senha</label>
-                    <input type="password" id="loginPassword" required placeholder="••••••••">
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    <span class="btn-text">Entrar</span>
-                    <div class="spinner"></div>
-                </button>
-            </form>
-            
-            <div class="modal-footer">
-                Não tem conta? <a onclick="switchModal('login', 'register')">Cadastre-se</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Register Modal -->
-    <div id="registerModal" class="modal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('register')">
-                <i class="fas fa-times"></i>
-            </button>
-            <h2>Criar conta</h2>
-            <p class="modal-subtitle">Junte-se ao TaxiBF hoje mesmo</p>
-            
-            <div id="registerError" class="error-message"></div>
-            
-            <button class="btn btn-google" onclick="signInWithGoogle()">
-                <img src="https://www.google.com/favicon.ico" alt="Google" style="width: 20px; height: 20px;">
-                <span class="btn-text">Cadastrar com Google</span>
-                <div class="spinner"></div>
-            </button>
-            
-            <div class="divider">
-                <span>ou</span>
-            </div>
-            
-            <form id="registerForm" onsubmit="handleRegister(event)">
-                <div class="form-group">
-                    <label for="registerName">Nome completo</label>
-                    <input type="text" id="registerName" required placeholder="Seu nome">
-                </div>
-                <div class="form-group">
-                    <label for="registerEmail">E-mail</label>
-                    <input type="email" id="registerEmail" required placeholder="seu@email.com">
-                </div>
-                <div class="form-group">
-                    <label for="registerPassword">Senha</label>
-                    <input type="password" id="registerPassword" required placeholder="••••••••" minlength="8">
-                    <p class="password-hint">Mínimo 8 caracteres, incluindo letras maiúsculas, minúsculas e números</p>
-                </div>
-                <div class="form-group">
-                    <label for="registerType">Você é:</label>
-                    <select id="registerType" style="width: 100%; padding: 1rem; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem; font-family: 'Inter', sans-serif;">
-                        <option value="passenger">Passageiro</option>
-                        <option value="driver">Motorista (Táxi/Moto)</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    <span class="btn-text">Criar Conta</span>
-                    <div class="spinner"></div>
-                </button>
-            </form>
-            
-            <div class="modal-footer">
-                Já tem conta? <a onclick="switchModal('register', 'login')">Entrar</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-        import { 
-            getAuth, 
-            signInWithEmailAndPassword, 
-            createUserWithEmailAndPassword,
-            signInWithPopup,
-            GoogleAuthProvider,
-            updateProfile
-        } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAHMFQ-QqtdFdcdOXvmRjbNeQvv0rvi2bw",
-            authDomain: "taxibf-3a1fa.firebaseapp.com",
-            projectId: "taxibf-3a1fa",
-            storageBucket: "taxibf-3a1fa.firebasestorage.app",
-            messagingSenderId: "845069797456",
-            appId: "1:845069797456:web:84c61d126f204f945ba955"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const googleProvider = new GoogleAuthProvider();
-
-        // Funções globais
-        window.openModal = function(type) {
-            document.getElementById(type + 'Modal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        };
-
-        window.closeModal = function(type) {
-            document.getElementById(type + 'Modal').classList.remove('active');
-            document.body.style.overflow = 'auto';
-            clearErrors();
-        };
-
-        window.switchModal = function(from, to) {
-            closeModal(from);
-            setTimeout(() => openModal(to), 300);
-        };
-
+    <script>
         window.toggleMobileMenu = function() {
             const navButtons = document.querySelector('.nav-buttons');
-            navButtons.style.display = navButtons.style.display === 'flex' ? 'none' : 'flex';
-            navButtons.style.position = 'absolute';
-            navButtons.style.top = '100%';
-            navButtons.style.left = '0';
-            navButtons.style.right = '0';
-            navButtons.style.background = 'white';
-            navButtons.style.padding = '1rem';
-            navButtons.style.flexDirection = 'column';
-            navButtons.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
-        };
-
-        function clearErrors() {
-            document.querySelectorAll('.error-message').forEach(el => {
-                el.classList.remove('active');
-                el.textContent = '';
-            });
-        }
-
-        function showError(type, message) {
-            const errorEl = document.getElementById(type + 'Error');
-            errorEl.textContent = message;
-            errorEl.classList.add('active');
-        }
-
-        function setLoading(button, loading) {
-            if (loading) {
-                button.classList.add('loading');
-                button.disabled = true;
+            if (navButtons.style.display === 'flex') {
+                navButtons.style.display = 'none';
             } else {
-                button.classList.remove('loading');
-                button.disabled = false;
-            }
-        }
-
-        window.handleLogin = async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-
-            clearErrors();
-            setLoading(submitBtn, true);
-
-            try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-                
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    if (userData.type === 'driver') {
-                        window.location.href = '/dashboard-motorista.html';
-                    } else {
-                        window.location.href = '/dashboard-passageiro.html';
-                    }
-                }
-            } catch (error) {
-                let message = 'Erro ao fazer login. Tente novamente.';
-                if (error.code === 'auth/user-not-found') message = 'Usuário não encontrado.';
-                if (error.code === 'auth/wrong-password') message = 'Senha incorreta.';
-                if (error.code === 'auth/invalid-email') message = 'E-mail inválido.';
-                showError('login', message);
-            } finally {
-                setLoading(submitBtn, false);
+                navButtons.style.display = 'flex';
+                navButtons.style.position = 'absolute';
+                navButtons.style.top = '100%';
+                navButtons.style.left = '0';
+                navButtons.style.right = '0';
+                navButtons.style.background = 'white';
+                navButtons.style.padding = '1rem';
+                navButtons.style.flexDirection = 'column';
+                navButtons.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
             }
         };
 
-        window.handleRegister = async function(e) {
-            e.preventDefault();
-            const name = document.getElementById('registerName').value;
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const type = document.getElementById('registerType').value;
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-
-            clearErrors();
-            setLoading(submitBtn, true);
-
-            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-            if (!passwordRegex.test(password)) {
-                showError('register', 'A senha deve ter no mínimo 8 caracteres, incluindo letras maiúsculas, minúsculas e números.');
-                setLoading(submitBtn, false);
-                return;
-            }
-
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                await updateProfile(user, { displayName: name });
-
-                await setDoc(doc(db, 'users', user.uid), {
-                    name: name,
-                    email: email,
-                    type: type,
-                    createdAt: new Date(),
-                    status: type === 'driver' ? 'offline' : null,
-                    favorites: [],
-                    location: null
-                });
-
-                if (type === 'driver') {
-                    await setDoc(doc(db, 'drivers', user.uid), {
-                        userId: user.uid,
-                        name: name,
-                        status: 'offline',
-                        vehicleInfo: {},
-                        workHours: {},
-                        rating: 0,
-                        totalRides: 0,
-                        createdAt: new Date()
-                    });
-                }
-
-                if (type === 'driver') {
-                    window.location.href = '/completar-perfil-motorista.html';
-                } else {
-                    window.location.href = '/dashboard-passageiro.html';
-                }
-
-            } catch (error) {
-                let message = 'Erro ao criar conta. Tente novamente.';
-                if (error.code === 'auth/email-already-in-use') message = 'Este e-mail já está cadastrado.';
-                if (error.code === 'auth/invalid-email') message = 'E-mail inválido.';
-                if (error.code === 'auth/weak-password') message = 'Senha muito fraca.';
-                showError('register', message);
-            } finally {
-                setLoading(submitBtn, false);
-            }
-        };
-
-        window.signInWithGoogle = async function() {
-            const btn = document.querySelector('.btn-google');
-            setLoading(btn, true);
-
-            try {
-                const result = await signInWithPopup(auth, googleProvider);
-                const user = result.user;
-                
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                
-                if (!userDoc.exists()) {
-                    await setDoc(doc(db, 'users', user.uid), {
-                        name: user.displayName,
-                        email: user.email,
-                        type: 'pending',
-                        createdAt: new Date(),
-                        photoURL: user.photoURL
-                    });
-                    window.location.href = '/escolher-tipo.html';
-                } else {
-                    const userData = userDoc.data();
-                    if (userData.type === 'driver') {
-                        window.location.href = '/dashboard-motorista.html';
-                    } else {
-                        window.location.href = '/dashboard-passageiro.html';
-                    }
-                }
-            } catch (error) {
-                console.error('Erro Google Sign In:', error);
-                showError('login', 'Erro ao entrar com Google. Tente novamente.');
-                showError('register', 'Erro ao entrar com Google. Tente novamente.');
-            } finally {
-                setLoading(btn, false);
-            }
-        };
-
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
-                    document.body.style.overflow = 'auto';
-                }
+        // Fechar menu mobile ao clicar em um link
+        document.querySelectorAll('.nav-buttons a').forEach(link => {
+            link.addEventListener('click', () => {
+                const navButtons = document.querySelector('.nav-buttons');
+                navButtons.style.display = 'none';
             });
         });
 
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                console.log('Usuário logado:', user.email);
+        // Fechar menu mobile ao redimensionar a janela
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 968) {
+                const navButtons = document.querySelector('.nav-buttons');
+                navButtons.style.display = 'flex';
+                navButtons.style.position = 'static';
+                navButtons.style.background = 'transparent';
+                navButtons.style.padding = '0';
+                navButtons.style.flexDirection = 'row';
+                navButtons.style.boxShadow = 'none';
             }
         });
     </script>
