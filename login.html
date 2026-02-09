@@ -194,17 +194,6 @@
             box-shadow: none;
         }
 
-        .btn-google {
-            background: var(--white);
-            color: var(--dark-graphite);
-            border: 2px solid var(--input-border);
-            margin-top: 1rem;
-        }
-
-        .btn-google:hover {
-            border-color: var(--taxi-yellow);
-        }
-
         .register-link {
             text-align: center;
             margin-top: 1.5rem;
@@ -323,10 +312,7 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-
+        // Configuração Firebase ÚNICA para todos os arquivos
         const firebaseConfig = {
             apiKey: "AIzaSyDsLnfKynKVsn66paVJjCnbHeH8pGBahCw",
             authDomain: "taxibf-1f545.firebaseapp.com",
@@ -336,9 +322,25 @@
             appId: "1:965457489049:web:cd0baf070944e3927bdc08"
         };
 
+        // Importações Firebase (versão 12.9.0)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword 
+        } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            updateDoc 
+        } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+        // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
+        console.log("Firebase Login inicializado!");
 
         // Verificar se veio do cadastro
         const urlParams = new URLSearchParams(window.location.search);
@@ -360,9 +362,11 @@
             const campo = document.getElementById(campoId);
             const errorElement = document.getElementById(campoId + 'Error');
             
-            campo.classList.add('error');
-            errorElement.textContent = mensagem;
-            errorElement.style.display = 'block';
+            if (campo) campo.classList.add('error');
+            if (errorElement) {
+                errorElement.textContent = mensagem;
+                errorElement.style.display = 'block';
+            }
         }
 
         // Limpar erro
@@ -370,18 +374,16 @@
             const campo = document.getElementById(campoId);
             const errorElement = document.getElementById(campoId + 'Error');
             
-            campo.classList.remove('error');
-            errorElement.style.display = 'none';
+            if (campo) campo.classList.remove('error');
+            if (errorElement) errorElement.style.display = 'none';
         }
 
-        // Submit do formulário
+        // Submit do formulário - SIMPLIFICADO
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             // Limpar erros anteriores
-            ['email', 'senha'].forEach(campo => {
-                limparErro(campo);
-            });
+            ['email', 'senha'].forEach(limparErro);
             
             // Coletar dados
             const email = document.getElementById('email').value.trim();
@@ -422,39 +424,62 @@
             loadingSpinner.style.display = 'block';
             
             try {
+                console.log("Tentando login com:", email);
+                
                 // Fazer login
                 const userCredential = await signInWithEmailAndPassword(auth, email, senha);
                 const user = userCredential.user;
                 
-                // Verificar perfil do usuário
+                console.log("Login bem-sucedido! UID:", user.uid);
+                
+                // Verificar se usuário tem perfil no Firestore
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
+                    console.log("Dados do usuário:", userData);
                     
                     // Atualizar último acesso
                     await updateDoc(doc(db, "users", user.uid), {
                         ultimoAcesso: new Date()
                     });
                     
-                    // Verificar se já escolheu perfil
-                    if (!userData.tipoPerfil) {
+                    // VERIFICAR CAMPO CORRETO (tipoPerfil)
+                    const tipoPerfil = userData.tipoPerfil || userData.accountType;
+                    
+                    if (!tipoPerfil) {
                         // Se não tem perfil, redirecionar para escolha
+                        console.log("Usuário sem perfil, redirecionando para escolha-perfil");
                         window.location.href = "escolha-perfil.html";
                     } else {
                         // Se já tem perfil, redirecionar para dashboard apropriada
-                        if (userData.tipoPerfil === 'passageiro') {
+                        console.log("Usuário tem perfil:", tipoPerfil);
+                        if (tipoPerfil === 'passageiro') {
                             window.location.href = "dashboard-passageiro.html";
-                        } else {
+                        } else if (tipoPerfil === 'taxista' || tipoPerfil === 'driver') {
                             window.location.href = "dashboard-taxista.html";
+                        } else {
+                            // Perfil desconhecido, voltar para escolha
+                            window.location.href = "escolha-perfil.html";
                         }
                     }
                 } else {
-                    // Se não tem dados no Firestore, redirecionar para escolha de perfil
+                    // Se não tem dados no Firestore, criar documento básico
+                    console.log("Usuário sem dados no Firestore, criando...");
+                    await setDoc(doc(db, "users", user.uid), {
+                        uid: user.uid,
+                        email: email,
+                        dataCadastro: new Date(),
+                        ultimoAcesso: new Date()
+                    });
+                    
+                    // Redirecionar para escolha de perfil
                     window.location.href = "escolha-perfil.html";
                 }
                 
             } catch (error) {
+                console.error("Erro no login:", error);
+                
                 // Habilitar botão novamente
                 btnLogin.disabled = false;
                 btnText.style.display = 'block';
@@ -463,52 +488,35 @@
                 // Tratar erros do Firebase
                 let mensagemErro = "Erro ao fazer login. Tente novamente.";
                 
-                if (error.code === 'auth/invalid-credential') {
-                    mensagemErro = "E-mail ou senha incorretos.";
-                    mostrarErro('email', mensagemErro);
-                    mostrarErro('senha', mensagemErro);
-                } else if (error.code === 'auth/user-not-found') {
-                    mensagemErro = "Usuário não encontrado. Crie uma conta.";
-                    mostrarErro('email', mensagemErro);
-                } else if (error.code === 'auth/wrong-password') {
-                    mensagemErro = "Senha incorreta.";
-                    mostrarErro('senha', mensagemErro);
-                } else if (error.code === 'auth/too-many-requests') {
-                    mensagemErro = "Muitas tentativas. Tente novamente mais tarde.";
-                    mostrarErro('email', mensagemErro);
-                } else {
-                    mostrarErro('email', mensagemErro);
+                switch(error.code) {
+                    case 'auth/invalid-credential':
+                    case 'auth/wrong-password':
+                        mensagemErro = "E-mail ou senha incorretos.";
+                        mostrarErro('email', mensagemErro);
+                        mostrarErro('senha', mensagemErro);
+                        break;
+                    case 'auth/user-not-found':
+                        mensagemErro = "Usuário não encontrado. Crie uma conta.";
+                        mostrarErro('email', mensagemErro);
+                        break;
+                    case 'auth/too-many-requests':
+                        mensagemErro = "Muitas tentativas. Tente novamente mais tarde.";
+                        mostrarErro('email', mensagemErro);
+                        break;
+                    case 'auth/network-request-failed':
+                        mensagemErro = "Erro de conexão. Verifique sua internet.";
+                        mostrarErro('email', mensagemErro);
+                        break;
+                    default:
+                        mostrarErro('email', mensagemErro);
                 }
             }
         });
 
-        // Verificar se já está logado
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // Se já está logado, verificar perfil e redirecionar
-                verificarERedirecionar(user.uid);
-            }
-        });
-
-        async function verificarERedirecionar(uid) {
-            try {
-                const userDoc = await getDoc(doc(db, "users", uid));
-                
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    
-                    if (userData.tipoPerfil === 'passageiro') {
-                        window.location.href = "dashboard-passageiro.html";
-                    } else if (userData.tipoPerfil === 'taxista') {
-                        window.location.href = "dashboard-taxista.html";
-                    } else {
-                        window.location.href = "escolha-perfil.html";
-                    }
-                }
-            } catch (error) {
-                // Se der erro, deixa na página de login
-            }
-        }
+        // IMPORTANTE: Não usar onAuthStateChanged no login.html
+        // Isso evita o loop com a página de escolha-perfil
+        
+        console.log("Sistema de login pronto!");
     </script>
 </body>
 </html>
