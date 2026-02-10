@@ -521,7 +521,9 @@
     <nav class="navbar">
         <div class="nav-container">
             <a href="#" class="logo">
-                <img src="logotaxibf.png" alt="TaxiBF">
+                <div style="width: 40px; height: 40px; background: var(--taxi-yellow); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--dark-graphite);">
+                    TB
+                </div>
                 <span>TaxiBF</span>
             </a>
             
@@ -546,12 +548,12 @@
 
             <div class="user-menu">
                 <div class="user-avatar" id="userAvatar" onclick="toggleProfile()">
-                    BF
+                    --
                 </div>
                 <button class="btn-logout" onclick="logout()" title="Sair">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
-                <button class="mobile-menu-btn">
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
@@ -581,8 +583,8 @@
                     
                     <div class="map-placeholder">
                         <i class="fas fa-map"></i>
-                        <p>Mapa carregando...</p>
-                        <small>Integração com Google Maps ou Mapbox</small>
+                        <p>Mapa</p>
+                        <small>Integração com API de mapas</small>
                     </div>
                 </div>
             </div>
@@ -596,68 +598,15 @@
                             <i class="fas fa-taxi"></i>
                             Motoristas próximos
                         </h3>
-                        <span class="badge" id="driverCount">3</span>
+                        <span class="badge" id="driverCount">0</span>
                     </div>
                     
                     <div class="driver-list" id="driverList">
-                        <!-- Driver 1 -->
-                        <div class="driver-card">
-                            <div class="driver-avatar">
-                                JC
-                                <span class="status-dot available"></span>
-                            </div>
-                            <div class="driver-info">
-                                <div class="driver-name">João Carlos</div>
-                                <div class="driver-details">Taxi • Fiat Siena Branco</div>
-                            </div>
-                            <div class="driver-distance">0.8km</div>
-                            <div class="driver-actions">
-                                <button class="btn-icon-small" onclick="callDriver('joao')" title="Ligar">
-                                    <i class="fas fa-phone"></i>
-                                </button>
-                                <button class="btn-icon-small" onclick="whatsappDriver('joao')" title="WhatsApp">
-                                    <i class="fab fa-whatsapp"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Driver 2 -->
-                        <div class="driver-card">
-                            <div class="driver-avatar" style="background: #e74c3c; color: white;">
-                                MS
-                                <span class="status-dot busy"></span>
-                            </div>
-                            <div class="driver-info">
-                                <div class="driver-name">Maria Silva</div>
-                                <div class="driver-details">Mototaxista • Honda Biz</div>
-                            </div>
-                            <div class="driver-distance">1.2km</div>
-                            <div class="driver-actions">
-                                <button class="btn-icon-small" onclick="callDriver('maria')" title="Ligar">
-                                    <i class="fas fa-phone"></i>
-                                </button>
-                                <button class="btn-icon-small" onclick="whatsappDriver('maria')" title="WhatsApp">
-                                    <i class="fab fa-whatsapp"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Driver 3 -->
-                        <div class="driver-card">
-                            <div class="driver-avatar" style="background: #9e9e9e; color: white;">
-                                PO
-                                <span class="status-dot offline"></span>
-                            </div>
-                            <div class="driver-info">
-                                <div class="driver-name">Pedro Oliveira</div>
-                                <div class="driver-details">Taxista • VW Voyage Preto</div>
-                            </div>
-                            <div class="driver-distance">2.1km</div>
-                            <div class="driver-actions">
-                                <button class="btn-icon-small" onclick="addFavorite('pedro')" title="Adicionar favorito">
-                                    <i class="far fa-star"></i>
-                                </button>
-                            </div>
+                        <!-- Lista de motoristas será carregada dinamicamente -->
+                        <div class="empty-state" id="noDriversMessage">
+                            <i class="fas fa-taxi"></i>
+                            <p>Nenhum motorista próximo encontrado</p>
+                            <small>Ative sua localização</small>
                         </div>
                     </div>
                 </div>
@@ -669,26 +618,15 @@
                             <i class="fas fa-heart"></i>
                             Favoritos
                         </h3>
-                        <span class="badge">2</span>
+                        <span class="badge" id="favoriteCount">0</span>
                     </div>
                     
-                    <div class="favorites-grid">
-                        <div class="favorite-item" onclick="viewFavorite('antonio')">
-                            <div class="favorite-avatar">
-                                AS
-                                <span class="status-dot available" style="width: 12px; height: 12px;"></span>
-                            </div>
-                            <div class="favorite-name">Antônio</div>
-                            <div class="favorite-status" style="color: var(--available);">Disponível</div>
-                        </div>
-                        
-                        <div class="favorite-item" onclick="viewFavorite('carla')">
-                            <div class="favorite-avatar" style="background: #e74c3c; color: white;">
-                                CR
-                                <span class="status-dot busy" style="width: 12px; height: 12px;"></span>
-                            </div>
-                            <div class="favorite-name">Carla</div>
-                            <div class="favorite-status" style="color: var(--busy);">Ocupada</div>
+                    <div class="favorites-grid" id="favoritesGrid">
+                        <!-- Favoritos serão carregados dinamicamente -->
+                        <div class="empty-state" id="noFavoritesMessage">
+                            <i class="far fa-star"></i>
+                            <p>Nenhum motorista favorito</p>
+                            <small>Adicione motoristas aos favoritos</small>
                         </div>
                     </div>
                 </div>
@@ -715,9 +653,9 @@
                             <i class="fas fa-share-alt"></i>
                             <span>Compartilhar</span>
                         </button>
-                        <button class="action-btn" onclick="rateApp()">
-                            <i class="fas fa-star"></i>
-                            <span>Avaliar</span>
+                        <button class="action-btn" onclick="showHelp()">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Ajuda</span>
                         </button>
                     </div>
                 </div>
@@ -731,233 +669,342 @@
         <p style="margin-top: 1rem; color: #666;">Carregando...</p>
     </div>
 
-   <!-- Firebase -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+    <script type="module">
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY_AQUI",
+            authDomain: "SEU_AUTH_DOMAIN",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyAHMFQ-QqtdFdcdOXvmRjbNeQvv0rvi2bw",
-        authDomain: "taxibf-3a1fa.firebaseapp.com",
-        projectId: "taxibf-3a1fa",
-        storageBucket: "taxibf-3a1fa.firebasestorage.app",
-        messagingSenderId: "845069797456",
-        appId: "1:845069797456:web:84c61d126f204f945ba955"
-    };
+        // Initialize Firebase (comentado para segurança)
+        // const app = firebase.initializeApp(firebaseConfig);
+        // const auth = firebase.auth();
+        // const db = firebase.firestore();
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+        // Global state
+        let currentUser = null;
+        let userData = null;
+        let nearbyDrivers = [];
+        let favorites = [];
 
-    let currentUser = null;
-    let userData = null;
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
+            checkLocationPermission();
+        });
 
-    // Verificar autenticação
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            currentUser = user;
-            const userDoc = await getDoc(doc(db, 'users', user.uid));
+        function initializeDashboard() {
+            // Simular carregamento de usuário
+            setTimeout(() => {
+                // Mock user data - REMOVER quando integrar com Firebase
+                currentUser = {
+                    displayName: "Usuário",
+                    email: "usuario@exemplo.com"
+                };
+                
+                updateUserUI();
+                loadMockData();
+                
+                // Esconder loading
+                document.getElementById('loadingOverlay').classList.remove('active');
+            }, 1500);
+        }
+
+        function updateUserUI() {
+            const avatar = document.getElementById('userAvatar');
+            if (currentUser) {
+                const initials = currentUser.displayName ? 
+                    currentUser.displayName.substring(0, 2).toUpperCase() : 
+                    'US';
+                avatar.textContent = initials;
+            }
+        }
+
+        function loadMockData() {
+            // Esta função será substituída por dados reais do Firebase
+            // Por enquanto, mostra estado vazio
+            document.getElementById('driverCount').textContent = '0';
+            document.getElementById('favoriteCount').textContent = '0';
+        }
+
+        function checkLocationPermission() {
+            if (!navigator.geolocation) {
+                alert('Seu navegador não suporta geolocalização.');
+                return;
+            }
             
-            if (userDoc.exists()) {
-                userData = userDoc.data();
-                
-                // VERIFICAÇÃO CORRIGIDA - SEM REDIRECIONAMENTO
-                // Se for motorista, apenas mostra um aviso (opcional)
-                if (userData.accountType === 'driver') {
-                    console.log('Usuário é motorista, mas está no dashboard do passageiro');
-                    // Você pode mostrar uma mensagem ou badge
-                    document.querySelector('.logo').innerHTML += 
-                        '<span style="margin-left: 10px; background: #27AE60; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px;">Motorista</span>';
-                }
-                
-                // Atualizar UI
-                updateUserUI(userData);
-                
-                // Carregar motoristas próximos (simulação)
-                loadNearbyDrivers();
+            // Solicitar permissão de localização
+            navigator.geolocation.getCurrentPosition(
+                () => console.log('Localização permitida'),
+                () => console.log('Localização negada'),
+                { enableHighAccuracy: true }
+            );
+        }
+
+        // Navigation functions
+        window.showSection = function(section) {
+            // Atualizar menu ativo
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.nav-item').classList.add('active');
+            
+            // Implementar lógica para mostrar diferentes seções
+            console.log('Mostrando seção:', section);
+            alert(`Seção ${section} - Em desenvolvimento`);
+        };
+
+        window.updateRadius = function() {
+            const radius = document.getElementById('radiusSelect').value;
+            console.log('Raio atualizado para:', radius, 'km');
+            // Aqui você implementaria a busca por motoristas com novo raio
+        };
+
+        window.centerMap = function() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.classList.add('active');
+            
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        console.log('Localização obtida com sucesso');
+                        loadingOverlay.classList.remove('active');
+                        
+                        // Aqui você integraria com a API do mapa
+                        // Ex: map.setCenter([position.coords.longitude, position.coords.latitude]);
+                        
+                        // Buscar motoristas próximos
+                        searchNearbyDrivers(position.coords);
+                    },
+                    (error) => {
+                        console.error('Erro ao obter localização:', error);
+                        loadingOverlay.classList.remove('active');
+                        alert('Não foi possível obter sua localização. Verifique as permissões do navegador.');
+                    },
+                    { enableHighAccuracy: true, timeout: 10000 }
+                );
             } else {
-                // Usuário não encontrado no Firestore
-                alert('Perfil não encontrado. Por favor, faça cadastro novamente.');
+                loadingOverlay.classList.remove('active');
+                alert('Seu navegador não suporta geolocalização.');
+            }
+        };
+
+        function searchNearbyDrivers(coords) {
+            // Esta função buscará motoristas próximos no Firebase
+            // Por enquanto é um mock
+            console.log('Buscando motoristas próximos para:', coords.latitude, coords.longitude);
+            
+            // Simular busca
+            setTimeout(() => {
+                // Mock: nenhum motorista encontrado
+                document.getElementById('driverCount').textContent = '0';
+                document.getElementById('noDriversMessage').style.display = 'block';
+            }, 1000);
+        }
+
+        // Quick actions
+        window.scheduleRide = function() {
+            console.log('Agendar corrida');
+            alert('Funcionalidade de agendamento em desenvolvimento');
+        };
+
+        window.emergencyCall = function() {
+            console.log('Emergência');
+            if (confirm('Deseja ligar para o número de emergência (190)?')) {
+                window.location.href = 'tel:190';
+            }
+        };
+
+        window.shareLocation = function() {
+            console.log('Compartilhar localização');
+            
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+                        const message = `Minha localização: ${mapsUrl}`;
+                        
+                        if (navigator.share) {
+                            navigator.share({
+                                title: 'Minha localização - TaxiBF',
+                                text: message,
+                                url: mapsUrl
+                            });
+                        } else {
+                            navigator.clipboard.writeText(message).then(() => {
+                                alert('Localização copiada para a área de transferência!');
+                            });
+                        }
+                    },
+                    () => {
+                        alert('Não foi possível obter a localização.');
+                    }
+                );
+            }
+        };
+
+        window.showHelp = function() {
+            console.log('Ajuda');
+            alert('Central de Ajuda\n\nPara suporte, entre em contato:\n• Email: suporte@taxibf.com\n• Telefone: (11) 99999-9999');
+        };
+
+        window.toggleProfile = function() {
+            console.log('Abrir perfil');
+            alert('Página de perfil do usuário - Em desenvolvimento');
+        };
+
+        window.toggleMobileMenu = function() {
+            const navMenu = document.querySelector('.nav-menu');
+            navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
+        };
+
+        window.logout = function() {
+            if (confirm('Tem certeza que deseja sair?')) {
+                // Aqui você implementaria o logout do Firebase
+                // await auth.signOut();
+                
+                // Redirecionar para login
                 window.location.href = 'login.html';
             }
-        } else {
-            // Não logado
-            window.location.href = 'login.html';
+        };
+
+        // Funções para integração futura com Firebase
+        function loadDriversFromFirebase() {
+            // Exemplo de como buscar motoristas do Firebase
+            /*
+            db.collection('drivers')
+                .where('status', '==', 'available')
+                .where('location', 'near', [userLng, userLat])
+                .limit(10)
+                .onSnapshot((snapshot) => {
+                    nearbyDrivers = [];
+                    snapshot.forEach(doc => {
+                        nearbyDrivers.push({ id: doc.id, ...doc.data() });
+                    });
+                    updateDriversUI();
+                });
+            */
         }
-    });
 
-    function updateUserUI(data) {
-        const avatar = document.getElementById('userAvatar');
-        const displayName = data.fullName || data.displayName || currentUser.email.split('@')[0];
-        const initials = displayName.substring(0, 2).toUpperCase();
-        avatar.textContent = initials;
-        
-        // Atualizar título da página com nome do usuário
-        document.title = `TaxiBF - ${displayName}`;
-    }
-
-    function loadNearbyDrivers() {
-        // Aqui você implementaria a busca real no Firestore com geolocalização
-        // Por enquanto está mockado no HTML
-        
-        // Simular carregamento
-        setTimeout(() => {
-            console.log('Motoristas carregados');
-        }, 1000);
-    }
-
-    // Ações
-    window.showSection = function(section) {
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.classList.remove('active');
-        });
-        event.target.closest('.nav-item').classList.add('active');
-        
-        // Implementar navegação entre seções
-        console.log('Mostrar seção:', section);
-        
-        // Mostrar/ocultar seções baseado na escolha
-        const sections = document.querySelectorAll('.section-content');
-        sections.forEach(sec => sec.style.display = 'none');
-        
-        const activeSection = document.getElementById(section + '-section');
-        if (activeSection) {
-            activeSection.style.display = 'block';
-        }
-    };
-
-    window.updateRadius = function() {
-        const radius = document.getElementById('radiusSelect').value;
-        console.log('Atualizar raio para:', radius, 'km');
-        // Recarregar motoristas com novo raio
-        
-        // Atualizar contador (mock)
-        document.getElementById('driverCount').textContent = Math.floor(Math.random() * 5) + 1;
-    };
-
-    window.centerMap = function() {
-        // Centralizar mapa na localização do usuário
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        loadingOverlay.classList.add('active');
-        
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    console.log('Localização:', position.coords.latitude, position.coords.longitude);
-                    loadingOverlay.classList.remove('active');
-                    
-                    // Aqui você integraria com a API do mapa
-                    alert(`Localização encontrada!\nLat: ${position.coords.latitude}\nLon: ${position.coords.longitude}`);
-                },
-                (error) => {
-                    console.error('Erro ao obter localização:', error);
-                    loadingOverlay.classList.remove('active');
-                    alert('Não foi possível obter sua localização. Verifique as permissões.');
-                },
-                { enableHighAccuracy: true, timeout: 10000 }
-            );
-        } else {
-            loadingOverlay.classList.remove('active');
-            alert('Seu navegador não suporta geolocalização.');
-        }
-    };
-
-    window.callDriver = function(driverId) {
-        console.log('Ligar para motorista:', driverId);
-        alert('Discando... (simulação)\nNa versão final, abriria o aplicativo de telefone)');
-    };
-
-    window.whatsappDriver = function(driverId) {
-        console.log('WhatsApp para:', driverId);
-        // Número de exemplo
-        const phoneNumber = '5511999999999';
-        const message = 'Olá! Vi seu perfil no TaxiBF e gostaria de solicitar uma corrida.';
-        const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-        window.open(url, '_blank');
-    };
-
-    window.addFavorite = function(driverId) {
-        console.log('Adicionar favorito:', driverId);
-        
-        // Simular adição aos favoritos
-        const favoriteItem = `
-            <div class="favorite-item" onclick="viewFavorite('${driverId}')">
-                <div class="favorite-avatar" style="background: #FFC400;">
-                    ${driverId.substring(0, 2).toUpperCase()}
-                    <span class="status-dot available" style="width: 12px; height: 12px;"></span>
-                </div>
-                <div class="favorite-name">${driverId.charAt(0).toUpperCase() + driverId.slice(1)}</div>
-                <div class="favorite-status" style="color: var(--available);">Disponível</div>
-            </div>
-        `;
-        
-        // Adicionar ao grid de favoritos
-        const favoritesGrid = document.querySelector('.favorites-grid');
-        if (favoritesGrid.children.length < 4) { // Limitar a 4 favoritos
-            favoritesGrid.insertAdjacentHTML('beforeend', favoriteItem);
-            alert('Adicionado aos favoritos!');
-        } else {
-            alert('Limite de favoritos atingido (4).');
-        }
-    };
-
-    window.viewFavorite = function(driverId) {
-        console.log('Ver favorito:', driverId);
-        alert(`Visualizando detalhes do motorista: ${driverId}`);
-    };
-
-    window.scheduleRide = function() {
-        console.log('Agendar corrida');
-        alert('Funcionalidade de agendamento em desenvolvimento\n\nEm breve você poderá:\n• Agendar corridas futuras\n• Definir local de busca\n• Salvar rotas frequentes');
-    };
-
-    window.emergencyCall = function() {
-        console.log('Emergência');
-        if (confirm('Deseja ligar para emergência (190)?')) {
-            window.location.href = 'tel:190';
-        }
-    };
-
-    window.shareLocation = function() {
-        console.log('Compartilhar localização');
-        
-        if (navigator.share) {
-            navigator.share({
-                title: 'Minha localização - TaxiBF',
-                text: 'Estou usando o TaxiBF para encontrar táxis próximos!',
-                url: window.location.href
-            }).then(() => {
-                console.log('Localização compartilhada com sucesso');
-            }).catch(console.error);
-        } else {
-            // Fallback para navegadores sem Web Share API
-            alert('Copie o link para compartilhar: ' + window.location.href);
-        }
-    };
-
-    window.rateApp = function() {
-        console.log('Avaliar app');
-        alert('⭐ Avalie nosso app! ⭐\n\nEsta funcionalidade irá redirecionar você para a loja de aplicativos quando o app for publicado.');
-    };
-
-    window.toggleProfile = function() {
-        console.log('Abrir perfil');
-        // Redirecionar para página de perfil
-        window.location.href = 'perfil.html';
-    };
-
-    window.logout = async function() {
-        if (confirm('Tem certeza que deseja sair?')) {
-            try {
-                await signOut(auth);
-                window.location.href = 'index.html';
-            } catch (error) {
-                console.error('Erro ao sair:', error);
-                alert('Erro ao fazer logout. Tente novamente.');
+        function loadFavoritesFromFirebase() {
+            // Exemplo de como buscar favoritos do Firebase
+            /*
+            if (currentUser) {
+                db.collection('users').doc(currentUser.uid)
+                    .collection('favorites')
+                    .onSnapshot((snapshot) => {
+                        favorites = [];
+                        snapshot.forEach(doc => {
+                            favorites.push({ id: doc.id, ...doc.data() });
+                        });
+                        updateFavoritesUI();
+                    });
             }
+            */
         }
-    };
-</script>
+
+        function updateDriversUI() {
+            const driverList = document.getElementById('driverList');
+            const count = nearbyDrivers.length;
+            
+            document.getElementById('driverCount').textContent = count;
+            
+            if (count === 0) {
+                document.getElementById('noDriversMessage').style.display = 'block';
+                return;
+            }
+            
+            document.getElementById('noDriversMessage').style.display = 'none';
+            
+            // Gerar HTML para cada motorista
+            let driversHTML = '';
+            nearbyDrivers.forEach(driver => {
+                driversHTML += `
+                    <div class="driver-card" onclick="selectDriver('${driver.id}')">
+                        <div class="driver-avatar">
+                            ${driver.initials || 'DR'}
+                            <span class="status-dot ${driver.status || 'available'}"></span>
+                        </div>
+                        <div class="driver-info">
+                            <div class="driver-name">${driver.name || 'Motorista'}</div>
+                            <div class="driver-details">${driver.vehicle || 'Veículo não informado'}</div>
+                        </div>
+                        <div class="driver-distance">${driver.distance || '--'}km</div>
+                        <div class="driver-actions">
+                            <button class="btn-icon-small" onclick="callDriver('${driver.id}'); event.stopPropagation();" title="Ligar">
+                                <i class="fas fa-phone"></i>
+                            </button>
+                            <button class="btn-icon-small" onclick="addToFavorites('${driver.id}'); event.stopPropagation();" title="Favoritar">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            driverList.innerHTML = driversHTML;
+        }
+
+        function updateFavoritesUI() {
+            const favoritesGrid = document.getElementById('favoritesGrid');
+            const count = favorites.length;
+            
+            document.getElementById('favoriteCount').textContent = count;
+            
+            if (count === 0) {
+                document.getElementById('noFavoritesMessage').style.display = 'block';
+                return;
+            }
+            
+            document.getElementById('noFavoritesMessage').style.display = 'none';
+            
+            // Gerar HTML para cada favorito
+            let favoritesHTML = '';
+            favorites.forEach(fav => {
+                favoritesHTML += `
+                    <div class="favorite-item" onclick="selectFavorite('${fav.driverId}')">
+                        <div class="favorite-avatar">
+                            ${fav.initials || 'FA'}
+                            <span class="status-dot ${fav.status || 'offline'}" style="width: 12px; height: 12px;"></span>
+                        </div>
+                        <div class="favorite-name">${fav.name || 'Favorito'}</div>
+                        <div class="favorite-status" style="color: var(--${fav.status || 'offline'});">
+                            ${fav.status === 'available' ? 'Disponível' : 
+                              fav.status === 'busy' ? 'Ocupado' : 'Offline'}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            favoritesGrid.innerHTML = favoritesHTML;
+        }
+
+        // Funções para interação com motoristas
+        window.selectDriver = function(driverId) {
+            console.log('Motorista selecionado:', driverId);
+            alert(`Motorista ${driverId} selecionado\n\nFuncionalidade de solicitação de corrida em desenvolvimento`);
+        };
+
+        window.callDriver = function(driverId) {
+            console.log('Ligar para motorista:', driverId);
+            alert('Funcionalidade de chamada telefônica em desenvolvimento');
+        };
+
+        window.addToFavorites = function(driverId) {
+            console.log('Adicionar aos favoritos:', driverId);
+            alert(`Motorista ${driverId} adicionado aos favoritos\n\nEsta funcionalidade será integrada com o Firebase`);
+        };
+
+        window.selectFavorite = function(driverId) {
+            console.log('Favorito selecionado:', driverId);
+            alert(`Favorito ${driverId} selecionado\n\nVocê pode solicitar uma corrida diretamente com este motorista`);
+        };
+    </script>
 </body>
 </html>
