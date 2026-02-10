@@ -505,7 +505,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let selectedProfile = null;
+        let selectedProfile = 'passageiro';
         let currentUser = null;
 
         const passengerCard = document.getElementById('passengerCard');
@@ -531,7 +531,7 @@
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
                     
-                    const displayName = userData.nomeCompleto || userData.displayName || user.email.split('@')[0];
+                    const displayName = userData.nomeCompleto || user.email.split('@')[0];
                     userName.textContent = displayName;
                     
                     const initials = displayName.substring(0, 2).toUpperCase();
@@ -545,14 +545,12 @@
                         </div>
                     `;
                     
-                    // VERIFICAÇÃO MODIFICADA: NUNCA redireciona automaticamente
-                    // O usuário SEMPRE deve escolher o perfil
+                    // SEM REDIRECIONAMENTO AUTOMÁTICO
+                    // Usuário sempre escolhe
                     
-                } else {
-                    showError('Erro ao carregar seus dados. Por favor, recarregue a página.');
                 }
             } catch (error) {
-                showError('Erro ao carregar seus dados. Tente novamente.');
+                // Não mostra erro para o usuário
             }
         });
 
@@ -588,21 +586,19 @@
                 
                 await updateDoc(doc(db, 'users', currentUser.uid), updateData);
                 
-                showSuccess('Perfil atualizado com sucesso! Redirecionando...');
+                showSuccess('Perfil atualizado! Redirecionando...');
                 
                 setTimeout(() => {
-                    // REDIRECIONAMENTO CORRETO
+                    // REDIRECIONAMENTO DIRETO PARA AS DASHBOARDS
                     if (selectedProfile === 'passageiro') {
-                        // Vai para criação do perfil do passageiro
-                        window.location.href = 'criar-perfil-passageiro.html';
+                        window.location.href = 'dashboard-passageiro.html';
                     } else {
-                        // Vai para criação do perfil do taxista
-                        window.location.href = 'criar-perfil-taxista.html';
+                        window.location.href = 'dashboard-taxi.html';
                     }
                 }, 1500);
 
             } catch (error) {
-                showError('Erro ao salvar sua escolha. Tente novamente.');
+                showError('Erro ao salvar sua escolha.');
                 setLoading(false);
             }
         };
@@ -612,7 +608,7 @@
                 await signOut(auth);
                 window.location.href = 'index.html';
             } catch (error) {
-                showError('Erro ao sair da conta. Tente novamente.');
+                showError('Erro ao sair da conta.');
             }
         });
 
