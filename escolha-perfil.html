@@ -505,7 +505,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let selectedProfile = null;
+        let selectedProfile = 'passageiro';
         let currentUser = null;
         let userData = null;
 
@@ -546,14 +546,18 @@
                         </div>
                     `;
                     
-                    if (!userData.tipoPerfil && !userData.accountType) {
+                    if (userData.tipoPerfil === 'passageiro') {
+                        window.location.href = 'dashboard-passageiro.html';
+                    } else if (userData.tipoPerfil === 'taxista') {
+                        window.location.href = 'dashboard-taxi.html';
+                    } else if (!userData.tipoPerfil) {
                         selectProfile('passageiro');
                     }
                 } else {
-                    showError('Erro ao carregar seus dados. Por favor, recarregue a página.');
+                    showError('Erro ao carregar seus dados.');
                 }
             } catch (error) {
-                showError('Erro ao carregar seus dados. Tente novamente.');
+                showError('Erro ao carregar seus dados.');
             }
         });
 
@@ -595,12 +599,12 @@
                     if (selectedProfile === 'passageiro') {
                         window.location.href = 'dashboard-passageiro.html';
                     } else {
-                        window.location.href = 'dashboard-taxista.html';
+                        window.location.href = 'dashboard-taxi.html';
                     }
                 }, 1500);
 
             } catch (error) {
-                showError('Erro ao salvar sua escolha. Tente novamente.');
+                showError('Erro ao salvar sua escolha.');
                 setLoading(false);
             }
         };
@@ -610,7 +614,7 @@
                 await signOut(auth);
                 window.location.href = 'index.html';
             } catch (error) {
-                showError('Erro ao sair da conta. Tente novamente.');
+                showError('Erro ao sair da conta.');
             }
         });
 
