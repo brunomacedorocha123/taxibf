@@ -428,7 +428,7 @@
             </div>
 
             <div class="profile-options">
-                <!-- Passenger Card -->
+                <!-- Passageiro -->
                 <div class="profile-card passenger" onclick="selectProfile('passageiro')" id="passengerCard">
                     <div class="selected-badge">
                         <i class="fas fa-check"></i> Selecionado
@@ -450,7 +450,7 @@
                     </div>
                 </div>
 
-                <!-- Driver Card -->
+                <!-- Motorista -->
                 <div class="profile-card driver" onclick="selectProfile('taxista')" id="driverCard">
                     <div class="selected-badge">
                         <i class="fas fa-check"></i> Selecionado
@@ -505,9 +505,8 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let selectedProfile = 'passageiro';
+        let selectedProfile = null;
         let currentUser = null;
-        let userData = null;
 
         const passengerCard = document.getElementById('passengerCard');
         const driverCard = document.getElementById('driverCard');
@@ -530,7 +529,7 @@
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
                 
                 if (userDoc.exists()) {
-                    userData = userDoc.data();
+                    const userData = userDoc.data();
                     
                     const displayName = userData.nomeCompleto || userData.displayName || user.email.split('@')[0];
                     userName.textContent = displayName;
@@ -546,18 +545,14 @@
                         </div>
                     `;
                     
-                    if (userData.tipoPerfil === 'passageiro') {
-                        window.location.href = 'dashboard-passageiro.html';
-                    } else if (userData.tipoPerfil === 'taxista') {
-                        window.location.href = 'dashboard-taxi.html';
-                    } else if (!userData.tipoPerfil) {
-                        selectProfile('passageiro');
-                    }
+                    // VERIFICAÇÃO MODIFICADA: NUNCA redireciona automaticamente
+                    // O usuário SEMPRE deve escolher o perfil
+                    
                 } else {
-                    showError('Erro ao carregar seus dados.');
+                    showError('Erro ao carregar seus dados. Por favor, recarregue a página.');
                 }
             } catch (error) {
-                showError('Erro ao carregar seus dados.');
+                showError('Erro ao carregar seus dados. Tente novamente.');
             }
         });
 
@@ -596,15 +591,18 @@
                 showSuccess('Perfil atualizado com sucesso! Redirecionando...');
                 
                 setTimeout(() => {
+                    // REDIRECIONAMENTO CORRETO
                     if (selectedProfile === 'passageiro') {
-                        window.location.href = 'dashboard-passageiro.html';
+                        // Vai para criação do perfil do passageiro
+                        window.location.href = 'criar-perfil-passageiro.html';
                     } else {
-                        window.location.href = 'dashboard-taxi.html';
+                        // Vai para criação do perfil do taxista
+                        window.location.href = 'criar-perfil-taxista.html';
                     }
                 }, 1500);
 
             } catch (error) {
-                showError('Erro ao salvar sua escolha.');
+                showError('Erro ao salvar sua escolha. Tente novamente.');
                 setLoading(false);
             }
         };
@@ -614,7 +612,7 @@
                 await signOut(auth);
                 window.location.href = 'index.html';
             } catch (error) {
-                showError('Erro ao sair da conta.');
+                showError('Erro ao sair da conta. Tente novamente.');
             }
         });
 
@@ -646,6 +644,7 @@
             }
         }
 
+        // Seleciona perfil padrão quando a página carrega
         selectProfile('passageiro');
     </script>
 </body>
