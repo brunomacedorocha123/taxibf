@@ -119,7 +119,6 @@
 
         .user-avatar:hover {
             transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(255, 196, 0, 0.3);
         }
 
         .btn-logout {
@@ -237,10 +236,6 @@
             transition: all 0.3s;
         }
 
-        .radius-selector select:hover {
-            background: #e0e0e0;
-        }
-
         .location-btn {
             background: var(--taxi-yellow);
             border: none;
@@ -258,7 +253,6 @@
 
         .location-btn:hover {
             transform: scale(1.1);
-            box-shadow: 0 6px 25px rgba(255, 196, 0, 0.6);
         }
 
         .location-btn i {
@@ -348,11 +342,11 @@
             cursor: pointer;
             transition: all 0.3s;
             border: 2px solid transparent;
+            min-height: 80px;
         }
 
         .driver-card:hover {
             border-color: var(--taxi-yellow);
-            transform: translateX(8px);
             background: rgba(255, 196, 0, 0.05);
         }
 
@@ -368,6 +362,7 @@
             font-size: 1.3rem;
             position: relative;
             color: var(--dark-graphite);
+            flex-shrink: 0;
         }
 
         .status-dot {
@@ -378,7 +373,6 @@
             height: 16px;
             border-radius: 50%;
             border: 3px solid var(--white);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .status-dot.available { background: var(--available); }
@@ -388,6 +382,7 @@
         .driver-info {
             flex: 1;
             min-width: 0;
+            overflow: hidden;
         }
 
         .driver-name {
@@ -395,19 +390,17 @@
             margin-bottom: 0.3rem;
             font-size: 1rem;
             color: var(--dark-graphite);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .driver-details {
             font-size: 0.85rem;
             color: #666;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .driver-rating {
-            color: var(--taxi-yellow);
-            font-size: 0.8rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .driver-distance {
@@ -416,11 +409,13 @@
             font-size: 1.1rem;
             white-space: nowrap;
             margin: 0 0.5rem;
+            flex-shrink: 0;
         }
 
         .driver-actions {
             display: flex;
             gap: 0.6rem;
+            flex-shrink: 0;
         }
 
         .btn-icon-small {
@@ -436,17 +431,12 @@
             justify-content: center;
             color: #666;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            flex-shrink: 0;
         }
 
         .btn-icon-small:hover {
             background: var(--taxi-yellow);
             color: var(--dark-graphite);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 196, 0, 0.3);
-        }
-
-        .btn-icon-small i {
-            font-size: 1rem;
         }
 
         /* Favorites */
@@ -469,7 +459,6 @@
         .favorite-item:hover {
             border-color: var(--taxi-yellow);
             background: rgba(255, 196, 0, 0.1);
-            transform: translateY(-5px);
         }
 
         .favorite-avatar {
@@ -486,7 +475,6 @@
             position: relative;
             color: var(--dark-graphite);
             border: 3px solid var(--white);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .favorite-name {
@@ -494,6 +482,9 @@
             font-size: 1rem;
             margin-bottom: 0.3rem;
             color: var(--dark-graphite);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .favorite-status {
@@ -502,6 +493,7 @@
             padding: 0.2rem 0.8rem;
             border-radius: 12px;
             display: inline-block;
+            white-space: nowrap;
         }
 
         .status-available { background: rgba(46, 204, 113, 0.15); color: var(--available); }
@@ -533,8 +525,6 @@
         .action-btn:hover {
             border-color: var(--taxi-yellow);
             background: rgba(255, 196, 0, 0.1);
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(255, 196, 0, 0.15);
         }
 
         .action-btn i {
@@ -553,13 +543,13 @@
             text-align: center;
             padding: 3rem 2rem;
             color: #888;
+            grid-column: 1 / -1;
         }
 
         .empty-state i {
             font-size: 3.5rem;
             margin-bottom: 1.5rem;
             color: #ddd;
-            opacity: 0.7;
         }
 
         .empty-state p {
@@ -585,11 +575,6 @@
             border-radius: 50%;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .mobile-menu-btn:hover {
-            background: var(--light-gray);
         }
 
         /* Responsive */
@@ -619,7 +604,6 @@
                 flex-direction: column;
                 padding: 2rem;
                 box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-                z-index: 1000;
             }
             
             .nav-menu.active {
@@ -722,13 +706,6 @@
             margin-bottom: 2rem;
         }
 
-        .loading-text {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--dark-graphite);
-            margin-top: 1rem;
-        }
-
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -743,32 +720,32 @@
             </a>
             
             <div class="nav-menu" id="navMenu">
-                <a href="#" class="nav-item active" onclick="showSection('map')">
+                <a href="#" class="nav-item active">
                     <i class="fas fa-map-marker-alt"></i>
                     <span>Mapa</span>
                 </a>
-                <a href="#" class="nav-item" onclick="showSection('favorites')">
+                <a href="#" class="nav-item">
                     <i class="fas fa-star"></i>
                     <span>Favoritos</span>
                 </a>
-                <a href="#" class="nav-item" onclick="showSection('history')">
+                <a href="#" class="nav-item">
                     <i class="fas fa-history"></i>
                     <span>Histórico</span>
                 </a>
-                <a href="#" class="nav-item" onclick="showSection('schedule')">
+                <a href="#" class="nav-item">
                     <i class="fas fa-calendar"></i>
                     <span>Agendar</span>
                 </a>
             </div>
 
             <div class="user-menu">
-                <div class="user-avatar" id="userAvatar" onclick="goToProfile()">
-                    JP
+                <div class="user-avatar" id="userAvatar">
+                    --
                 </div>
-                <button class="btn-logout" onclick="logout()" title="Sair">
+                <button class="btn-logout" title="Sair">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
-                <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
@@ -784,14 +761,14 @@
                     <div class="map-controls">
                         <div class="radius-selector">
                             <label><i class="fas fa-ruler"></i> Raio de busca:</label>
-                            <select id="radiusSelect" onchange="updateRadius()">
+                            <select id="radiusSelect">
                                 <option value="1">1 km</option>
                                 <option value="2" selected>2 km</option>
                                 <option value="5">5 km</option>
                                 <option value="10">10 km</option>
                             </select>
                         </div>
-                        <button class="location-btn" onclick="centerMap()" title="Centralizar no minha localização">
+                        <button class="location-btn" title="Centralizar no minha localização">
                             <i class="fas fa-crosshairs"></i>
                         </button>
                     </div>
@@ -799,7 +776,7 @@
                     <div class="map-placeholder">
                         <i class="fas fa-map-marked-alt"></i>
                         <p>Mapa Interativo</p>
-                        <small>Sua localização e motoristas próximos serão exibidos aqui</small>
+                        <small>Ative sua localização para ver motoristas próximos</small>
                     </div>
                 </div>
             </div>
@@ -813,11 +790,15 @@
                             <i class="fas fa-taxi"></i>
                             Motoristas Próximos
                         </h3>
-                        <span class="badge" id="driverCount">4</span>
+                        <span class="badge" id="driverCount">0</span>
                     </div>
                     
                     <div class="driver-list" id="driverList">
-                        <!-- Motoristas carregados via JavaScript -->
+                        <div class="empty-state">
+                            <i class="fas fa-taxi"></i>
+                            <p>Nenhum motorista próximo</p>
+                            <small>Ative sua localização para ver motoristas</small>
+                        </div>
                     </div>
                 </div>
 
@@ -828,11 +809,15 @@
                             <i class="fas fa-heart"></i>
                             Meus Favoritos
                         </h3>
-                        <span class="badge" id="favoriteCount">2</span>
+                        <span class="badge" id="favoriteCount">0</span>
                     </div>
                     
                     <div class="favorites-grid" id="favoritesGrid">
-                        <!-- Favoritos carregados via JavaScript -->
+                        <div class="empty-state">
+                            <i class="far fa-star"></i>
+                            <p>Nenhum motorista favorito</p>
+                            <small>Adicione motoristas aos favoritos</small>
+                        </div>
                     </div>
                 </div>
 
@@ -846,19 +831,19 @@
                     </div>
                     
                     <div class="quick-actions">
-                        <button class="action-btn" onclick="scheduleRide()">
+                        <button class="action-btn" id="btnSchedule">
                             <i class="fas fa-calendar-plus"></i>
                             <span>Agendar</span>
                         </button>
-                        <button class="action-btn" onclick="requestRide()">
+                        <button class="action-btn" id="btnRequest">
                             <i class="fas fa-taxi"></i>
                             <span>Chamar Taxi</span>
                         </button>
-                        <button class="action-btn" onclick="shareLocation()">
+                        <button class="action-btn" id="btnShare">
                             <i class="fas fa-share-alt"></i>
                             <span>Compartilhar</span>
                         </button>
-                        <button class="action-btn" onclick="showHelp()">
+                        <button class="action-btn" id="btnHelp">
                             <i class="fas fa-question-circle"></i>
                             <span>Ajuda</span>
                         </button>
@@ -871,267 +856,185 @@
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner-large"></div>
-        <div class="loading-text">Carregando seu dashboard...</div>
     </div>
 
     <script>
-        // Dados mockados
-        const nearbyDrivers = [
-            {
-                id: 1,
-                name: "Carlos Silva",
-                initials: "CS",
-                vehicle: "Toyota Corolla • Prata",
-                rating: 4.9,
-                distance: "0.8",
-                status: "available"
-            },
-            {
-                id: 2,
-                name: "Ana Santos",
-                initials: "AS",
-                vehicle: "Honda Civic • Preto",
-                rating: 4.7,
-                distance: "1.2",
-                status: "available"
-            },
-            {
-                id: 3,
-                name: "Roberto Lima",
-                initials: "RL",
-                vehicle: "Fiat Siena • Branco",
-                rating: 4.8,
-                distance: "2.1",
-                status: "busy"
-            },
-            {
-                id: 4,
-                name: "Mariana Costa",
-                initials: "MC",
-                vehicle: "VW Voyage • Prata",
-                rating: 4.9,
-                distance: "3.5",
-                status: "available"
-            }
-        ];
+        // Elementos DOM
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const navMenu = document.getElementById('navMenu');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const userAvatar = document.getElementById('userAvatar');
+        const driverList = document.getElementById('driverList');
+        const favoritesGrid = document.getElementById('favoritesGrid');
+        const driverCount = document.getElementById('driverCount');
+        const favoriteCount = document.getElementById('favoriteCount');
+        const radiusSelect = document.getElementById('radiusSelect');
+        const locationBtn = document.querySelector('.location-btn');
 
-        const favoriteDrivers = [
-            {
-                id: 101,
-                name: "Antônio",
-                initials: "AM",
-                status: "available"
-            },
-            {
-                id: 102,
-                name: "Carla",
-                initials: "CR",
-                status: "busy"
-            }
-        ];
+        // Botões de ação
+        const btnSchedule = document.getElementById('btnSchedule');
+        const btnRequest = document.getElementById('btnRequest');
+        const btnShare = document.getElementById('btnShare');
+        const btnHelp = document.getElementById('btnHelp');
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
-            loadDashboardData();
-            
-            setTimeout(() => {
-                document.getElementById('loadingOverlay').classList.remove('active');
-            }, 1000);
+            initializeApp();
         });
 
-        function loadDashboardData() {
-            loadNearbyDrivers();
-            loadFavorites();
+        function initializeApp() {
+            // Configurar eventos
+            setupEventListeners();
+            
+            // Carregar dados do usuário
+            loadUserData();
+            
+            // Esconder loading após 1 segundo
+            setTimeout(() => {
+                loadingOverlay.classList.remove('active');
+            }, 1000);
         }
 
-        function loadNearbyDrivers() {
-            const driverList = document.getElementById('driverList');
-            const driverCount = document.getElementById('driverCount');
+        function setupEventListeners() {
+            // Menu mobile
+            mobileMenuBtn.addEventListener('click', toggleMobileMenu);
             
-            driverCount.textContent = nearbyDrivers.length.toString();
-            
-            let driversHTML = '';
-            nearbyDrivers.forEach(driver => {
-                const statusText = driver.status === 'available' ? 'Disponível' : 
-                                  driver.status === 'busy' ? 'Ocupado' : 'Offline';
-                
-                driversHTML += `
-                    <div class="driver-card" onclick="selectDriver(${driver.id})">
-                        <div class="driver-avatar">
-                            ${driver.initials}
-                            <span class="status-dot ${driver.status}"></span>
-                        </div>
-                        <div class="driver-info">
-                            <div class="driver-name">${driver.name}</div>
-                            <div class="driver-details">
-                                ${driver.vehicle}
-                                <span class="driver-rating">
-                                    <i class="fas fa-star"></i> ${driver.rating}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="driver-distance">${driver.distance}km</div>
-                        <div class="driver-actions">
-                            <button class="btn-icon-small" onclick="callDriver(${driver.id}); event.stopPropagation();" title="Ligar">
-                                <i class="fas fa-phone"></i>
-                            </button>
-                            <button class="btn-icon-small" onclick="toggleFavorite(${driver.id}); event.stopPropagation();" title="Favoritar">
-                                <i class="far fa-star"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            driverList.innerHTML = driversHTML;
-        }
-
-        function loadFavorites() {
-            const favoritesGrid = document.getElementById('favoritesGrid');
-            const favoriteCount = document.getElementById('favoriteCount');
-            
-            favoriteCount.textContent = favoriteDrivers.length.toString();
-            
-            let favoritesHTML = '';
-            favoriteDrivers.forEach(driver => {
-                const statusClass = `status-${driver.status}`;
-                const statusText = driver.status === 'available' ? 'Disponível' : 
-                                  driver.status === 'busy' ? 'Ocupado' : 'Offline';
-                
-                favoritesHTML += `
-                    <div class="favorite-item" onclick="selectFavorite(${driver.id})">
-                        <div class="favorite-avatar">
-                            ${driver.initials}
-                            <span class="status-dot ${driver.status}" style="width: 14px; height: 14px;"></span>
-                        </div>
-                        <div class="favorite-name">${driver.name}</div>
-                        <div class="favorite-status ${statusClass}">${statusText}</div>
-                    </div>
-                `;
-            });
-            
-            favoritesGrid.innerHTML = favoritesHTML;
-        }
-
-        // Funções de navegação
-        function showSection(section) {
+            // Itens do menu de navegação
             document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    setActiveNavItem(this);
+                });
             });
-            event.target.closest('.nav-item').classList.add('active');
             
-            document.getElementById('navMenu').classList.remove('active');
+            // Botão de logout
+            document.querySelector('.btn-logout').addEventListener('click', logout);
             
-            if(section === 'map') {
-                alert('Mapa - Selecione seu destino no mapa');
-            } else if(section === 'favorites') {
-                alert('Favoritos - Veja seus motoristas favoritos');
-            } else if(section === 'history') {
-                alert('Histórico - Veja suas corridas anteriores');
-            } else if(section === 'schedule') {
-                alert('Agendar - Agende uma corrida para depois');
-            }
+            // Avatar do usuário
+            userAvatar.addEventListener('click', goToProfile);
+            
+            // Botões de ação
+            btnSchedule.addEventListener('click', scheduleRide);
+            btnRequest.addEventListener('click', requestRide);
+            btnShare.addEventListener('click', shareLocation);
+            btnHelp.addEventListener('click', showHelp);
+            
+            // Controles do mapa
+            radiusSelect.addEventListener('change', updateRadius);
+            locationBtn.addEventListener('click', centerMap);
+            
+            // Fechar menu mobile ao clicar fora
+            document.addEventListener('click', function(event) {
+                if (navMenu.classList.contains('active') && 
+                    !navMenu.contains(event.target) && 
+                    !mobileMenuBtn.contains(event.target)) {
+                    navMenu.classList.remove('active');
+                }
+            });
+        }
+
+        function loadUserData() {
+            // Simular carregamento de dados do usuário
+            // Na versão real, isso viria do Firebase
+            userAvatar.textContent = '--';
         }
 
         function toggleMobileMenu() {
-            const navMenu = document.getElementById('navMenu');
             navMenu.classList.toggle('active');
+        }
+
+        function setActiveNavItem(item) {
+            document.querySelectorAll('.nav-item').forEach(navItem => {
+                navItem.classList.remove('active');
+            });
+            item.classList.add('active');
+            navMenu.classList.remove('active');
         }
 
         function goToProfile() {
             window.location.href = 'perfil-passageiro.html';
         }
 
-        // Funções do mapa
         function updateRadius() {
-            const radius = document.getElementById('radiusSelect').value;
+            // Mostrar loading
+            loadingOverlay.classList.add('active');
+            
+            // Simular busca de motoristas
+            setTimeout(() => {
+                loadingOverlay.classList.remove('active');
+                // Atualizar lista vazia
+                driverList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-taxi"></i>
+                        <p>Nenhum motorista encontrado</p>
+                        <small>Raio de busca: ${radiusSelect.value} km</small>
+                    </div>
+                `;
+                driverCount.textContent = '0';
+            }, 800);
         }
 
         function centerMap() {
-            document.getElementById('loadingOverlay').classList.add('active');
+            loadingOverlay.classList.add('active');
             
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
-                    (position) => {
+                    () => {
                         setTimeout(() => {
-                            document.getElementById('loadingOverlay').classList.remove('active');
-                            alert('Localização centralizada com sucesso!');
-                        }, 1000);
+                            loadingOverlay.classList.remove('active');
+                        }, 800);
                     },
                     () => {
-                        document.getElementById('loadingOverlay').classList.remove('active');
-                        alert('Ative a localização para usar esta função.');
+                        loadingOverlay.classList.remove('active');
+                        alert('Por favor, ative a localização para usar esta função.');
                     }
                 );
             } else {
-                document.getElementById('loadingOverlay').classList.remove('active');
+                loadingOverlay.classList.remove('active');
                 alert('Seu navegador não suporta geolocalização.');
             }
         }
 
-        // Funções de motoristas
-        function selectDriver(driverId) {
-            alert('Funcionalidade de solicitar corrida em desenvolvimento');
-        }
-
-        function callDriver(driverId) {
-            alert('Abrindo discador...');
-        }
-
-        function toggleFavorite(driverId) {
-            alert('Motorista adicionado aos favoritos!');
-        }
-
-        function selectFavorite(driverId) {
-            alert('Motorista favorito selecionado');
-        }
-
-        // Ações rápidas
         function scheduleRide() {
-            alert('Agendar corrida - Em breve');
+            loadingOverlay.classList.add('active');
+            setTimeout(() => {
+                loadingOverlay.classList.remove('active');
+                alert('Funcionalidade de agendamento em desenvolvimento.');
+            }, 500);
         }
 
         function requestRide() {
-            alert('Chamando táxi mais próximo...');
+            loadingOverlay.classList.add('active');
+            setTimeout(() => {
+                loadingOverlay.classList.remove('active');
+                alert('Em breve você poderá solicitar corridas aqui.');
+            }, 500);
         }
 
         function shareLocation() {
             if (navigator.share) {
                 navigator.share({
                     title: 'TaxiBF',
-                    text: 'Estou usando o TaxiBF!',
-                    url: window.location.href
+                    text: 'Baixe o TaxiBF para suas corridas!',
+                    url: window.location.origin
                 });
             } else {
-                alert('Link copiado! Compartilhe com seus amigos.');
+                alert('Compartilhe o link: ' + window.location.origin);
             }
         }
 
         function showHelp() {
-            alert('Central de Ajuda: suporte@taxibf.com');
+            alert('Central de Ajuda:\n\nEmail: suporte@taxibf.com\nTelefone: (11) 99999-9999');
         }
 
-        // Logout
         function logout() {
             if (confirm('Deseja realmente sair?')) {
-                document.getElementById('loadingOverlay').classList.add('active');
+                loadingOverlay.classList.add('active');
                 setTimeout(() => {
                     window.location.href = 'login.html';
                 }, 1000);
             }
         }
-
-        // Fechar menu mobile ao clicar fora
-        document.addEventListener('click', function(event) {
-            const navMenu = document.getElementById('navMenu');
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            
-            if (navMenu.classList.contains('active') && 
-                !navMenu.contains(event.target) && 
-                !mobileMenuBtn.contains(event.target)) {
-                navMenu.classList.remove('active');
-            }
-        });
     </script>
 </body>
 </html>
