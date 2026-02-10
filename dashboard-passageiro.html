@@ -1,9 +1,9 @@
-=<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - TaxiBF Passageiro</title>
+    <title>TaxiBF - Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -15,7 +15,6 @@
             --available: #2ECC71;
             --busy: #E74C3C;
             --offline: #9E9E9E;
-            --profile-bg: #1C1C1C;
         }
 
         * {
@@ -53,19 +52,15 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            font-weight: 800;
-            font-size: 1.8rem;
-            color: var(--dark-graphite);
             text-decoration: none;
         }
 
         .logo img {
-            height: 60px;
+            height: 50px;
             width: auto;
             object-fit: contain;
-            transform: scale(3);
-            margin-left: 10px;
+            transform: scale(2.5);
+            margin-left: 15px;
         }
 
         .nav-menu {
@@ -361,11 +356,6 @@
             background: rgba(255, 196, 0, 0.05);
         }
 
-        .driver-card.active {
-            border-color: var(--taxi-yellow);
-            background: rgba(255, 196, 0, 0.1);
-        }
-
         .driver-avatar {
             width: 55px;
             height: 55px;
@@ -582,152 +572,6 @@
             font-size: 0.9rem;
         }
 
-        /* Profile Panel */
-        .profile-panel {
-            position: fixed;
-            top: 0;
-            right: -400px;
-            width: 380px;
-            height: 100vh;
-            background: var(--profile-bg);
-            color: var(--white);
-            z-index: 2000;
-            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: -5px 0 30px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .profile-panel.active {
-            right: 0;
-        }
-
-        .profile-header {
-            padding: 2.5rem 2rem 1.5rem;
-            background: linear-gradient(135deg, #2C2C2C, #1C1C1C);
-            border-bottom: 2px solid var(--taxi-yellow);
-        }
-
-        .profile-close {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            background: none;
-            border: none;
-            color: var(--white);
-            font-size: 1.5rem;
-            cursor: pointer;
-            opacity: 0.7;
-            transition: opacity 0.3s;
-            z-index: 10;
-        }
-
-        .profile-close:hover {
-            opacity: 1;
-        }
-
-        .profile-avatar-large {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--taxi-yellow), #FFD700);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 2.5rem;
-            color: var(--dark-graphite);
-            margin: 0 auto 1.5rem;
-            border: 4px solid rgba(255,255,255,0.2);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-        }
-
-        .profile-name {
-            font-size: 1.8rem;
-            font-weight: 800;
-            text-align: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .profile-email {
-            text-align: center;
-            color: #aaa;
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .profile-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 1rem;
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--taxi-yellow);
-            margin-bottom: 0.3rem;
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: #aaa;
-            font-weight: 500;
-        }
-
-        .profile-menu {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1.5rem;
-        }
-
-        .profile-menu-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1.2rem 1.5rem;
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            margin-bottom: 0.8rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid transparent;
-        }
-
-        .profile-menu-item:hover {
-            background: rgba(255, 196, 0, 0.1);
-            border-color: var(--taxi-yellow);
-            transform: translateX(5px);
-        }
-
-        .profile-menu-item i {
-            font-size: 1.2rem;
-            color: var(--taxi-yellow);
-            width: 24px;
-        }
-
-        .profile-menu-item span {
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--white);
-        }
-
-        .profile-footer {
-            padding: 1.5rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.2);
-        }
-
         /* Mobile Menu */
         .mobile-menu-btn {
             display: none;
@@ -796,13 +640,8 @@
             }
             
             .logo img {
-                height: 50px;
-                transform: scale(2.5);
-            }
-            
-            .profile-panel {
-                width: 100%;
-                right: -100%;
+                transform: scale(2.2);
+                margin-left: 10px;
             }
         }
 
@@ -849,8 +688,8 @@
             }
             
             .logo img {
-                height: 40px;
-                transform: scale(2);
+                transform: scale(1.8);
+                margin-left: 5px;
             }
         }
 
@@ -893,25 +732,6 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
-        /* Overlay para quando o profile panel estiver aberto */
-        .profile-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1999;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .profile-overlay.active {
-            display: block;
-            opacity: 1;
-        }
     </style>
 </head>
 <body>
@@ -920,7 +740,6 @@
         <div class="nav-container">
             <a href="#" class="logo">
                 <img src="logotaxibf.png" alt="TaxiBF Logo">
-                <span>TaxiBF</span>
             </a>
             
             <div class="nav-menu" id="navMenu">
@@ -943,7 +762,7 @@
             </div>
 
             <div class="user-menu">
-                <div class="user-avatar" id="userAvatar" onclick="toggleProfile()">
+                <div class="user-avatar" id="userAvatar" onclick="goToProfile()">
                     JP
                 </div>
                 <button class="btn-logout" onclick="logout()" title="Sair">
@@ -998,7 +817,7 @@
                     </div>
                     
                     <div class="driver-list" id="driverList">
-                        <!-- Motoristas serão carregados dinamicamente -->
+                        <!-- Motoristas carregados via JavaScript -->
                     </div>
                 </div>
 
@@ -1013,7 +832,7 @@
                     </div>
                     
                     <div class="favorites-grid" id="favoritesGrid">
-                        <!-- Favoritos serão carregados dinamicamente -->
+                        <!-- Favoritos carregados via JavaScript -->
                     </div>
                 </div>
 
@@ -1049,73 +868,6 @@
         </div>
     </main>
 
-    <!-- Profile Panel -->
-    <div class="profile-panel" id="profilePanel">
-        <button class="profile-close" onclick="toggleProfile()">
-            <i class="fas fa-times"></i>
-        </button>
-        
-        <div class="profile-header">
-            <div class="profile-avatar-large" id="profileAvatarLarge">
-                JP
-            </div>
-            <h2 class="profile-name" id="profileName">João Pereira</h2>
-            <p class="profile-email" id="profileEmail">joao.pereira@email.com</p>
-            
-            <div class="profile-stats">
-                <div class="stat-item">
-                    <div class="stat-value">42</div>
-                    <div class="stat-label">Viagens</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">4.8</div>
-                    <div class="stat-label">Avaliação</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">5</div>
-                    <div class="stat-label">Favoritos</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="profile-menu">
-            <div class="profile-menu-item" onclick="editProfile()">
-                <i class="fas fa-user-edit"></i>
-                <span>Editar Perfil</span>
-            </div>
-            <div class="profile-menu-item" onclick="viewPaymentMethods()">
-                <i class="fas fa-credit-card"></i>
-                <span>Pagamentos</span>
-            </div>
-            <div class="profile-menu-item" onclick="viewHistory()">
-                <i class="fas fa-history"></i>
-                <span>Histórico Completo</span>
-            </div>
-            <div class="profile-menu-item" onclick="viewSafety()">
-                <i class="fas fa-shield-alt"></i>
-                <span>Segurança</span>
-            </div>
-            <div class="profile-menu-item" onclick="viewSettings()">
-                <i class="fas fa-cog"></i>
-                <span>Configurações</span>
-            </div>
-            <div class="profile-menu-item" onclick="showSupport()">
-                <i class="fas fa-headset"></i>
-                <span>Suporte</span>
-            </div>
-        </div>
-        
-        <div class="profile-footer">
-            <button class="action-btn" onclick="logout()" style="width: 100%; background: rgba(231, 76, 60, 0.1); border-color: #E74C3C;">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Sair da Conta</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- Profile Overlay -->
-    <div class="profile-overlay" id="profileOverlay" onclick="toggleProfile()"></div>
-
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner-large"></div>
@@ -1123,18 +875,7 @@
     </div>
 
     <script>
-        // Dados do usuário (mock - substituir por dados do Firebase)
-        const userData = {
-            name: "João Pereira",
-            email: "joao.pereira@email.com",
-            initials: "JP",
-            phone: "(11) 98765-4321",
-            rating: 4.8,
-            trips: 42,
-            favorites: 5
-        };
-
-        // Dados de motoristas próximos (mock)
+        // Dados mockados
         const nearbyDrivers = [
             {
                 id: 1,
@@ -1174,7 +915,6 @@
             }
         ];
 
-        // Dados de motoristas favoritos (mock)
         const favoriteDrivers = [
             {
                 id: 101,
@@ -1192,55 +932,21 @@
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
-            initializeDashboard();
-        });
-
-        function initializeDashboard() {
-            // Atualizar UI do usuário
-            updateUserUI();
+            loadDashboardData();
             
-            // Carregar motoristas próximos
-            loadNearbyDrivers();
-            
-            // Carregar favoritos
-            loadFavorites();
-            
-            // Esconder loading após 1.5 segundos
             setTimeout(() => {
                 document.getElementById('loadingOverlay').classList.remove('active');
-            }, 1500);
-        }
+            }, 1000);
+        });
 
-        function updateUserUI() {
-            // Atualizar avatar no navbar
-            document.getElementById('userAvatar').textContent = userData.initials;
-            
-            // Atualizar painel de perfil
-            document.getElementById('profileAvatarLarge').textContent = userData.initials;
-            document.getElementById('profileName').textContent = userData.name;
-            document.getElementById('profileEmail').textContent = userData.email;
-            
-            // Atualizar estatísticas
-            document.querySelector('.stat-value:nth-child(1)').textContent = userData.trips;
-            document.querySelector('.stat-value:nth-child(2)').textContent = userData.rating;
-            document.querySelector('.stat-value:nth-child(3)').textContent = userData.favorites;
+        function loadDashboardData() {
+            loadNearbyDrivers();
+            loadFavorites();
         }
 
         function loadNearbyDrivers() {
             const driverList = document.getElementById('driverList');
             const driverCount = document.getElementById('driverCount');
-            
-            if (nearbyDrivers.length === 0) {
-                driverList.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-taxi"></i>
-                        <p>Nenhum motorista próximo</p>
-                        <small>Ative sua localização para ver motoristas</small>
-                    </div>
-                `;
-                driverCount.textContent = '0';
-                return;
-            }
             
             driverCount.textContent = nearbyDrivers.length.toString();
             
@@ -1284,18 +990,6 @@
             const favoritesGrid = document.getElementById('favoritesGrid');
             const favoriteCount = document.getElementById('favoriteCount');
             
-            if (favoriteDrivers.length === 0) {
-                favoritesGrid.innerHTML = `
-                    <div class="empty-state" style="grid-column: 1 / -1;">
-                        <i class="far fa-star"></i>
-                        <p>Nenhum motorista favorito</p>
-                        <small>Adicione motoristas aos favoritos</small>
-                    </div>
-                `;
-                favoriteCount.textContent = '0';
-                return;
-            }
-            
             favoriteCount.textContent = favoriteDrivers.length.toString();
             
             let favoritesHTML = '';
@@ -1321,17 +1015,22 @@
 
         // Funções de navegação
         function showSection(section) {
-            // Atualizar menu ativo
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
             event.target.closest('.nav-item').classList.add('active');
             
-            // Fechar menu mobile se estiver aberto
             document.getElementById('navMenu').classList.remove('active');
             
-            // Mostrar seção correspondente
-            alert(`Seção ${section} - Em desenvolvimento`);
+            if(section === 'map') {
+                alert('Mapa - Selecione seu destino no mapa');
+            } else if(section === 'favorites') {
+                alert('Favoritos - Veja seus motoristas favoritos');
+            } else if(section === 'history') {
+                alert('Histórico - Veja suas corridas anteriores');
+            } else if(section === 'schedule') {
+                alert('Agendar - Agende uma corrida para depois');
+            }
         }
 
         function toggleMobileMenu() {
@@ -1339,151 +1038,88 @@
             navMenu.classList.toggle('active');
         }
 
+        function goToProfile() {
+            window.location.href = 'perfil-passageiro.html';
+        }
+
         // Funções do mapa
         function updateRadius() {
             const radius = document.getElementById('radiusSelect').value;
-            console.log(`Raio atualizado para: ${radius} km`);
-            // Aqui você implementaria a busca de motoristas com o novo raio
         }
 
         function centerMap() {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            loadingOverlay.classList.add('active');
+            document.getElementById('loadingOverlay').classList.add('active');
             
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        console.log('Localização obtida:', position.coords);
-                        
-                        // Simular busca de motoristas
                         setTimeout(() => {
-                            loadingOverlay.classList.remove('active');
-                            alert(`Localização centralizada!\n\nLatitude: ${position.coords.latitude.toFixed(6)}\nLongitude: ${position.coords.longitude.toFixed(6)}`);
+                            document.getElementById('loadingOverlay').classList.remove('active');
+                            alert('Localização centralizada com sucesso!');
                         }, 1000);
                     },
-                    (error) => {
-                        loadingOverlay.classList.remove('active');
-                        console.error('Erro na geolocalização:', error);
-                        alert('Não foi possível obter sua localização. Verifique as permissões do navegador.');
-                    },
-                    { enableHighAccuracy: true, timeout: 10000 }
+                    () => {
+                        document.getElementById('loadingOverlay').classList.remove('active');
+                        alert('Ative a localização para usar esta função.');
+                    }
                 );
             } else {
-                loadingOverlay.classList.remove('active');
+                document.getElementById('loadingOverlay').classList.remove('active');
                 alert('Seu navegador não suporta geolocalização.');
             }
         }
 
-        // Funções de interação com motoristas
+        // Funções de motoristas
         function selectDriver(driverId) {
-            const driver = nearbyDrivers.find(d => d.id === driverId);
-            if (driver) {
-                alert(`Solicitar corrida com ${driver.name}\n\nVeículo: ${driver.vehicle}\nDistância: ${driver.distance} km\n\nFuncionalidade de solicitação em desenvolvimento.`);
-            }
+            alert('Funcionalidade de solicitar corrida em desenvolvimento');
         }
 
         function callDriver(driverId) {
-            alert('Funcionalidade de chamada telefônica\n\nNa versão final, o app abrirá o discador com o número do motorista.');
+            alert('Abrindo discador...');
         }
 
         function toggleFavorite(driverId) {
-            const driver = nearbyDrivers.find(d => d.id === driverId);
-            if (driver) {
-                alert(`${driver.name} adicionado aos favoritos!`);
-                // Aqui você implementaria a lógica para adicionar/remover dos favoritos
-            }
+            alert('Motorista adicionado aos favoritos!');
         }
 
         function selectFavorite(driverId) {
-            const driver = favoriteDrivers.find(d => d.id === driverId);
-            if (driver) {
-                alert(`Motorista favorito: ${driver.name}\n\nStatus: ${driver.status === 'available' ? 'Disponível' : 'Ocupado'}\n\nVocê pode solicitar uma corrida diretamente.`);
-            }
+            alert('Motorista favorito selecionado');
         }
 
-        // Funções de ações rápidas
+        // Ações rápidas
         function scheduleRide() {
-            alert('Agendar Corrida\n\nEscolha data, horário e local de partida para agendar sua corrida.');
+            alert('Agendar corrida - Em breve');
         }
 
         function requestRide() {
-            alert('Solicitar Corrida Agora\n\nEncontraremos o motorista mais próximo para você.');
+            alert('Chamando táxi mais próximo...');
         }
 
         function shareLocation() {
             if (navigator.share) {
                 navigator.share({
-                    title: 'Minha Localização - TaxiBF',
-                    text: 'Estou usando o TaxiBF para encontrar táxis próximos!',
+                    title: 'TaxiBF',
+                    text: 'Estou usando o TaxiBF!',
                     url: window.location.href
                 });
             } else {
-                navigator.clipboard.writeText(window.location.href).then(() => {
-                    alert('Link copiado para a área de transferência!');
-                });
+                alert('Link copiado! Compartilhe com seus amigos.');
             }
         }
 
         function showHelp() {
-            alert('Central de Ajuda\n\nPara suporte, entre em contato:\n• WhatsApp: (11) 98765-4321\n• Email: suporte@taxibf.com\n• Telefone: 0800-123-4567');
+            alert('Central de Ajuda: suporte@taxibf.com');
         }
 
-        // Funções do perfil
-        function toggleProfile() {
-            const profilePanel = document.getElementById('profilePanel');
-            const profileOverlay = document.getElementById('profileOverlay');
-            
-            profilePanel.classList.toggle('active');
-            profileOverlay.classList.toggle('active');
-            
-            // Fechar menu mobile se estiver aberto
-            document.getElementById('navMenu').classList.remove('active');
-        }
-
-        function editProfile() {
-            alert('Editar Perfil\n\nAqui você pode atualizar suas informações pessoais.');
-        }
-
-        function viewPaymentMethods() {
-            alert('Métodos de Pagamento\n\nGerencie seus cartões e formas de pagamento.');
-        }
-
-        function viewHistory() {
-            alert('Histórico Completo\n\nVeja todas as suas viagens realizadas.');
-        }
-
-        function viewSafety() {
-            alert('Configurações de Segurança\n\nAjuste suas preferências de segurança e privacidade.');
-        }
-
-        function viewSettings() {
-            alert('Configurações do App\n\nPersonalize sua experiência no TaxiBF.');
-        }
-
-        function showSupport() {
-            alert('Suporte ao Cliente\n\nFale conosco para resolver qualquer problema.');
-        }
-
-        // Função de logout
+        // Logout
         function logout() {
-            if (confirm('Tem certeza que deseja sair da sua conta?')) {
-                const loadingOverlay = document.getElementById('loadingOverlay');
-                loadingOverlay.classList.add('active');
-                
-                // Simular processo de logout
+            if (confirm('Deseja realmente sair?')) {
+                document.getElementById('loadingOverlay').classList.add('active');
                 setTimeout(() => {
-                    loadingOverlay.classList.remove('active');
-                    alert('Você foi desconectado com sucesso!');
-                    // Redirecionar para página de login
                     window.location.href = 'login.html';
                 }, 1000);
             }
         }
-
-        // Fechar painel de perfil ao clicar no overlay
-        document.getElementById('profileOverlay').addEventListener('click', function() {
-            toggleProfile();
-        });
 
         // Fechar menu mobile ao clicar fora
         document.addEventListener('click', function(event) {
