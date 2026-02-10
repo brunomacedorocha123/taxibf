@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxiBF - Dashboard Taxista</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --taxi-yellow: #FFC400;
+            --dark-graphite: #1C1C1C;
+            --white: #FFFFFF;
+            --light-gray: #F5F5F5;
+            --available: #2ECC71;
+            --busy: #E74C3C;
+            --offline: #9E9E9E;
+            --verified: #3498db;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light-gray);
+            color: var(--dark-graphite);
+        }
+
+        /* Navbar */
+        .navbar {
+            background: var(--white);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+            transform: scale(2.5);
+            margin-left: 15px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: var(--dark-graphite);
+        }
+
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--taxi-yellow);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--taxi-yellow), #FFD700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--dark-graphite);
+            cursor: pointer;
+            border: 3px solid var(--white);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-logout {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 1.3rem;
+            transition: color 0.3s;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-logout:hover {
+            color: var(--busy);
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 100px;
+            padding: 2rem;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+        }
+
+        /* Status Card */
+        .status-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark-graphite);
+        }
+
+        .verified-badge {
+            background: rgba(52, 152, 219, 0.1);
+            color: var(--verified);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .verified-badge i {
+            font-size: 0.9rem;
+        }
+
+        /* Status Selector */
+        .status-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-btn {
+            padding: 1.2rem 0.5rem;
+            border-radius: 15px;
+            border: 2px solid #e8e8e8;
+            background: var(--white);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .status-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .status-btn.active {
+            border-color: var(--taxi-yellow);
+            background: rgba(255, 196, 0, 0.1);
+        }
+
+        .status-btn.available.active {
+            border-color: var(--available);
+            background: rgba(46, 204, 113, 0.1);
+        }
+
+        .status-btn.busy.active {
+            border-color: var(--busy);
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .status-btn.offline.active {
+            border-color: var(--offline);
+            background: rgba(158, 158, 158, 0.1);
+        }
+
+        .status-icon {
+            font-size: 1.8rem;
+        }
+
+        .status-btn.available .status-icon { color: var(--available); }
+        .status-btn.busy .status-icon { color: var(--busy); }
+        .status-btn.offline .status-icon { color: var(--offline); }
+
+        /* Credentials */
+        .credentials {
+            background: var(--light-gray);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .credential-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .credential-item:last-child {
+            border-bottom: none;
+        }
+
+        .credential-label {
+            font-size: 0.9rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .credential-label i {
+            color: var(--taxi-yellow);
+        }
+
+        .credential-value {
+            font-weight: 700;
+            color: var(--dark-graphite);
+            font-size: 0.95rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--light-gray);
+            border-radius: 15px;
+            padding: 1.2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            background: rgba(255, 196, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--dark-graphite);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 600;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .action-btn {
+            padding: 1.2rem 0.5rem;
+            border-radius: 15px;
+            border: 2px solid #e8e8e8;
+            background: var(--white);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+
+        .action-btn:hover {
+            border-color: var(--taxi-yellow);
+            background: rgba(255, 196, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .action-btn i {
+            font-size: 1.5rem;
+            color: var(--taxi-yellow);
+        }
+
+        .action-btn span {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--dark-graphite);
+        }
+
+        /* Map Section */
+        .map-container {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            height: 600px;
+            position: relative;
+        }
+
+        .map-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #e0e0e0 0%, #f0f0f0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #666;
+        }
+
+        .map-placeholder i {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            color: var(--taxi-yellow);
+            opacity: 0.7;
+        }
+
+        .map-placeholder p {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .map-placeholder small {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .map-controls {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            right: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .gps-status {
+            background: var(--white);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 600;
+            color: var(--dark-graphite);
+        }
+
+        .gps-status.active {
+            color: var(--available);
+        }
+
+        .gps-status.inactive {
+            color: var(--offline);
+        }
+
+        .location-btn {
+            background: var(--taxi-yellow);
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 196, 0, 0.4);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark-graphite);
+        }
+
+        .location-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .location-btn i {
+            font-size: 1.5rem;
+        }
+
+        /* Subscription Card */
+        .subscription-card {
+            background: linear-gradient(135deg, var(--taxi-yellow), #FFD700);
+            border-radius: 20px;
+            padding: 1.8rem;
+            margin-top: 1.5rem;
+            color: var(--dark-graphite);
+            box-shadow: 0 4px 20px rgba(255, 196, 0, 0.3);
+        }
+
+        .subscription-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .subscription-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+
+        .subscription-status {
+            background: var(--dark-graphite);
+            color: var(--white);
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .subscription-details {
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+
+        .btn-renew {
+            background: var(--dark-graphite);
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .btn-renew:hover {
+            background: #000;
+            transform: translateY(-2px);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--dark-graphite);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 300px 1fr;
+                gap: 1.5rem;
+            }
+            
+            .map-container {
+                height: 500px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--white);
+                flex-direction: column;
+                padding: 2rem;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .nav-item.active::after {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: flex;
+            }
+            
+            .main-content {
+                padding: 1rem;
+                margin-top: 90px;
+            }
+            
+            .logo img {
+                transform: scale(2.2);
+                margin-left: 10px;
+            }
+            
+            .map-container {
+                height: 400px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 0.5rem;
+            }
+            
+            .map-container {
+                height: 350px;
+                border-radius: 15px;
+            }
+            
+            .map-controls {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .gps-status {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .location-btn {
+                align-self: flex-end;
+                margin-top: -60px;
+            }
+            
+            .status-card {
+                padding: 1.5rem;
+            }
+            
+            .status-selector {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .logo img {
+                transform: scale(1.8);
+                margin-left: 5px;
+            }
+        }
+
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            flex-direction: column;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner-large {
+            width: 70px;
+            height: 70px;
+            border: 5px solid rgba(255, 196, 0, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--taxi-yellow);
+            animation: spin 1s linear infinite;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <img src="logotaxibf.png" alt="TaxiBF Logo">
+            </a>
+            
+            <div class="nav-menu" id="navMenu">
+                <a href="#" class="nav-item active">
+                    <i class="fas fa-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-history"></i>
+                    <span>Histórico</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-star"></i>
+                    <span>Avaliações</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Configurações</span>
+                </a>
+            </div>
+
+            <div class="user-menu">
+                <div class="user-avatar" id="userAvatar">
+                    TS
+                </div>
+                <button class="btn-logout" title="Sair">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="dashboard-grid">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Status Card -->
+                <div class="status-card">
+                    <div class="status-header">
+                        <h3 class="status-title">Meu Status</h3>
+                        <div class="verified-badge">
+                            <i class="fas fa-shield-alt"></i>
+                            VERIFICADO
+                        </div>
+                    </div>
+                    
+                    <div class="status-selector">
+                        <button class="status-btn available active" data-status="available">
+                            <i class="fas fa-check-circle status-icon"></i>
+                            Disponível
+                        </button>
+                        <button class="status-btn busy" data-status="busy">
+                            <i class="fas fa-user-clock status-icon"></i>
+                            Ocupado
+                        </button>
+                        <button class="status-btn offline" data-status="offline">
+                            <i class="fas fa-moon status-icon"></i>
+                            Ausente
+                        </button>
+                    </div>
+                    
+                    <div class="credentials">
+                        <div class="credential-item">
+                            <span class="credential-label">
+                                <i class="fas fa-id-card"></i>
+                                Alvará
+                            </span>
+                            <span class="credential-value" id="alvaraNumber">12345-SPT</span>
+                        </div>
+                        <div class="credential-item">
+                            <span class="credential-label">
+                                <i class="fas fa-car"></i>
+                                Placa
+                            </span>
+                            <span class="credential-value" id="placaVeiculo">ABC-1234</span>
+                        </div>
+                        <div class="credential-item">
+                            <span class="credential-label">
+                                <i class="fas fa-taxi"></i>
+                                Tipo
+                            </span>
+                            <span class="credential-value" id="tipoVeiculo">Taxi</span>
+                        </div>
+                        <div class="credential-item">
+                            <span class="credential-label">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Bairro
+                            </span>
+                            <span class="credential-value" id="bairroAtuacao">Centro</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="favoritosCount">24</div>
+                            <div class="stat-label">Favoritos</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="avaliacaoMedia">4.8</div>
+                            <div class="stat-label">Avaliação</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="status-card">
+                    <h3 class="status-title" style="margin-bottom: 1.5rem;">Ações Rápidas</h3>
+                    
+                    <div class="quick-actions">
+                        <button class="action-btn" id="btnEditProfile">
+                            <i class="fas fa-user-edit"></i>
+                            <span>Editar Perfil</span>
+                        </button>
+                        <button class="action-btn" id="btnNotifications">
+                            <i class="fas fa-bell"></i>
+                            <span>Notificações</span>
+                        </button>
+                        <button class="action-btn" id="btnHistory">
+                            <i class="fas fa-history"></i>
+                            <span>Histórico</span>
+                        </button>
+                        <button class="action-btn" id="btnHelp">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Ajuda</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Subscription -->
+                <div class="subscription-card">
+                    <div class="subscription-header">
+                        <h3 class="subscription-title">Minha Assinatura</h3>
+                        <span class="subscription-status" id="subscriptionStatus">ATIVA</span>
+                    </div>
+                    
+                    <p class="subscription-details" id="subscriptionDetails">
+                        Plano Mensal • Renova em: 25/04/2024
+                    </p>
+                    
+                    <button class="btn-renew" id="btnRenew">
+                        <i class="fas fa-sync-alt"></i> RENOVAR ASSINATURA
+                    </button>
+                </div>
+            </div>
+
+            <!-- Map Section -->
+            <div class="map-section">
+                <div class="map-container">
+                    <div class="map-controls">
+                        <div class="gps-status" id="gpsStatus">
+                            <i class="fas fa-satellite"></i>
+                            <span>GPS: Ativo</span>
+                            <small>Sua localização está visível</small>
+                        </div>
+                        <button class="location-btn" title="Atualizar localização">
+                            <i class="fas fa-crosshairs"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="map-placeholder">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <p>Mapa de Atuação</p>
+                        <small>Sua localização é compartilhada quando está Disponível</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner-large"></div>
+    </div>
+
+    <script>
+        // Elementos DOM
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const navMenu = document.getElementById('navMenu');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const userAvatar = document.getElementById('userAvatar');
+        const gpsStatus = document.getElementById('gpsStatus');
+        const statusButtons = document.querySelectorAll('.status-btn');
+        const locationBtn = document.querySelector('.location-btn');
+
+        // Botões de ação
+        const btnEditProfile = document.getElementById('btnEditProfile');
+        const btnNotifications = document.getElementById('btnNotifications');
+        const btnHistory = document.getElementById('btnHistory');
+        const btnHelp = document.getElementById('btnHelp');
+        const btnRenew = document.getElementById('btnRenew');
+
+        // Dados do taxista
+        const alvaraNumber = document.getElementById('alvaraNumber');
+        const placaVeiculo = document.getElementById('placaVeiculo');
+        const tipoVeiculo = document.getElementById('tipoVeiculo');
+        const bairroAtuacao = document.getElementById('bairroAtuacao');
+        const favoritosCount = document.getElementById('favoritosCount');
+        const avaliacaoMedia = document.getElementById('avaliacaoMedia');
+        const subscriptionStatus = document.getElementById('subscriptionStatus');
+        const subscriptionDetails = document.getElementById('subscriptionDetails');
+
+        // Estado atual
+        let currentStatus = 'available';
+        let gpsActive = false;
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Configurar eventos
+            setupEventListeners();
+            
+            // Carregar dados do taxista
+            loadTaxistaData();
+            
+            // Verificar GPS
+            checkGPS();
+            
+            // Esconder loading após 1 segundo
+            setTimeout(() => {
+                loadingOverlay.classList.remove('active');
+            }, 1000);
+        }
+
+        function setupEventListeners() {
+            // Menu mobile
+            mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+            
+            // Itens do menu de navegação
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    setActiveNavItem(this);
+                });
+            });
+            
+            // Botão de logout
+            document.querySelector('.btn-logout').addEventListener('click', logout);
+            
+            // Avatar do usuário
+            userAvatar.addEventListener('click', goToProfile);
+            
+            // Botões de status
+            statusButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    changeStatus(this.dataset.status);
+                });
+            });
+            
+            // Botões de ação
+            btnEditProfile.addEventListener('click', editProfile);
+            btnNotifications.addEventListener('click', showNotifications);
+            btnHistory.addEventListener('click', showHistory);
+            btnHelp.addEventListener('click', showHelp);
+            btnRenew.addEventListener('click', renewSubscription);
+            
+            // Controle do mapa
+            locationBtn.addEventListener('click', updateLocation);
+            
+            // Fechar menu mobile ao clicar fora
+            document.addEventListener('click', function(event) {
+                if (navMenu.classList.contains('active') && 
+                    !navMenu.contains(event.target) && 
+                    !mobileMenuBtn.contains(event.target)) {
+                    navMenu.classList.remove('active');
+                }
+            });
+        }
+
+        function loadTaxistaData() {
+            // Simular carregamento de dados do taxista
+            // Na versão real, isso viria do Firebase
+            
+            // Exibir iniciais do nome
+            userAvatar.textContent = 'TS'; // Taxista Silva
+            
+            // Carregar dados do perfil
+            alvaraNumber.textContent = '12345-SPT';
+            placaVeiculo.textContent = 'ABC-1234';
+            tipoVeiculo.textContent = 'Taxi';
+            bairroAtuacao.textContent = 'Centro';
+            favoritosCount.textContent = '24';
+            avaliacaoMedia.textContent = '4.8';
+            
+            // Status da assinatura
+            subscriptionStatus.textContent = 'ATIVA';
+            subscriptionDetails.textContent = 'Plano Mensal • Renova em: 25/04/2024';
+        }
+
+        function checkGPS() {
+            if (navigator.geolocation) {
+                gpsActive = true;
+                updateGPSDisplay();
+            } else {
+                gpsActive = false;
+                updateGPSDisplay();
+                alert('Seu dispositivo não suporta GPS.');
+            }
+        }
+
+        function updateGPSDisplay() {
+            if (gpsActive) {
+                gpsStatus.innerHTML = `
+                    <i class="fas fa-satellite"></i>
+                    <span>GPS: Ativo</span>
+                    <small>Sua localização está visível</small>
+                `;
+                gpsStatus.classList.remove('inactive');
+                gpsStatus.classList.add('active');
+            } else {
+                gpsStatus.innerHTML = `
+                    <i class="fas fa-satellite"></i>
+                    <span>GPS: Inativo</span>
+                    <small>Ative a localização</small>
+                `;
+                gpsStatus.classList.remove('active');
+                gpsStatus.classList.add('inactive');
+            }
+        }
+
+        function changeStatus(newStatus) {
+            loadingOverlay.classList.add('active');
+            
+            // Remover classe active de todos os botões
+            statusButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Adicionar classe active ao botão clicado
+            document.querySelector(`.status-btn[data-status="${newStatus}"]`).classList.add('active');
+            
+            // Atualizar estado atual
+            currentStatus = newStatus;
+            
+            // Simular atualização no servidor
+            setTimeout(() => {
+                loadingOverlay.classList.remove('active');
+                
+                // Atualizar mensagem no mapa baseado no status
+                const mapPlaceholder = document.querySelector('.map-placeholder');
+                if (newStatus === 'available') {
+                    mapPlaceholder.querySelector('p').textContent = 'Mapa de Atuação';
+                    mapPlaceholder.querySelector('small').textContent = 'Sua localização é compartilhada com passageiros';
+                } else if (newStatus === 'busy') {
+                    mapPlaceholder.querySelector('p').textContent = 'Status: Ocupado';
+                    mapPlaceholder.querySelector('small').textContent = 'Você não aparecerá para novos passageiros';
+                } else {
+                    mapPlaceholder.querySelector('p').textContent = 'Status: Ausente';
+                    mapPlaceholder.querySelector('small').textContent = 'Você está offline no momento';
+                }
+                
+                alert(`Status alterado para: ${getStatusText(newStatus)}`);
+            }, 800);
+        }
+
+        function getStatusText(status) {
+            switch(status) {
+                case 'available': return 'Disponível';
+                case 'busy': return 'Ocupado';
+                case 'offline': return 'Ausente';
+                default: return 'Desconhecido';
+            }
+        }
+
+        function updateLocation() {
+            loadingOverlay.classList.add('active');
+            
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        setTimeout(() => {
+                            loadingOverlay.classList.remove('active');
+                            alert('Localização atualizada com sucesso!');
+                            gpsActive = true;
+                            updateGPSDisplay();
+                        }, 800);
+                    },
+                    (error) => {
+                        loadingOverlay.classList.remove('active');
+                        alert('Não foi possível obter a localização. Verifique as permissões do navegador.');
+                        gpsActive = false;
+                        updateGPSDisplay();
+                    }
+                );
+            } else {
+                loadingOverlay.classList.remove('active');
+                alert('Seu navegador não suporta geolocalização.');
+                gpsActive = false;
+                updateGPSDisplay();
+            }
+        }
+
+        function editProfile() {
+            loadingOverlay.classList.add('active');
+            setTimeout(() => {
+                loadingOverlay.classList.remove('active');
+                alert('Redirecionando para edição de perfil...');
+                // window.location.href = 'editar-perfil-taxista.html';
+            }, 500);
+        }
+
+        function showNotifications() {
+            loadingOverlay.classList.add('active');
+            setTimeout(() => {
+                loadingOverlay.classList.remove('active');
+                alert('Exibindo notificações...');
+                // window.location.href = 'notificacoes-taxista.html';
+            }, 500);
+        }
+
+        function showHistory() {
+            loadingOverlay.classList.add('active');
+            setTimeout(() => {
+                loadingOverlay.classList.remove('active');
+                alert('Exibindo histórico de corridas...');
+                // window.location.href = 'historico-taxista.html';
+            }, 500);
+        }
+
+        function showHelp() {
+            alert('Central de Ajuda Taxista:\n\nEmail: taxistas@taxibf.com\nTelefone: (11) 99999-8888\nHorário: 8h às 18h');
+        }
+
+        function renewSubscription() {
+            loadingOverlay.classList.add('active');
+            setTimeout(() => {
+                loadingOverlay.classList.remove('active');
+                alert('Redirecionando para renovação de assinatura...');
+                // window.location.href = 'assinatura-taxista.html';
+            }, 500);
+        }
+
+        function toggleMobileMenu() {
+            navMenu.classList.toggle('active');
+        }
+
+        function setActiveNavItem(item) {
+            document.querySelectorAll('.nav-item').forEach(navItem => {
+                navItem.classList.remove('active');
+            });
+            item.classList.add('active');
+            navMenu.classList.remove('active');
+        }
+
+        function goToProfile() {
+            window.location.href = 'perfil-taxista.html';
+        }
+
+        function logout() {
+            if (confirm('Deseja realmente sair?')) {
+                loadingOverlay.classList.add('active');
+                setTimeout(() => {
+                    window.location.href = 'login-taxista.html';
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
