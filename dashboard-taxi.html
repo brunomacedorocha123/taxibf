@@ -16,6 +16,8 @@
             --busy: #E74C3C;
             --offline: #9E9E9E;
             --verified: #3498db;
+            --pending: #f39c12;
+            --expired: #95a5a6;
         }
 
         * {
@@ -102,6 +104,10 @@
             gap: 1.5rem;
         }
 
+        .user-profile-menu {
+            position: relative;
+        }
+
         .user-avatar {
             width: 50px;
             height: 50px;
@@ -116,10 +122,111 @@
             border: 3px solid var(--white);
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             transition: all 0.3s;
+            position: relative;
         }
 
         .user-avatar:hover {
             transform: scale(1.05);
+        }
+
+        .user-avatar.verified::after {
+            content: '✓';
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            background: var(--verified);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--white);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            min-width: 250px;
+            display: none;
+            z-index: 1001;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .profile-dropdown.active {
+            display: block;
+        }
+
+        .dropdown-header {
+            padding: 1.5rem;
+            background: var(--light-gray);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .dropdown-user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .dropdown-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--taxi-yellow), #FFD700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--dark-graphite);
+        }
+
+        .dropdown-user-details h4 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .dropdown-user-details p {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .dropdown-menu {
+            padding: 0.5rem 0;
+        }
+
+        .dropdown-item {
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: var(--dark-graphite);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background: var(--light-gray);
+            padding-left: 2rem;
+        }
+
+        .dropdown-item i {
+            color: var(--taxi-yellow);
+            width: 20px;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: rgba(0,0,0,0.1);
+            margin: 0.5rem 0;
         }
 
         .btn-logout {
@@ -195,6 +302,30 @@
 
         .verified-badge i {
             font-size: 0.9rem;
+        }
+
+        .pending-badge {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--pending);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .expired-badge {
+            background: rgba(149, 165, 166, 0.1);
+            color: var(--expired);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         /* Status Selector */
@@ -289,6 +420,12 @@
             font-weight: 700;
             color: var(--dark-graphite);
             font-size: 0.95rem;
+        }
+
+        .credential-value.empty {
+            color: #999;
+            font-style: italic;
+            font-weight: normal;
         }
 
         /* Stats Grid */
@@ -468,6 +605,11 @@
             box-shadow: 0 4px 20px rgba(255, 196, 0, 0.3);
         }
 
+        .subscription-card.no-subscription {
+            background: linear-gradient(135deg, var(--light-gray), #e8e8e8);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
         .subscription-header {
             display: flex;
             justify-content: space-between;
@@ -489,13 +631,25 @@
             font-weight: 700;
         }
 
+        .subscription-status.active {
+            background: var(--available);
+        }
+
+        .subscription-status.pending {
+            background: var(--pending);
+        }
+
+        .subscription-status.expired {
+            background: var(--expired);
+        }
+
         .subscription-details {
             font-size: 0.95rem;
             margin-bottom: 1.5rem;
             opacity: 0.9;
         }
 
-        .btn-renew {
+        .btn-subscription {
             background: var(--dark-graphite);
             color: var(--white);
             border: none;
@@ -506,11 +660,51 @@
             transition: all 0.3s;
             width: 100%;
             font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
-        .btn-renew:hover {
+        .btn-subscription:hover {
             background: #000;
             transform: translateY(-2px);
+        }
+
+        .btn-subscription.primary {
+            background: var(--taxi-yellow);
+            color: var(--dark-graphite);
+        }
+
+        .btn-subscription.primary:hover {
+            background: #ffb100;
+        }
+
+        /* Alert Card */
+        .alert-card {
+            background: rgba(231, 76, 60, 0.1);
+            border: 2px solid var(--busy);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .alert-icon {
+            color: var(--busy);
+            font-size: 1.5rem;
+        }
+
+        .alert-content h4 {
+            color: var(--busy);
+            margin-bottom: 0.3rem;
+        }
+
+        .alert-content p {
+            font-size: 0.9rem;
+            color: #666;
         }
 
         /* Mobile Menu */
@@ -582,6 +776,14 @@
             
             .map-container {
                 height: 400px;
+            }
+            
+            .profile-dropdown {
+                position: fixed;
+                top: 100px;
+                left: 1rem;
+                right: 1rem;
+                width: auto;
             }
         }
 
@@ -669,6 +871,130 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.3rem;
+            color: var(--dark-graphite);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: var(--light-gray);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn-modal {
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-modal.primary {
+            background: var(--taxi-yellow);
+            color: var(--dark-graphite);
+        }
+
+        .btn-modal.primary:hover {
+            background: #ffb100;
+        }
+
+        .btn-modal.secondary {
+            background: var(--light-gray);
+            color: var(--dark-graphite);
+        }
+
+        .btn-modal.secondary:hover {
+            background: #e8e8e8;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-graphite);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--taxi-yellow);
+        }
     </style>
 </head>
 <body>
@@ -684,25 +1010,68 @@
                     <i class="fas fa-dashboard"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" id="navHistory">
                     <i class="fas fa-history"></i>
                     <span>Histórico</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" id="navRatings">
                     <i class="fas fa-star"></i>
                     <span>Avaliações</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" id="navSettings">
                     <i class="fas fa-cog"></i>
                     <span>Configurações</span>
                 </a>
             </div>
 
             <div class="user-menu">
-                <div class="user-avatar" id="userAvatar">
-                    TS
+                <div class="user-profile-menu">
+                    <div class="user-avatar" id="userAvatar">
+                        <span id="userInitials">--</span>
+                    </div>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="dropdown-header">
+                            <div class="dropdown-user-info">
+                                <div class="dropdown-avatar" id="dropdownAvatar">
+                                    <span id="dropdownInitials">--</span>
+                                </div>
+                                <div class="dropdown-user-details">
+                                    <h4 id="dropdownName">Carregando...</h4>
+                                    <p id="dropdownEmail">carregando@email.com</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dropdown-menu">
+                            <a href="perfil-taxista.html" class="dropdown-item">
+                                <i class="fas fa-user-circle"></i>
+                                <span>Ver Perfil Completo</span>
+                            </a>
+                            <a href="editar-perfil-taxista.html" class="dropdown-item">
+                                <i class="fas fa-user-edit"></i>
+                                <span>Editar Perfil</span>
+                            </a>
+                            <a href="documentos-taxista.html" class="dropdown-item">
+                                <i class="fas fa-file-alt"></i>
+                                <span>Meus Documentos</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="configuracoes-taxista.html" class="dropdown-item">
+                                <i class="fas fa-cog"></i>
+                                <span>Configurações</span>
+                            </a>
+                            <a href="ajuda-taxista.html" class="dropdown-item">
+                                <i class="fas fa-question-circle"></i>
+                                <span>Ajuda & Suporte</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-item" id="dropdownLogout">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Sair</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <button class="btn-logout" title="Sair">
+                <button class="btn-logout" id="btnLogout" title="Sair">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
                 <button class="mobile-menu-btn" id="mobileMenuBtn">
@@ -717,26 +1086,35 @@
         <div class="dashboard-grid">
             <!-- Sidebar -->
             <div class="sidebar">
+                <!-- Alerts -->
+                <div class="alert-card" id="alertCard" style="display: none;">
+                    <i class="fas fa-exclamation-triangle alert-icon"></i>
+                    <div class="alert-content">
+                        <h4 id="alertTitle">Alerta</h4>
+                        <p id="alertMessage">Mensagem de alerta</p>
+                    </div>
+                </div>
+
                 <!-- Status Card -->
                 <div class="status-card">
                     <div class="status-header">
                         <h3 class="status-title">Meu Status</h3>
-                        <div class="verified-badge">
+                        <div class="verified-badge" id="verificationBadge">
                             <i class="fas fa-shield-alt"></i>
-                            VERIFICADO
+                            VERIFICANDO
                         </div>
                     </div>
                     
                     <div class="status-selector">
-                        <button class="status-btn available active" data-status="available">
+                        <button class="status-btn available" data-status="available" id="btnAvailable">
                             <i class="fas fa-check-circle status-icon"></i>
                             Disponível
                         </button>
-                        <button class="status-btn busy" data-status="busy">
+                        <button class="status-btn busy" data-status="busy" id="btnBusy">
                             <i class="fas fa-user-clock status-icon"></i>
                             Ocupado
                         </button>
-                        <button class="status-btn offline" data-status="offline">
+                        <button class="status-btn offline" data-status="offline" id="btnOffline">
                             <i class="fas fa-moon status-icon"></i>
                             Ausente
                         </button>
@@ -748,39 +1126,47 @@
                                 <i class="fas fa-id-card"></i>
                                 Alvará
                             </span>
-                            <span class="credential-value" id="alvaraNumber">12345-SPT</span>
+                            <span class="credential-value" id="alvaraNumber">--</span>
                         </div>
                         <div class="credential-item">
                             <span class="credential-label">
                                 <i class="fas fa-car"></i>
                                 Placa
                             </span>
-                            <span class="credential-value" id="placaVeiculo">ABC-1234</span>
+                            <span class="credential-value" id="placaVeiculo">--</span>
                         </div>
                         <div class="credential-item">
                             <span class="credential-label">
                                 <i class="fas fa-taxi"></i>
                                 Tipo
                             </span>
-                            <span class="credential-value" id="tipoVeiculo">Taxi</span>
+                            <span class="credential-value" id="tipoVeiculo">--</span>
                         </div>
                         <div class="credential-item">
                             <span class="credential-label">
                                 <i class="fas fa-map-marker-alt"></i>
                                 Bairro
                             </span>
-                            <span class="credential-value" id="bairroAtuacao">Centro</span>
+                            <span class="credential-value" id="bairroAtuacao">--</span>
                         </div>
                     </div>
                     
                     <div class="stats-grid">
                         <div class="stat-card">
-                            <div class="stat-value" id="favoritosCount">24</div>
-                            <div class="stat-label">Favoritos</div>
+                            <div class="stat-value" id="corridasHoje">0</div>
+                            <div class="stat-label">Corridas Hoje</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value" id="avaliacaoMedia">4.8</div>
+                            <div class="stat-value" id="avaliacaoMedia">0.0</div>
                             <div class="stat-label">Avaliação</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="faturamentoHoje">R$ 0</div>
+                            <div class="stat-label">Faturamento Hoje</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="tempoOnline">0h</div>
+                            <div class="stat-label">Tempo Online</div>
                         </div>
                     </div>
                 </div>
@@ -798,9 +1184,9 @@
                             <i class="fas fa-bell"></i>
                             <span>Notificações</span>
                         </button>
-                        <button class="action-btn" id="btnHistory">
-                            <i class="fas fa-history"></i>
-                            <span>Histórico</span>
+                        <button class="action-btn" id="btnDocuments">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Documentos</span>
                         </button>
                         <button class="action-btn" id="btnHelp">
                             <i class="fas fa-question-circle"></i>
@@ -810,18 +1196,18 @@
                 </div>
 
                 <!-- Subscription -->
-                <div class="subscription-card">
+                <div class="subscription-card" id="subscriptionCard">
                     <div class="subscription-header">
                         <h3 class="subscription-title">Minha Assinatura</h3>
-                        <span class="subscription-status" id="subscriptionStatus">ATIVA</span>
+                        <span class="subscription-status" id="subscriptionStatus">--</span>
                     </div>
                     
                     <p class="subscription-details" id="subscriptionDetails">
-                        Plano Mensal • Renova em: 25/04/2024
+                        Carregando informações...
                     </p>
                     
-                    <button class="btn-renew" id="btnRenew">
-                        <i class="fas fa-sync-alt"></i> RENOVAR ASSINATURA
+                    <button class="btn-subscription" id="btnSubscription">
+                        <i class="fas fa-sync-alt"></i> CARREGANDO...
                     </button>
                 </div>
             </div>
@@ -832,18 +1218,18 @@
                     <div class="map-controls">
                         <div class="gps-status" id="gpsStatus">
                             <i class="fas fa-satellite"></i>
-                            <span>GPS: Ativo</span>
-                            <small>Sua localização está visível</small>
+                            <span>Verificando GPS...</span>
+                            <small>Aguardando permissão</small>
                         </div>
-                        <button class="location-btn" title="Atualizar localização">
+                        <button class="location-btn" id="btnLocation" title="Atualizar localização">
                             <i class="fas fa-crosshairs"></i>
                         </button>
                     </div>
                     
                     <div class="map-placeholder">
                         <i class="fas fa-map-marked-alt"></i>
-                        <p>Mapa de Atuação</p>
-                        <small>Sua localização é compartilhada quando está Disponível</small>
+                        <p id="mapTitle">Carregando mapa...</p>
+                        <small id="mapSubtitle">Conectando com o sistema</small>
                     </div>
                 </div>
             </div>
@@ -853,38 +1239,115 @@
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner-large"></div>
+        <p id="loadingMessage">Carregando dados do taxista...</p>
+    </div>
+
+    <!-- Modal de Status -->
+    <div class="modal" id="statusModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Alterar Status</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage">Tem certeza que deseja alterar seu status para <strong id="statusName">Disponível</strong>?</p>
+                <div class="form-group">
+                    <label for="statusNote">Observação (opcional):</label>
+                    <textarea id="statusNote" class="form-control" rows="3" placeholder="Ex: Pausa para almoço, combustível, etc."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal secondary" id="modalCancel">Cancelar</button>
+                <button class="btn-modal primary" id="modalConfirm">Confirmar</button>
+            </div>
+        </div>
     </div>
 
     <script>
+        // Configuração do Firebase (substitua com suas credenciais)
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_PROJETO.firebaseapp.com",
+            projectId: "SEU_PROJETO",
+            storageBucket: "SEU_PROJETO.appspot.com",
+            messagingSenderId: "SEU_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        // Inicialização do Firebase (comente se não configurado ainda)
+        // firebase.initializeApp(firebaseConfig);
+        // const auth = firebase.auth();
+        // const db = firebase.firestore();
+
         // Elementos DOM
         const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingMessage = document.getElementById('loadingMessage');
         const navMenu = document.getElementById('navMenu');
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const userAvatar = document.getElementById('userAvatar');
+        const userInitials = document.getElementById('userInitials');
+        const profileDropdown = document.getElementById('profileDropdown');
+        const dropdownAvatar = document.getElementById('dropdownAvatar');
+        const dropdownInitials = document.getElementById('dropdownInitials');
+        const dropdownName = document.getElementById('dropdownName');
+        const dropdownEmail = document.getElementById('dropdownEmail');
+        const dropdownLogout = document.getElementById('dropdownLogout');
+        const btnLogout = document.getElementById('btnLogout');
         const gpsStatus = document.getElementById('gpsStatus');
-        const statusButtons = document.querySelectorAll('.status-btn');
-        const locationBtn = document.querySelector('.location-btn');
+        const btnLocation = document.getElementById('btnLocation');
+        const statusModal = document.getElementById('statusModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const statusName = document.getElementById('statusName');
+        const statusNote = document.getElementById('statusNote');
+        const modalClose = document.getElementById('modalClose');
+        const modalCancel = document.getElementById('modalCancel');
+        const modalConfirm = document.getElementById('modalConfirm');
+        const mapTitle = document.getElementById('mapTitle');
+        const mapSubtitle = document.getElementById('mapSubtitle');
+        const alertCard = document.getElementById('alertCard');
+        const alertTitle = document.getElementById('alertTitle');
+        const alertMessage = document.getElementById('alertMessage');
 
-        // Botões de ação
-        const btnEditProfile = document.getElementById('btnEditProfile');
-        const btnNotifications = document.getElementById('btnNotifications');
-        const btnHistory = document.getElementById('btnHistory');
-        const btnHelp = document.getElementById('btnHelp');
-        const btnRenew = document.getElementById('btnRenew');
-
-        // Dados do taxista
+        // Dados do perfil
         const alvaraNumber = document.getElementById('alvaraNumber');
         const placaVeiculo = document.getElementById('placaVeiculo');
         const tipoVeiculo = document.getElementById('tipoVeiculo');
         const bairroAtuacao = document.getElementById('bairroAtuacao');
-        const favoritosCount = document.getElementById('favoritosCount');
+        const verificationBadge = document.getElementById('verificationBadge');
+        const corridasHoje = document.getElementById('corridasHoje');
         const avaliacaoMedia = document.getElementById('avaliacaoMedia');
+        const faturamentoHoje = document.getElementById('faturamentoHoje');
+        const tempoOnline = document.getElementById('tempoOnline');
+
+        // Status buttons
+        const btnAvailable = document.getElementById('btnAvailable');
+        const btnBusy = document.getElementById('btnBusy');
+        const btnOffline = document.getElementById('btnOffline');
+
+        // Subscription
+        const subscriptionCard = document.getElementById('subscriptionCard');
         const subscriptionStatus = document.getElementById('subscriptionStatus');
         const subscriptionDetails = document.getElementById('subscriptionDetails');
+        const btnSubscription = document.getElementById('btnSubscription');
+
+        // Botões de ação
+        const btnEditProfile = document.getElementById('btnEditProfile');
+        const btnNotifications = document.getElementById('btnNotifications');
+        const btnDocuments = document.getElementById('btnDocuments');
+        const btnHelp = document.getElementById('btnHelp');
+        const navHistory = document.getElementById('navHistory');
+        const navRatings = document.getElementById('navRatings');
+        const navSettings = document.getElementById('navSettings');
 
         // Estado atual
-        let currentStatus = 'available';
+        let currentStatus = 'offline';
+        let currentUser = null;
+        let taxistaData = null;
         let gpsActive = false;
+        let statusChangePending = null;
+        let onlineStartTime = null;
+        let onlineTimer = null;
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
@@ -892,94 +1355,382 @@
         });
 
         function initializeApp() {
+            loadingMessage.textContent = "Carregando dados do taxista...";
+            loadingOverlay.classList.add('active');
+            
             // Configurar eventos
             setupEventListeners();
             
-            // Carregar dados do taxista
-            loadTaxistaData();
-            
-            // Verificar GPS
-            checkGPS();
-            
-            // Esconder loading após 1 segundo
-            setTimeout(() => {
-                loadingOverlay.classList.remove('active');
-            }, 1000);
+            // Verificar autenticação
+            checkAuth();
         }
 
         function setupEventListeners() {
             // Menu mobile
             mobileMenuBtn.addEventListener('click', toggleMobileMenu);
             
-            // Itens do menu de navegação
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    setActiveNavItem(this);
-                });
-            });
+            // Menu do usuário
+            userAvatar.addEventListener('click', toggleProfileDropdown);
             
-            // Botão de logout
-            document.querySelector('.btn-logout').addEventListener('click', logout);
-            
-            // Avatar do usuário
-            userAvatar.addEventListener('click', goToProfile);
-            
-            // Botões de status
-            statusButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    changeStatus(this.dataset.status);
-                });
-            });
-            
-            // Botões de ação
-            btnEditProfile.addEventListener('click', editProfile);
-            btnNotifications.addEventListener('click', showNotifications);
-            btnHistory.addEventListener('click', showHistory);
-            btnHelp.addEventListener('click', showHelp);
-            btnRenew.addEventListener('click', renewSubscription);
-            
-            // Controle do mapa
-            locationBtn.addEventListener('click', updateLocation);
-            
-            // Fechar menu mobile ao clicar fora
+            // Fechar dropdown ao clicar fora
             document.addEventListener('click', function(event) {
+                if (!userAvatar.contains(event.target) && !profileDropdown.contains(event.target)) {
+                    profileDropdown.classList.remove('active');
+                }
+                
                 if (navMenu.classList.contains('active') && 
                     !navMenu.contains(event.target) && 
                     !mobileMenuBtn.contains(event.target)) {
                     navMenu.classList.remove('active');
                 }
             });
+            
+            // Logout
+            dropdownLogout.addEventListener('click', logout);
+            btnLogout.addEventListener('click', logout);
+            
+            // Status buttons
+            btnAvailable.addEventListener('click', () => requestStatusChange('available'));
+            btnBusy.addEventListener('click', () => requestStatusChange('busy'));
+            btnOffline.addEventListener('click', () => requestStatusChange('offline'));
+            
+            // Modal
+            modalClose.addEventListener('click', closeModal);
+            modalCancel.addEventListener('click', closeModal);
+            modalConfirm.addEventListener('click', confirmStatusChange);
+            
+            // Botões de ação
+            btnEditProfile.addEventListener('click', () => window.location.href = 'editar-perfil-taxista.html');
+            btnNotifications.addEventListener('click', () => window.location.href = 'notificacoes-taxista.html');
+            btnDocuments.addEventListener('click', () => window.location.href = 'documentos-taxista.html');
+            btnHelp.addEventListener('click', () => window.location.href = 'ajuda-taxista.html');
+            btnSubscription.addEventListener('click', handleSubscription);
+            btnLocation.addEventListener('click', updateLocation);
+            
+            // Navegação
+            navHistory.addEventListener('click', () => window.location.href = 'historico-taxista.html');
+            navRatings.addEventListener('click', () => window.location.href = 'avaliacoes-taxista.html');
+            navSettings.addEventListener('click', () => window.location.href = 'configuracoes-taxista.html');
+            
+            // Itens do menu de navegação
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    if (this.getAttribute('href') === '#') {
+                        e.preventDefault();
+                    }
+                    setActiveNavItem(this);
+                });
+            });
         }
 
-        function loadTaxistaData() {
-            // Simular carregamento de dados do taxista
-            // Na versão real, isso viria do Firebase
+        function checkAuth() {
+            // Simulação de autenticação
+            // Na versão real, usar Firebase Auth
             
-            // Exibir iniciais do nome
-            userAvatar.textContent = 'TS'; // Taxista Silva
+            setTimeout(() => {
+                // Simular usuário logado
+                currentUser = {
+                    uid: 'user123',
+                    email: 'taxista@exemplo.com',
+                    displayName: 'João Silva',
+                    photoURL: null
+                };
+                
+                loadTaxistaData();
+            }, 1500);
+        }
+
+        async function loadTaxistaData() {
+            try {
+                // Simulação de dados do Firestore
+                // Na versão real: const doc = await db.collection('taxistas').doc(currentUser.uid).get();
+                
+                // Dados simulados do taxista
+                taxistaData = {
+                    nome: 'João Silva',
+                    email: 'taxista@exemplo.com',
+                    telefone: '(11) 98765-4321',
+                    cpf: '123.456.789-00',
+                    alvara: '12345/SPT',
+                    placa: 'ABC-1234',
+                    modeloVeiculo: 'Toyota Corolla 2020',
+                    corVeiculo: 'Prata',
+                    tipoVeiculo: 'Taxi Comum',
+                    bairroAtuacao: 'Centro, Paulista',
+                    status: 'offline',
+                    statusVerificacao: 'verificado', // 'pendente', 'verificado', 'rejeitado'
+                    avaliacaoMedia: 4.7,
+                    totalCorridas: 1247,
+                    totalAvaliacoes: 892,
+                    faturamentoMes: 12540.50,
+                    corridasHoje: 8,
+                    faturamentoHoje: 420.75,
+                    tempoOnlineHoje: 5.5, // horas
+                    assinatura: {
+                        status: 'ativa', // 'ativa', 'pendente', 'expirada', 'nenhuma'
+                        tipo: 'mensal',
+                        dataInicio: '2024-03-25',
+                        dataExpiracao: '2024-04-25',
+                        proximaRenovacao: '2024-04-25',
+                        valor: 199.90
+                    },
+                    ultimaLocalizacao: {
+                        lat: -23.5505,
+                        lng: -46.6333,
+                        timestamp: new Date().toISOString()
+                    }
+                };
+                
+                updateUIWithTaxistaData();
+                checkGPS();
+                updateOnlineTimer();
+                
+                setTimeout(() => {
+                    loadingOverlay.classList.remove('active');
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                loadingMessage.textContent = "Erro ao carregar dados. Tentando novamente...";
+                setTimeout(loadTaxistaData, 3000);
+            }
+        }
+
+        function updateUIWithTaxistaData() {
+            if (!taxistaData) return;
             
-            // Carregar dados do perfil
-            alvaraNumber.textContent = '12345-SPT';
-            placaVeiculo.textContent = 'ABC-1234';
-            tipoVeiculo.textContent = 'Taxi';
-            bairroAtuacao.textContent = 'Centro';
-            favoritosCount.textContent = '24';
-            avaliacaoMedia.textContent = '4.8';
+            // Avatar e nome
+            const initials = getInitials(taxistaData.nome);
+            userInitials.textContent = initials;
+            dropdownInitials.textContent = initials;
+            dropdownName.textContent = taxistaData.nome;
+            dropdownEmail.textContent = taxistaData.email;
             
-            // Status da assinatura
-            subscriptionStatus.textContent = 'ATIVA';
-            subscriptionDetails.textContent = 'Plano Mensal • Renova em: 25/04/2024';
+            // Credenciais
+            alvaraNumber.textContent = taxistaData.alvara || '--';
+            placaVeiculo.textContent = taxistaData.placa || '--';
+            tipoVeiculo.textContent = taxistaData.tipoVeiculo || '--';
+            bairroAtuacao.textContent = taxistaData.bairroAtuacao || '--';
+            
+            // Stats
+            corridasHoje.textContent = taxistaData.corridasHoje || '0';
+            avaliacaoMedia.textContent = taxistaData.avaliacaoMedia?.toFixed(1) || '0.0';
+            faturamentoHoje.textContent = `R$ ${(taxistaData.faturamentoHoje || 0).toFixed(2)}`;
+            tempoOnline.textContent = `${(taxistaData.tempoOnlineHoje || 0).toFixed(1)}h`;
+            
+            // Status de verificação
+            updateVerificationStatus(taxistaData.statusVerificacao);
+            
+            // Status atual
+            updateStatusUI(taxistaData.status);
+            
+            // Assinatura
+            updateSubscriptionUI(taxistaData.assinatura);
+            
+            // Alertas
+            checkAlerts();
+        }
+
+        function getInitials(name) {
+            if (!name) return '--';
+            return name.split(' ')
+                .map(part => part[0])
+                .join('')
+                .toUpperCase()
+                .substring(0, 2);
+        }
+
+        function updateVerificationStatus(status) {
+            verificationBadge.className = 'verified-badge';
+            verificationBadge.innerHTML = '<i class="fas fa-shield-alt"></i>';
+            
+            switch(status) {
+                case 'verificado':
+                    verificationBadge.innerHTML += ' VERIFICADO';
+                    userAvatar.classList.add('verified');
+                    break;
+                case 'pendente':
+                    verificationBadge.className = 'pending-badge';
+                    verificationBadge.innerHTML = '<i class="fas fa-clock"></i> PENDENTE';
+                    userAvatar.classList.remove('verified');
+                    break;
+                case 'rejeitado':
+                    verificationBadge.className = 'expired-badge';
+                    verificationBadge.innerHTML = '<i class="fas fa-exclamation-circle"></i> REJEITADO';
+                    userAvatar.classList.remove('verified');
+                    break;
+                default:
+                    verificationBadge.innerHTML += ' VERIFICANDO';
+                    userAvatar.classList.remove('verified');
+            }
+        }
+
+        function updateStatusUI(status) {
+            currentStatus = status;
+            
+            // Remover active de todos os botões
+            btnAvailable.classList.remove('active');
+            btnBusy.classList.remove('active');
+            btnOffline.classList.remove('active');
+            
+            // Adicionar active ao botão correto
+            switch(status) {
+                case 'available':
+                    btnAvailable.classList.add('active');
+                    mapTitle.textContent = 'Mapa de Atuação';
+                    mapSubtitle.textContent = 'Você está visível para passageiros';
+                    startOnlineTimer();
+                    break;
+                case 'busy':
+                    btnBusy.classList.add('active');
+                    mapTitle.textContent = 'Status: Ocupado';
+                    mapSubtitle.textContent = 'Finalize a corrida para voltar ao mapa';
+                    stopOnlineTimer();
+                    break;
+                case 'offline':
+                    btnOffline.classList.add('active');
+                    mapTitle.textContent = 'Status: Ausente';
+                    mapSubtitle.textContent = 'Você está offline no momento';
+                    stopOnlineTimer();
+                    break;
+            }
+            
+            // Atualizar no banco de dados (simulação)
+            updateStatusInDatabase(status);
+        }
+
+        function updateStatusInDatabase(status) {
+            // Simulação de atualização no Firestore
+            // Na versão real: await db.collection('taxistas').doc(currentUser.uid).update({ status });
+            
+            console.log(`Status atualizado para: ${status}`);
+            
+            // Atualizar dados locais
+            if (taxistaData) {
+                taxistaData.status = status;
+            }
+        }
+
+        function requestStatusChange(newStatus) {
+            if (newStatus === currentStatus) return;
+            
+            statusChangePending = newStatus;
+            
+            // Configurar modal
+            const statusText = getStatusText(newStatus);
+            statusName.textContent = statusText;
+            modalTitle.textContent = `Alterar para ${statusText}`;
+            modalMessage.textContent = `Tem certeza que deseja alterar seu status para ${statusText}?`;
+            statusNote.value = '';
+            
+            // Mostrar modal
+            statusModal.classList.add('active');
+        }
+
+        function confirmStatusChange() {
+            if (!statusChangePending) return;
+            
+            const note = statusNote.value.trim();
+            
+            // Registrar no histórico (simulação)
+            if (note) {
+                console.log(`Status alterado com observação: ${note}`);
+            }
+            
+            // Atualizar status
+            updateStatusUI(statusChangePending);
+            
+            // Fechar modal
+            closeModal();
+            
+            // Mostrar feedback
+            showNotification(`Status alterado para ${getStatusText(statusChangePending)}`);
+        }
+
+        function getStatusText(status) {
+            switch(status) {
+                case 'available': return 'Disponível';
+                case 'busy': return 'Ocupado';
+                case 'offline': return 'Ausente';
+                default: return 'Desconhecido';
+            }
+        }
+
+        function closeModal() {
+            statusModal.classList.remove('active');
+            statusChangePending = null;
+        }
+
+        function updateSubscriptionUI(subscription) {
+            if (!subscription || subscription.status === 'nenhuma') {
+                subscriptionCard.className = 'subscription-card no-subscription';
+                subscriptionStatus.textContent = 'NENHUMA';
+                subscriptionDetails.textContent = 'Você ainda não possui uma assinatura ativa';
+                btnSubscription.innerHTML = '<i class="fas fa-plus-circle"></i> ASSINAR AGORA';
+                btnSubscription.className = 'btn-subscription primary';
+                return;
+            }
+            
+            subscriptionCard.className = 'subscription-card';
+            subscriptionStatus.textContent = subscription.status.toUpperCase();
+            subscriptionStatus.className = `subscription-status ${subscription.status}`;
+            
+            const expiracao = new Date(subscription.dataExpiracao);
+            const hoje = new Date();
+            const diffTime = expiracao - hoje;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            subscriptionDetails.textContent = `Plano ${subscription.tipo} • Expira em: ${expiracao.toLocaleDateString('pt-BR')} (${diffDays} dias)`;
+            
+            if (subscription.status === 'ativa') {
+                btnSubscription.innerHTML = '<i class="fas fa-sync-alt"></i> GERENCIAR ASSINATURA';
+                btnSubscription.className = 'btn-subscription';
+            } else if (subscription.status === 'pendente') {
+                btnSubscription.innerHTML = '<i class="fas fa-clock"></i> AGUARDANDO PAGAMENTO';
+                btnSubscription.className = 'btn-subscription';
+            } else if (subscription.status === 'expirada') {
+                btnSubscription.innerHTML = '<i class="fas fa-exclamation-triangle"></i> RENOVAR ASSINATURA';
+                btnSubscription.className = 'btn-subscription primary';
+            }
+        }
+
+        function handleSubscription() {
+            if (!taxistaData || !taxistaData.assinatura) {
+                window.location.href = 'assinatura-taxista.html?action=new';
+                return;
+            }
+            
+            const subscription = taxistaData.assinatura;
+            
+            if (subscription.status === 'nenhuma' || subscription.status === 'expirada') {
+                window.location.href = 'assinatura-taxista.html?action=new';
+            } else {
+                window.location.href = 'assinatura-taxista.html?action=manage';
+            }
         }
 
         function checkGPS() {
             if (navigator.geolocation) {
-                gpsActive = true;
-                updateGPSDisplay();
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        gpsActive = true;
+                        updateGPSDisplay();
+                        
+                        // Atualizar localização no banco se estiver disponível
+                        if (currentStatus === 'available' && taxistaData) {
+                            updateLocationInDatabase(position.coords);
+                        }
+                    },
+                    (error) => {
+                        gpsActive = false;
+                        updateGPSDisplay();
+                        console.warn('Erro no GPS:', error.message);
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
             } else {
                 gpsActive = false;
                 updateGPSDisplay();
-                alert('Seu dispositivo não suporta GPS.');
             }
         }
 
@@ -1003,69 +1754,33 @@
             }
         }
 
-        function changeStatus(newStatus) {
-            loadingOverlay.classList.add('active');
-            
-            // Remover classe active de todos os botões
-            statusButtons.forEach(button => {
-                button.classList.remove('active');
-            });
-            
-            // Adicionar classe active ao botão clicado
-            document.querySelector(`.status-btn[data-status="${newStatus}"]`).classList.add('active');
-            
-            // Atualizar estado atual
-            currentStatus = newStatus;
-            
-            // Simular atualização no servidor
-            setTimeout(() => {
-                loadingOverlay.classList.remove('active');
-                
-                // Atualizar mensagem no mapa baseado no status
-                const mapPlaceholder = document.querySelector('.map-placeholder');
-                if (newStatus === 'available') {
-                    mapPlaceholder.querySelector('p').textContent = 'Mapa de Atuação';
-                    mapPlaceholder.querySelector('small').textContent = 'Sua localização é compartilhada com passageiros';
-                } else if (newStatus === 'busy') {
-                    mapPlaceholder.querySelector('p').textContent = 'Status: Ocupado';
-                    mapPlaceholder.querySelector('small').textContent = 'Você não aparecerá para novos passageiros';
-                } else {
-                    mapPlaceholder.querySelector('p').textContent = 'Status: Ausente';
-                    mapPlaceholder.querySelector('small').textContent = 'Você está offline no momento';
-                }
-                
-                alert(`Status alterado para: ${getStatusText(newStatus)}`);
-            }, 800);
-        }
-
-        function getStatusText(status) {
-            switch(status) {
-                case 'available': return 'Disponível';
-                case 'busy': return 'Ocupado';
-                case 'offline': return 'Ausente';
-                default: return 'Desconhecido';
-            }
-        }
-
         function updateLocation() {
             loadingOverlay.classList.add('active');
+            loadingMessage.textContent = "Atualizando localização...";
             
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
+                        gpsActive = true;
+                        updateGPSDisplay();
+                        
+                        // Atualizar no banco de dados
+                        if (taxistaData) {
+                            updateLocationInDatabase(position.coords);
+                        }
+                        
                         setTimeout(() => {
                             loadingOverlay.classList.remove('active');
-                            alert('Localização atualizada com sucesso!');
-                            gpsActive = true;
-                            updateGPSDisplay();
+                            showNotification('Localização atualizada com sucesso!');
                         }, 800);
                     },
                     (error) => {
-                        loadingOverlay.classList.remove('active');
-                        alert('Não foi possível obter a localização. Verifique as permissões do navegador.');
                         gpsActive = false;
                         updateGPSDisplay();
-                    }
+                        loadingOverlay.classList.remove('active');
+                        alert('Não foi possível obter a localização. Verifique as permissões do navegador.');
+                    },
+                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
                 );
             } else {
                 loadingOverlay.classList.remove('active');
@@ -1075,44 +1790,128 @@
             }
         }
 
-        function editProfile() {
-            loadingOverlay.classList.add('active');
-            setTimeout(() => {
-                loadingOverlay.classList.remove('active');
-                alert('Redirecionando para edição de perfil...');
-                // window.location.href = 'editar-perfil-taxista.html';
-            }, 500);
+        function updateLocationInDatabase(coords) {
+            // Simulação de atualização no Firestore
+            // Na versão real: await db.collection('taxistas').doc(currentUser.uid).update({
+            //     ultimaLocalizacao: {
+            //         lat: coords.latitude,
+            //         lng: coords.longitude,
+            //         timestamp: new Date().toISOString()
+            //     }
+            // });
+            
+            console.log(`Localização atualizada: ${coords.latitude}, ${coords.longitude}`);
         }
 
-        function showNotifications() {
-            loadingOverlay.classList.add('active');
-            setTimeout(() => {
-                loadingOverlay.classList.remove('active');
-                alert('Exibindo notificações...');
-                // window.location.href = 'notificacoes-taxista.html';
-            }, 500);
+        function startOnlineTimer() {
+            if (onlineTimer) clearInterval(onlineTimer);
+            onlineStartTime = new Date();
+            
+            onlineTimer = setInterval(() => {
+                if (onlineStartTime && currentStatus === 'available') {
+                    const now = new Date();
+                    const diffMs = now - onlineStartTime;
+                    const diffHours = diffMs / (1000 * 60 * 60);
+                    
+                    // Atualizar exibição
+                    tempoOnline.textContent = `${diffHours.toFixed(1)}h`;
+                    
+                    // Atualizar dados locais
+                    if (taxistaData) {
+                        taxistaData.tempoOnlineHoje = diffHours;
+                    }
+                }
+            }, 60000); // Atualizar a cada minuto
         }
 
-        function showHistory() {
-            loadingOverlay.classList.add('active');
-            setTimeout(() => {
-                loadingOverlay.classList.remove('active');
-                alert('Exibindo histórico de corridas...');
-                // window.location.href = 'historico-taxista.html';
-            }, 500);
+        function stopOnlineTimer() {
+            if (onlineTimer) {
+                clearInterval(onlineTimer);
+                onlineTimer = null;
+            }
         }
 
-        function showHelp() {
-            alert('Central de Ajuda Taxista:\n\nEmail: taxistas@taxibf.com\nTelefone: (11) 99999-8888\nHorário: 8h às 18h');
+        function updateOnlineTimer() {
+            if (currentStatus === 'available' && taxistaData) {
+                startOnlineTimer();
+            } else {
+                stopOnlineTimer();
+            }
         }
 
-        function renewSubscription() {
-            loadingOverlay.classList.add('active');
+        function checkAlerts() {
+            if (!taxistaData) return;
+            
+            const alerts = [];
+            
+            // Verificar documentos pendentes
+            if (taxistaData.statusVerificacao === 'pendente') {
+                alerts.push({
+                    title: 'Verificação Pendente',
+                    message: 'Seus documentos estão em análise. Aguarde a aprovação.',
+                    type: 'warning'
+                });
+            }
+            
+            // Verificar assinatura expirada
+            if (taxistaData.assinatura && taxistaData.assinatura.status === 'expirada') {
+                alerts.push({
+                    title: 'Assinatura Expirada',
+                    message: 'Sua assinatura expirou. Renove para continuar trabalhando.',
+                    type: 'error'
+                });
+            }
+            
+            // Verificar avaliação baixa
+            if (taxistaData.avaliacaoMedia < 3.5) {
+                alerts.push({
+                    title: 'Avaliação Baixa',
+                    message: 'Sua avaliação está abaixo da média. Verifique suas corridas.',
+                    type: 'warning'
+                });
+            }
+            
+            // Mostrar primeiro alerta
+            if (alerts.length > 0) {
+                const alert = alerts[0];
+                alertTitle.textContent = alert.title;
+                alertMessage.textContent = alert.message;
+                alertCard.style.display = 'flex';
+            } else {
+                alertCard.style.display = 'none';
+            }
+        }
+
+        function showNotification(message) {
+            // Criar notificação temporária
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: var(--taxi-yellow);
+                color: var(--dark-graphite);
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+                z-index: 10000;
+                font-weight: 600;
+                animation: slideIn 0.3s ease;
+            `;
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
             setTimeout(() => {
-                loadingOverlay.classList.remove('active');
-                alert('Redirecionando para renovação de assinatura...');
-                // window.location.href = 'assinatura-taxista.html';
-            }, 500);
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        function toggleProfileDropdown() {
+            profileDropdown.classList.toggle('active');
         }
 
         function toggleMobileMenu() {
@@ -1127,18 +1926,33 @@
             navMenu.classList.remove('active');
         }
 
-        function goToProfile() {
-            window.location.href = 'perfil-taxista.html';
-        }
-
         function logout() {
-            if (confirm('Deseja realmente sair?')) {
+            if (confirm('Deseja realmente sair da sua conta?')) {
                 loadingOverlay.classList.add('active');
+                loadingMessage.textContent = "Saindo da conta...";
+                
+                // Simulação de logout
+                // Na versão real: await auth.signOut();
+                
                 setTimeout(() => {
                     window.location.href = 'login-taxista.html';
                 }, 1000);
             }
         }
+
+        // Adicionar estilos de animação para notificações
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
