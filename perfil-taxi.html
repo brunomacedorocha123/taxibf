@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Completar Perfil - Taxista</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: #667eea;
+        }
+
+        .upload-icon {
+            font-size: 40px;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .preview-image {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 50%;
+            margin: 15px auto;
+            display: block;
+        }
+
+        .status-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .status-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .status-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .success-message {
+            background: #2ecc71;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile-card">
+            <div class="header">
+                <h1>🐕 Completar Perfil de Taxista</h1>
+                <p>Complete suas informações para começar a trabalhar</p>
+            </div>
+
+            <form id="taxiProfileForm">
+                <!-- Dados Pessoais -->
+                <div class="form-group">
+                    <label>Como gostaria de ser chamado?</label>
+                    <input type="text" id="apelido" placeholder="Ex: Seu Zé, João" required>
+                </div>
+
+                <!-- Dados do Alvará e Veículo -->
+                <div class="form-group">
+                    <label>Número do Alvará</label>
+                    <input type="text" id="numeroAlvara" placeholder="Digite o número do alvará" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Placa do Veículo</label>
+                    <input type="text" id="placaVeiculo" placeholder="ABC-1234" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Modelo do Veículo (Opcional)</label>
+                    <input type="text" id="modeloVeiculo" placeholder="Ex: Toyota Corolla">
+                </div>
+
+                <div class="form-group">
+                    <label>Cor do Veículo (Opcional)</label>
+                    <input type="text" id="corVeiculo" placeholder="Ex: Preto, Branco">
+                </div>
+
+                <!-- Upload de Foto -->
+                <div class="form-group">
+                    <label>Foto de Perfil</label>
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">📷</div>
+                        <p>Clique para adicionar foto</p>
+                        <input type="file" id="fotoInput" accept="image/*" style="display: none;">
+                        <img id="previewFoto" class="preview-image" style="display: none;">
+                    </div>
+                </div>
+
+                <!-- Status de Trabalho -->
+                <div class="form-group">
+                    <label>Status Atual</label>
+                    <div class="status-options">
+                        <div class="status-btn active" data-status="disponivel">✅ Disponível</div>
+                        <div class="status-btn" data-status="ocupado">🚗 Ocupado</div>
+                        <div class="status-btn" data-status="ausente">⏸️ Ausente</div>
+                    </div>
+                    <input type="hidden" id="status" value="disponivel">
+                </div>
+
+                <!-- Horário de Trabalho (Opcional) -->
+                <div class="form-group">
+                    <label>Horário que normalmente trabalha (Opcional)</label>
+                    <select id="horarioTrabalho">
+                        <option value="">Selecione o horário</option>
+                        <option value="manha">Manhã (06:00 - 12:00)</option>
+                        <option value="tarde">Tarde (12:00 - 18:00)</option>
+                        <option value="noite">Noite (18:00 - 00:00)</option>
+                        <option value="madrugada">Madrugada (00:00 - 06:00)</option>
+                        <option value="integral">Integral (24h)</option>
+                    </select>
+                </div>
+
+                <!-- Upload de Documentos (Futuro) -->
+                <div class="form-group">
+                    <label>Upload de Documentos (Em breve)</label>
+                    <div class="upload-area" style="opacity: 0.6; cursor: not-allowed;">
+                        <div class="upload-icon">📄</div>
+                        <p>Em breve: CNH, CRLV, Alvará</p>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">💾 Salvar Perfil</button>
+            </form>
+
+            <div id="successMessage" class="success-message">
+                Perfil salvo com sucesso! ✅
+            </div>
+
+            <div id="errorMessage" class="error-message"></div>
+        </div>
+    </div>
+
+    <!-- Firebase e seus scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-storage-compat.js"></script>
+    
+    <script>
+        // Sua configuração Firebase (substitua com suas chaves)
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_AUTH_DOMAIN",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET",
+            messagingSenderId: "SEU_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // Variáveis globais
+        let currentUser = null;
+        let fotoFile = null;
+
+        // Quando a página carrega
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Verificar se usuário está logado
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    currentUser = user;
+                    console.log("Usuário logado:", user.uid);
+                    
+                    // Verificar se já tem perfil de taxista
+                    const perfilRef = db.collection('taxistasPerfil').doc(user.uid);
+                    const perfilDoc = await perfilRef.get();
+                    
+                    if (perfilDoc.exists) {
+                        // Já tem perfil, preencher formulário
+                        const data = perfilDoc.data();
+                        document.getElementById('apelido').value = data.apelido || '';
+                        document.getElementById('numeroAlvara').value = data.numeroAlvara || '';
+                        document.getElementById('placaVeiculo').value = data.placaVeiculo || '';
+                        document.getElementById('modeloVeiculo').value = data.modeloVeiculo || '';
+                        document.getElementById('corVeiculo').value = data.corVeiculo || '';
+                        document.getElementById('status').value = data.status || 'disponivel';
+                        document.getElementById('horarioTrabalho').value = data.horarioTrabalho || '';
+                        
+                        // Atualizar botões de status
+                        updateStatusButtons(data.status || 'disponivel');
+                        
+                        // Carregar foto se existir
+                        if (data.fotoPerfilUrl) {
+                            document.getElementById('previewFoto').src = data.fotoPerfilUrl;
+                            document.getElementById('previewFoto').style.display = 'block';
+                        }
+                    }
+                } else {
+                    // Não está logado, redirecionar
+                    window.location.href = 'login.html';
+                }
+            });
+        });
+
+        // Upload de foto
+        document.getElementById('uploadArea').addEventListener('click', function() {
+            document.getElementById('fotoInput').click();
+        });
+
+        document.getElementById('fotoInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                fotoFile = file;
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    const preview = document.getElementById('previewFoto');
+                    preview.src = event.target.result;
+                    preview.style.display = 'block';
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Status buttons
+        document.querySelectorAll('.status-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remover classe active de todos
+                document.querySelectorAll('.status-btn').forEach(b => {
+                    b.classList.remove('active');
+                });
+                
+                // Adicionar ao clicado
+                this.classList.add('active');
+                
+                // Atualizar input hidden
+                const status = this.getAttribute('data-status');
+                document.getElementById('status').value = status;
+            });
+        });
+
+        function updateStatusButtons(status) {
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-status') === status) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Salvar perfil
+        document.getElementById('taxiProfileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!currentUser) {
+                showError('Usuário não está logado!');
+                return;
+            }
+            
+            const submitBtn = this.querySelector('.btn-primary');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Salvando...';
+            submitBtn.disabled = true;
+            
+            try {
+                let fotoUrl = '';
+                
+                // 1. Upload da foto (se houver nova)
+                if (fotoFile) {
+                    fotoUrl = await uploadFoto(fotoFile, currentUser.uid);
+                } else {
+                    // Verificar se já tem foto no perfil
+                    const perfilRef = db.collection('taxistasPerfil').doc(currentUser.uid);
+                    const perfilDoc = await perfilRef.get();
+                    if (perfilDoc.exists && perfilDoc.data().fotoPerfilUrl) {
+                        fotoUrl = perfilDoc.data().fotoPerfilUrl;
+                    }
+                }
+                
+                // 2. Pegar dados do usuário do Firestore (users)
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                const userData = userDoc.exists ? userDoc.data() : {};
+                
+                // 3. Criar/atualizar perfil de taxista
+                const perfilData = {
+                    // Dados do usuário (vindos do login)
+                    nomeCompleto: userData.nomeCompleto || currentUser.displayName || '',
+                    email: currentUser.email || '',
+                    telefone: userData.telefone || '',
+                    idUnico: userData.idUnico || generateIdUnico(),
+                    
+                    // Dados do formulário
+                    apelido: document.getElementById('apelido').value,
+                    numeroAlvara: document.getElementById('numeroAlvara').value,
+                    placaVeiculo: document.getElementById('placaVeiculo').value.toUpperCase(),
+                    modeloVeiculo: document.getElementById('modeloVeiculo').value || '',
+                    corVeiculo: document.getElementById('corVeiculo').value || '',
+                    status: document.getElementById('status').value,
+                    horarioTrabalho: document.getElementById('horarioTrabalho').value || '',
+                    fotoPerfilUrl: fotoUrl,
+                    
+                    // Dados do sistema
+                    verificado: false,
+                    notaMedia: 0,
+                    totalCorridas: 0,
+                    dataCadastro: firebase.firestore.FieldValue.serverTimestamp(),
+                    dataAtualizacao: firebase.firestore.FieldValue.serverTimestamp(),
+                    ultimoAcesso: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                // 4. Salvar no Firestore
+                await db.collection('taxistasPerfil').doc(currentUser.uid).set(perfilData, { merge: true });
+                
+                // 5. Atualizar status no Firestore (coleção pública)
+                await db.collection('taxistasStatus').doc(currentUser.uid).set({
+                    status: perfilData.status,
+                    disponivel: perfilData.status === 'disponivel',
+                    ultimaAtualizacao: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                
+                // 6. Mostrar sucesso
+                showSuccess();
+                
+            } catch (error) {
+                console.error('Erro ao salvar perfil:', error);
+                showError('Erro ao salvar perfil: ' + error.message);
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Função para upload de foto
+        async function uploadFoto(file, userId) {
+            return new Promise((resolve, reject) => {
+                const storageRef = storage.ref();
+                const fotoRef = storageRef.child(`taxistas/${userId}/perfil/${Date.now()}_${file.name}`);
+                
+                const uploadTask = fotoRef.put(file);
+                
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        // Progresso (opcional)
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        console.log('Upload progress: ' + progress + '%');
+                    },
+                    (error) => {
+                        reject(error);
+                    },
+                    async () => {
+                        // Upload completo
+                        const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                        resolve(downloadURL);
+                    }
+                );
+            });
+        }
+
+        // Gerar ID único (se não existir)
+        function generateIdUnico() {
+            const prefix = 'TX';
+            const random = Math.floor(100000 + Math.random() * 900000);
+            return `${prefix}-${random}`;
+        }
+
+        function showSuccess() {
+            document.getElementById('successMessage').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 3000);
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
