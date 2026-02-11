@@ -1262,536 +1262,658 @@
     </div>
 
     <script>
-        // Firebase Configuration - SUBSTITUA COM SUAS CREDENCIAIS
-        const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_PROJETO.firebaseapp.com",
-            projectId: "SEU_PROJETO",
-            storageBucket: "SEU_PROJETO.appspot.com",
-            messagingSenderId: "SEU_SENDER_ID",
-            appId: "SEU_APP_ID"
-        };
+    // 🔥 FIREBASE - SEUS DADOS
+    const firebaseConfig = {
+        apiKey: "AIzaSyDsLnfKynKVsn66paVJjCnbHeH8pGBahCw",
+        authDomain: "taxibf-1f545.firebaseapp.com",
+        projectId: "taxibf-1f545",
+        storageBucket: "taxibf-1f545.firebasestorage.app",
+        messagingSenderId: "965457489049",
+        appId: "1:965457489049:web:cd0baf070944e3927bdc08"
+    };
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        const storage = firebase.storage();
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const storage = firebase.storage();
 
-        // Global Variables
-        let currentUser = null;
-        let userData = {};
-        let vehiclePhotos = [null, null, null];
-        let uploadedDocuments = {
-            cnh: null,
-            address: null
-        };
+    // Global Variables
+    let currentUser = null;
+    let userData = {
+        fullName: 'Motorista',
+        email: '',
+        phone: '',
+        cpf: '',
+        bio: '',
+        vehicle: {
+            plate: '',
+            model: '',
+            year: '',
+            color: '',
+            photos: [null, null, null]
+        },
+        preferences: {
+            notifyWhatsApp: true,
+            autoDarkMode: false
+        },
+        status: 'active',
+        stats: {
+            totalRides: 0,
+            rating: 0,
+            favorites: 0
+        }
+    };
+    
+    let vehiclePhotos = [null, null, null];
+    let uploadedDocuments = {
+        cnh: null,
+        address: null
+    };
 
-        // DOM Elements
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        const toast = document.getElementById('toast');
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const navMenu = document.getElementById('navMenu');
+    // DOM Elements
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const toast = document.getElementById('toast');
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const navMenu = document.getElementById('navMenu');
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeApp();
+    // ==========================================
+    // INIT - SEM REDIRECIONAMENTO
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('📄 Perfil carregado');
+        
+        setupEventListeners();
+        populateYears();
+        
+        // Verificar usuário - NÃO REDIRECIONA
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log('✅ Usuário autenticado:', user.uid);
+                currentUser = user;
+                loadUserProfile(user.uid);
+            } else {
+                console.log('⚠️ Usuário não autenticado - usando dados vazios');
+                // NÃO REDIRECIONA - só mostra formulário vazio
+                showToast('Atenção', 'Faça login para editar seu perfil', 'info');
+                fillForm(userData);
+                updateProfileDisplay(userData);
+            }
+        });
+    });
+
+    // ==========================================
+    // SETUP
+    // ==========================================
+    function setupEventListeners() {
+        // Mobile menu
+        mobileMenuBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
         });
 
-        function initializeApp() {
-            setupEventListeners();
-            populateYears();
-            
-            // Check auth state
-            auth.onAuthStateChanged((user) => {
-                if (user) {
-                    currentUser = user;
-                    loadUserProfile(user.uid);
-                } else {
-                    window.location.href = 'login.html';
-                }
-            });
-        }
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!navMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                navMenu.classList.remove('active');
+            }
+        });
 
-        function setupEventListeners() {
-            // Mobile menu
-            mobileMenuBtn.addEventListener('click', () => {
-                navMenu.classList.toggle('active');
-            });
+        // Input masks
+        const cpfInput = document.getElementById('cpf');
+        const phoneInput = document.getElementById('phone');
+        const plateInput = document.getElementById('plate');
+        
+        if (cpfInput) cpfInput.addEventListener('input', maskCPF);
+        if (phoneInput) phoneInput.addEventListener('input', maskPhone);
+        if (plateInput) plateInput.addEventListener('input', maskPlate);
 
-            // Close menu when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!navMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
-                    navMenu.classList.remove('active');
-                }
-            });
-
-            // Input masks
-            document.getElementById('cpf').addEventListener('input', maskCPF);
-            document.getElementById('phone').addEventListener('input', maskPhone);
-            document.getElementById('plate').addEventListener('input', maskPlate);
-
-            // Bio character limit
-            document.getElementById('bio').addEventListener('input', function() {
+        // Bio character limit
+        const bioInput = document.getElementById('bio');
+        if (bioInput) {
+            bioInput.addEventListener('input', function() {
                 if (this.value.length > 500) {
                     this.value = this.value.substring(0, 500);
                 }
             });
         }
+    }
 
-        function populateYears() {
-            const yearSelect = document.getElementById('carYear');
-            const currentYear = new Date().getFullYear();
-            for (let year = currentYear; year >= 2000; year--) {
-                const option = document.createElement('option');
-                option.value = year;
-                option.textContent = year;
-                yearSelect.appendChild(option);
-            }
-        }
-
-        // Load user data from Firestore
-        async function loadUserProfile(uid) {
-            showLoading(true);
+    // ==========================================
+    // CARREGAR DADOS
+    // ==========================================
+    async function loadUserProfile(uid) {
+        showLoading(true);
+        
+        try {
+            const doc = await db.collection('motoristas').doc(uid).get();
             
-            try {
-                const doc = await db.collection('motoristas').doc(uid).get();
+            if (doc.exists) {
+                console.log('📦 Dados carregados do Firestore');
+                userData = { ...userData, ...doc.data() };
+                vehiclePhotos = userData.vehicle?.photos || [null, null, null];
+                uploadedDocuments.cnh = userData.documents?.cnh || null;
+                uploadedDocuments.address = userData.documents?.address || null;
+            } else {
+                console.log('🆕 Novo usuário - criando perfil');
+                userData.email = currentUser.email;
+                userData.fullName = currentUser.displayName || 'Motorista';
                 
-                if (doc.exists) {
-                    userData = doc.data();
-                    fillForm(userData);
-                    updateProfileDisplay(userData);
-                } else {
-                    // New user - create basic profile
-                    const newProfile = {
-                        uid: uid,
-                        email: currentUser.email,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        status: 'active',
-                        subscription: {
-                            active: true,
-                            plan: 'mensal',
-                            value: 29.90,
-                            nextPayment: null
-                        },
-                        stats: {
-                            totalRides: 0,
-                            rating: 0,
-                            favorites: 0
-                        }
-                    };
-                    
-                    await db.collection('motoristas').doc(uid).set(newProfile);
-                    userData = newProfile;
-                }
-            } catch (error) {
-                console.error('Error loading profile:', error);
-                showToast('Erro', 'Não foi possível carregar seu perfil', 'error');
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        function fillForm(data) {
-            // Personal info
-            document.getElementById('fullName').value = data.fullName || '';
-            document.getElementById('cpf').value = data.cpf || '';
-            document.getElementById('phone').value = data.phone || '';
-            document.getElementById('email').value = data.email || currentUser.email;
-            document.getElementById('bio').value = data.bio || '';
-
-            // Vehicle info
-            document.getElementById('plate').value = data.vehicle?.plate || '';
-            document.getElementById('carModel').value = data.vehicle?.model || '';
-            document.getElementById('carYear').value = data.vehicle?.year || '';
-            document.getElementById('carColor').value = data.vehicle?.color || '';
-
-            // Preferences
-            document.getElementById('notifyWhatsApp').checked = data.preferences?.notifyWhatsApp !== false;
-            document.getElementById('autoDarkMode').checked = data.preferences?.autoDarkMode || false;
-            document.getElementById('deactivateAccount').checked = data.status === 'inactive';
-
-            // Load photos if exist
-            if (data.photoURL) {
-                displayProfilePhoto(data.photoURL);
-            }
-            
-            if (data.vehicle?.photos) {
-                data.vehicle.photos.forEach((url, index) => {
-                    if (url) displayVehiclePhoto(url, index);
+                // Salvar perfil básico
+                await db.collection('motoristas').doc(uid).set({
+                    uid: uid,
+                    email: currentUser.email,
+                    fullName: userData.fullName,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    status: 'active',
+                    stats: { totalRides: 0, rating: 0, favorites: 0 },
+                    vehicle: { plate: '', model: '', year: '', color: '', photos: [null, null, null] },
+                    preferences: { notifyWhatsApp: true, autoDarkMode: false }
                 });
             }
+            
+            // Preencher formulário
+            fillForm(userData);
+            updateProfileDisplay(userData);
+            
+        } catch (error) {
+            console.error('❌ Erro ao carregar perfil:', error);
+            showToast('Erro', 'Não foi possível carregar seu perfil', 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
 
-            // Update document status
-            if (data.documents?.cnh) updateDocumentStatus('cnh', true);
-            if (data.documents?.address) updateDocumentStatus('address', true);
+    // ==========================================
+    // PREENCHER FORMULÁRIO
+    // ==========================================
+    function fillForm(data) {
+        // Personal info
+        setValue('fullName', data.fullName || '');
+        setValue('cpf', data.cpf || '');
+        setValue('phone', data.phone || '');
+        setValue('email', data.email || currentUser?.email || '');
+        setValue('bio', data.bio || '');
+
+        // Vehicle info
+        setValue('plate', data.vehicle?.plate || '');
+        setValue('carModel', data.vehicle?.model || '');
+        setValue('carYear', data.vehicle?.year || '');
+        setValue('carColor', data.vehicle?.color || '');
+
+        // Preferences
+        const notifyCheck = document.getElementById('notifyWhatsApp');
+        if (notifyCheck) notifyCheck.checked = data.preferences?.notifyWhatsApp !== false;
+        
+        const darkModeCheck = document.getElementById('autoDarkMode');
+        if (darkModeCheck) darkModeCheck.checked = data.preferences?.autoDarkMode || false;
+        
+        const deactivateCheck = document.getElementById('deactivateAccount');
+        if (deactivateCheck) deactivateCheck.checked = data.status === 'inactive';
+
+        // Load photos
+        if (data.photoURL) displayProfilePhoto(data.photoURL);
+        
+        if (data.vehicle?.photos) {
+            data.vehicle.photos.forEach((url, index) => {
+                if (url) displayVehiclePhoto(url, index);
+            });
         }
 
-        function updateProfileDisplay(data) {
-            const initials = getInitials(data.fullName || currentUser.displayName || 'Motorista');
-            
-            document.getElementById('displayName').textContent = data.fullName || 'Motorista';
-            document.getElementById('displayEmail').textContent = data.email || currentUser.email;
-            document.getElementById('navAvatar').textContent = initials;
-            
-            if (!data.photoURL) {
-                document.getElementById('profilePlaceholder').textContent = initials;
-            }
+        // Update document status
+        if (data.documents?.cnh) updateDocumentStatus('cnh', true);
+        if (data.documents?.address) updateDocumentStatus('address', true);
+    }
 
-            // Stats
-            document.getElementById('statRides').textContent = data.stats?.totalRides || 0;
-            document.getElementById('statRating').textContent = data.stats?.rating || '0.0';
-            
-            const createdAt = data.createdAt?.toDate?.() || new Date();
-            document.getElementById('statSince').textContent = createdAt.getFullYear();
+    function setValue(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.value = value || '';
+    }
 
-            // Status
-            const statusEl = document.getElementById('profileStatus');
+    // ==========================================
+    // ATUALIZAR DISPLAY
+    // ==========================================
+    function updateProfileDisplay(data) {
+        const name = data.fullName || currentUser?.displayName || 'Motorista';
+        const initials = getInitials(name);
+        const email = data.email || currentUser?.email || 'email@nao.carregado';
+        
+        // Nome e email
+        setText('displayName', name);
+        setText('displayEmail', email);
+        setText('navAvatar', initials);
+        
+        // Avatar
+        const placeholder = document.getElementById('profilePlaceholder');
+        if (placeholder && !data.photoURL) {
+            placeholder.style.display = 'flex';
+            placeholder.textContent = initials;
+        }
+
+        // Stats
+        setText('statRides', data.stats?.totalRides || 0);
+        setText('statRating', data.stats?.rating || '0.0');
+        
+        const createdAt = data.createdAt?.toDate?.() || new Date();
+        setText('statSince', createdAt.getFullYear());
+
+        // Status
+        const statusEl = document.getElementById('profileStatus');
+        if (statusEl) {
             if (data.status === 'inactive') {
-                statusEl.classList.add('inactive');
+                statusEl.className = 'profile-status inactive';
                 statusEl.innerHTML = '<i class="fas fa-circle"></i><span>Inativo</span>';
+            } else {
+                statusEl.className = 'profile-status';
+                statusEl.innerHTML = '<i class="fas fa-circle"></i><span>Ativo</span>';
             }
         }
+    }
 
-        // Save profile to Firestore
-        async function saveProfile() {
-            if (!validateForm()) return;
+    function setText(id, text) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+    }
 
-            showLoading(true);
-            const saveBtn = document.getElementById('saveBtn');
-            saveBtn.disabled = true;
-
-            try {
-                const formData = {
-                    fullName: document.getElementById('fullName').value.trim(),
-                    cpf: document.getElementById('cpf').value,
-                    phone: document.getElementById('phone').value,
-                    bio: document.getElementById('bio').value.trim(),
-                    vehicle: {
-                        plate: document.getElementById('plate').value.toUpperCase(),
-                        model: document.getElementById('carModel').value.trim(),
-                        year: document.getElementById('carYear').value,
-                        color: document.getElementById('carColor').value,
-                        photos: vehiclePhotos
-                    },
-                    preferences: {
-                        notifyWhatsApp: document.getElementById('notifyWhatsApp').checked,
-                        autoDarkMode: document.getElementById('autoDarkMode').checked
-                    },
-                    status: document.getElementById('deactivateAccount').checked ? 'inactive' : 'active',
-                    documents: uploadedDocuments,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
-
-                // Update display name in Auth if changed
-                if (currentUser.displayName !== formData.fullName) {
-                    await currentUser.updateProfile({
-                        displayName: formData.fullName
-                    });
-                }
-
-                // Save to Firestore
-                await db.collection('motoristas').doc(currentUser.uid).update(formData);
-                
-                // Update local data
-                userData = { ...userData, ...formData };
-                updateProfileDisplay(userData);
-                
-                showToast('Sucesso!', 'Perfil atualizado com sucesso', 'success');
-            } catch (error) {
-                console.error('Error saving profile:', error);
-                showToast('Erro', 'Não foi possível salvar as alterações', 'error');
-            } finally {
-                showLoading(false);
-                saveBtn.disabled = false;
-            }
+    // ==========================================
+    // SALVAR PERFIL
+    // ==========================================
+    async function saveProfile() {
+        if (!currentUser) {
+            showToast('Atenção', 'Você precisa estar logado', 'error');
+            return;
         }
+        
+        if (!validateForm()) return;
 
-        // Photo Upload Handlers
-        async function handlePhotoUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        showLoading(true);
+        const saveBtn = document.getElementById('saveBtn');
+        if (saveBtn) saveBtn.disabled = true;
 
-            if (file.size > 5 * 1024 * 1024) {
-                showToast('Erro', 'Imagem muito grande. Máximo 5MB', 'error');
-                return;
-            }
+        try {
+            const formData = {
+                fullName: getValue('fullName'),
+                cpf: getValue('cpf'),
+                phone: getValue('phone'),
+                bio: getValue('bio'),
+                vehicle: {
+                    plate: getValue('plate').toUpperCase(),
+                    model: getValue('carModel'),
+                    year: getValue('carYear'),
+                    color: getValue('carColor'),
+                    photos: vehiclePhotos
+                },
+                preferences: {
+                    notifyWhatsApp: document.getElementById('notifyWhatsApp')?.checked || false,
+                    autoDarkMode: document.getElementById('autoDarkMode')?.checked || false
+                },
+                status: document.getElementById('deactivateAccount')?.checked ? 'inactive' : 'active',
+                documents: {
+                    cnh: uploadedDocuments.cnh,
+                    address: uploadedDocuments.address
+                },
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
 
-            showLoading(true);
-
-            try {
-                const storageRef = storage.ref(`motoristas/${currentUser.uid}/profile.jpg`);
-                await storageRef.put(file);
-                const url = await storageRef.getDownloadURL();
-                
-                await db.collection('motoristas').doc(currentUser.uid).update({
-                    photoURL: url
+            // Update display name in Auth
+            if (currentUser.displayName !== formData.fullName) {
+                await currentUser.updateProfile({
+                    displayName: formData.fullName
                 });
-
-                displayProfilePhoto(url);
-                showToast('Sucesso!', 'Foto atualizada', 'success');
-            } catch (error) {
-                console.error('Upload error:', error);
-                showToast('Erro', 'Falha ao enviar foto', 'error');
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        function displayProfilePhoto(url) {
-            document.getElementById('profilePhoto').src = url;
-            document.getElementById('profilePhoto').style.display = 'block';
-            document.getElementById('profilePlaceholder').style.display = 'none';
-        }
-
-        async function handleVehiclePhoto(event, index) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            if (file.size > 5 * 1024 * 1024) {
-                showToast('Erro', 'Imagem muito grande. Máximo 5MB', 'error');
-                return;
             }
 
-            showLoading(true);
+            // Save to Firestore
+            await db.collection('motoristas').doc(currentUser.uid).update(formData);
+            
+            // Update local data
+            userData = { ...userData, ...formData };
+            updateProfileDisplay(userData);
+            
+            showToast('Sucesso!', 'Perfil atualizado com sucesso', 'success');
+        } catch (error) {
+            console.error('❌ Erro ao salvar:', error);
+            showToast('Erro', 'Não foi possível salvar', 'error');
+        } finally {
+            showLoading(false);
+            if (saveBtn) saveBtn.disabled = false;
+        }
+    }
 
-            try {
-                const storageRef = storage.ref(`motoristas/${currentUser.uid}/vehicle_${index}.jpg`);
-                await storageRef.put(file);
-                const url = await storageRef.getDownloadURL();
-                
-                vehiclePhotos[index] = url;
-                displayVehiclePhoto(url, index);
-                
-                // Auto-save vehicle photos
-                await db.collection('motoristas').doc(currentUser.uid).update({
-                    'vehicle.photos': vehiclePhotos
-                });
-                
-                showToast('Sucesso!', 'Foto do veículo adicionada', 'success');
-            } catch (error) {
-                showToast('Erro', 'Falha ao enviar foto', 'error');
-            } finally {
-                showLoading(false);
-            }
+    function getValue(id) {
+        const el = document.getElementById(id);
+        return el ? el.value.trim() : '';
+    }
+
+    // ==========================================
+    // UPLOAD DE FOTOS
+    // ==========================================
+    async function handlePhotoUpload(event) {
+        if (!currentUser) { showToast('Atenção', 'Faça login primeiro', 'error'); return; }
+        
+        const file = event.target.files[0];
+        if (!file) return;
+
+        if (file.size > 5 * 1024 * 1024) {
+            showToast('Erro', 'Imagem muito grande. Máximo 5MB', 'error');
+            return;
         }
 
-        function displayVehiclePhoto(url, index) {
+        showLoading(true);
+
+        try {
+            const storageRef = storage.ref(`motoristas/${currentUser.uid}/profile.jpg`);
+            await storageRef.put(file);
+            const url = await storageRef.getDownloadURL();
+            
+            await db.collection('motoristas').doc(currentUser.uid).update({ photoURL: url });
+            displayProfilePhoto(url);
+            showToast('Sucesso!', 'Foto atualizada', 'success');
+        } catch (error) {
+            console.error('Upload error:', error);
+            showToast('Erro', 'Falha ao enviar foto', 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    function displayProfilePhoto(url) {
+        const photo = document.getElementById('profilePhoto');
+        const placeholder = document.getElementById('profilePlaceholder');
+        
+        if (photo) {
+            photo.src = url;
+            photo.style.display = 'block';
+        }
+        if (placeholder) placeholder.style.display = 'none';
+    }
+
+    async function handleVehiclePhoto(event, index) {
+        if (!currentUser) { showToast('Atenção', 'Faça login primeiro', 'error'); return; }
+        
+        const file = event.target.files[0];
+        if (!file) return;
+
+        if (file.size > 5 * 1024 * 1024) {
+            showToast('Erro', 'Imagem muito grande. Máximo 5MB', 'error');
+            return;
+        }
+
+        showLoading(true);
+
+        try {
+            const storageRef = storage.ref(`motoristas/${currentUser.uid}/vehicle_${index}.jpg`);
+            await storageRef.put(file);
+            const url = await storageRef.getDownloadURL();
+            
+            vehiclePhotos[index] = url;
+            displayVehiclePhoto(url, index);
+            
+            await db.collection('motoristas').doc(currentUser.uid).update({
+                'vehicle.photos': vehiclePhotos
+            });
+            
+            showToast('Sucesso!', 'Foto do veículo adicionada', 'success');
+        } catch (error) {
+            showToast('Erro', 'Falha ao enviar foto', 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    function displayVehiclePhoto(url, index) {
+        const boxes = document.querySelectorAll('.photo-upload-box');
+        if (!boxes[index]) return;
+        
+        const box = boxes[index];
+        const labels = ['Frente', 'Lateral', 'Interior'];
+        
+        box.innerHTML = `
+            <img src="${url}" alt="Veículo">
+            <button class="photo-remove" onclick="removeVehiclePhoto(event, ${index})">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        box.classList.add('has-image');
+    }
+
+    async function removeVehiclePhoto(event, index) {
+        event.stopPropagation();
+        
+        if (!currentUser) { showToast('Atenção', 'Faça login primeiro', 'error'); return; }
+        if (!confirm('Remover esta foto?')) return;
+
+        showLoading(true);
+        
+        try {
+            vehiclePhotos[index] = null;
+            
             const boxes = document.querySelectorAll('.photo-upload-box');
             const box = boxes[index];
+            const labels = ['Frente', 'Lateral', 'Interior'];
             
             box.innerHTML = `
-                <img src="${url}" alt="Veículo">
-                <button class="photo-remove" onclick="removeVehiclePhoto(event, ${index})">
-                    <i class="fas fa-times"></i>
-                </button>
+                <i class="fas fa-plus"></i>
+                <span>${labels[index]}</span>
+                <input type="file" id="vehiclePhoto${index + 1}" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, ${index})">
             `;
-            box.classList.add('has-image');
-        }
-
-        async function removeVehiclePhoto(event, index) {
-            event.stopPropagation();
+            box.classList.remove('has-image');
             
-            if (!confirm('Remover esta foto?')) return;
-
-            showLoading(true);
-            
-            try {
-                vehiclePhotos[index] = null;
-                
-                const boxes = document.querySelectorAll('.photo-upload-box');
-                const box = boxes[index];
-                const labels = ['Frente', 'Lateral', 'Interior'];
-                
-                box.innerHTML = `
-                    <i class="fas fa-plus"></i>
-                    <span>${labels[index]}</span>
-                    <input type="file" id="vehiclePhoto${index + 1}" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, ${index})">
-                `;
-                box.classList.remove('has-image');
-                
-                await db.collection('motoristas').doc(currentUser.uid).update({
-                    'vehicle.photos': vehiclePhotos
-                });
-                
-                showToast('Sucesso!', 'Foto removida', 'success');
-            } catch (error) {
-                showToast('Erro', 'Falha ao remover foto', 'error');
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        // Document Upload
-        async function handleDocumentUpload(event, type) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            if (file.size > 10 * 1024 * 1024) {
-                showToast('Erro', 'Arquivo muito grande. Máximo 10MB', 'error');
-                return;
-            }
-
-            showLoading(true);
-
-            try {
-                const ext = file.name.split('.').pop();
-                const storageRef = storage.ref(`motoristas/${currentUser.uid}/documents/${type}.${ext}`);
-                await storageRef.put(file);
-                const url = await storageRef.getDownloadURL();
-                
-                uploadedDocuments[type] = {
-                    url: url,
-                    uploadedAt: new Date(),
-                    status: 'pending'
-                };
-                
-                updateDocumentStatus(type, true);
-                showToast('Sucesso!', 'Documento enviado para análise', 'success');
-            } catch (error) {
-                showToast('Erro', 'Falha ao enviar documento', 'error');
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        function updateDocumentStatus(type, uploaded) {
-            const statusEl = document.getElementById(`${type}Status`);
-            const badgeEl = document.getElementById(`${type}Badge`);
-            
-            if (uploaded) {
-                statusEl.textContent = 'Documento enviado - Aguardando verificação';
-                badgeEl.className = 'document-status verified';
-                badgeEl.innerHTML = '<i class="fas fa-check"></i><span>Enviado</span>';
-            }
-        }
-
-        // Validation
-        function validateForm() {
-            const required = ['fullName', 'cpf', 'phone', 'plate', 'carModel', 'carYear', 'carColor'];
-            let valid = true;
-
-            required.forEach(id => {
-                const el = document.getElementById(id);
-                if (!el.value.trim()) {
-                    el.classList.add('error');
-                    valid = false;
-                } else {
-                    el.classList.remove('error');
-                }
+            await db.collection('motoristas').doc(currentUser.uid).update({
+                'vehicle.photos': vehiclePhotos
             });
+            
+            showToast('Sucesso!', 'Foto removida', 'success');
+        } catch (error) {
+            showToast('Erro', 'Falha ao remover foto', 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
 
-            if (!valid) {
-                showToast('Atenção', 'Preencha todos os campos obrigatórios', 'error');
-                return false;
+    // ==========================================
+    // UPLOAD DE DOCUMENTOS
+    // ==========================================
+    async function handleDocumentUpload(event, type) {
+        if (!currentUser) { showToast('Atenção', 'Faça login primeiro', 'error'); return; }
+        
+        const file = event.target.files[0];
+        if (!file) return;
+
+        if (file.size > 10 * 1024 * 1024) {
+            showToast('Erro', 'Arquivo muito grande. Máximo 10MB', 'error');
+            return;
+        }
+
+        showLoading(true);
+
+        try {
+            const ext = file.name.split('.').pop();
+            const storageRef = storage.ref(`motoristas/${currentUser.uid}/documents/${type}.${ext}`);
+            await storageRef.put(file);
+            const url = await storageRef.getDownloadURL();
+            
+            uploadedDocuments[type] = {
+                url: url,
+                uploadedAt: new Date(),
+                status: 'pending'
+            };
+            
+            updateDocumentStatus(type, true);
+            showToast('Sucesso!', 'Documento enviado para análise', 'success');
+        } catch (error) {
+            showToast('Erro', 'Falha ao enviar documento', 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    function updateDocumentStatus(type, uploaded) {
+        const statusEl = document.getElementById(`${type}Status`);
+        const badgeEl = document.getElementById(`${type}Badge`);
+        
+        if (uploaded && statusEl && badgeEl) {
+            statusEl.textContent = 'Documento enviado - Aguardando verificação';
+            badgeEl.className = 'document-status verified';
+            badgeEl.innerHTML = '<i class="fas fa-check"></i><span>Enviado</span>';
+        }
+    }
+
+    // ==========================================
+    // VALIDAÇÃO
+    // ==========================================
+    function validateForm() {
+        const required = ['fullName', 'cpf', 'phone', 'plate', 'carModel', 'carYear', 'carColor'];
+        let valid = true;
+
+        required.forEach(id => {
+            const el = document.getElementById(id);
+            if (el && !el.value.trim()) {
+                el.classList.add('error');
+                valid = false;
+            } else if (el) {
+                el.classList.remove('error');
             }
+        });
 
-            return true;
+        if (!valid) {
+            showToast('Atenção', 'Preencha todos os campos obrigatórios', 'error');
+            return false;
         }
 
-        // Input Masks
-        function maskCPF(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-            e.target.value = value;
-        }
+        return true;
+    }
 
-        function maskPhone(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 11) value = value.slice(0, 11);
-            
-            if (value.length > 7) {
-                value = value.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
-            } else if (value.length > 2) {
-                value = value.replace(/^(\d{2})(\d)/, '($1) $2');
-            }
-            
-            e.target.value = value;
-        }
+    // ==========================================
+    // MÁSCARAS
+    // ==========================================
+    function maskCPF(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        value = value.substring(0, 11);
+        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+        value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        e.target.value = value;
+    }
 
-        function maskPlate(e) {
-            let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-            if (value.length > 7) value = value.slice(0, 7);
-            
-            // Mercosul plate format: ABC1D23 or old format: ABC-1234
-            if (value.length > 3) {
-                value = value.replace(/^([A-Z]{3})(\d)/, '$1-$2');
-            }
-            
-            e.target.value = value;
+    function maskPhone(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        value = value.substring(0, 11);
+        
+        if (value.length > 7) {
+            value = value.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+        } else if (value.length > 2) {
+            value = value.replace(/^(\d{2})(\d)/, '($1) $2');
         }
+        
+        e.target.value = value;
+    }
 
-        // Utilities
-        function getInitials(name) {
-            return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    function maskPlate(e) {
+        let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        value = value.substring(0, 7);
+        
+        if (value.length > 3) {
+            value = value.replace(/^([A-Z]{3})(\d[A-Z]\d{2}|\d{4})/, '$1-$2');
         }
+        
+        e.target.value = value;
+    }
 
-        function showLoading(show) {
-            loadingOverlay.classList.toggle('active', show);
+    // ==========================================
+    // UTILITIES
+    // ==========================================
+    function populateYears() {
+        const yearSelect = document.getElementById('carYear');
+        if (!yearSelect) return;
+        
+        const currentYear = new Date().getFullYear();
+        yearSelect.innerHTML = '<option value="">Selecione</option>';
+        
+        for (let year = currentYear; year >= 2000; year--) {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            yearSelect.appendChild(option);
         }
+    }
 
-        function showToast(title, message, type = 'info') {
-            const toastEl = document.getElementById('toast');
-            const iconEl = toastEl.querySelector('.toast-icon i');
-            
-            document.getElementById('toastTitle').textContent = title;
-            document.getElementById('toastMessage').textContent = message;
-            
-            toastEl.className = 'toast show ' + type;
-            
-            if (type === 'success') {
-                iconEl.className = 'fas fa-check-circle';
-            } else if (type === 'error') {
-                iconEl.className = 'fas fa-exclamation-circle';
-            } else {
-                iconEl.className = 'fas fa-info-circle';
-            }
-            
+    function getInitials(name) {
+        if (!name || name === 'Motorista') return 'JM';
+        return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    }
+
+    function showLoading(show) {
+        if (loadingOverlay) loadingOverlay.classList.toggle('active', show);
+    }
+
+    function showToast(title, message, type = 'info') {
+        const toastEl = document.getElementById('toast');
+        if (!toastEl) return;
+        
+        const iconEl = toastEl.querySelector('.toast-icon i');
+        const titleEl = document.getElementById('toastTitle');
+        const msgEl = document.getElementById('toastMessage');
+        
+        if (titleEl) titleEl.textContent = title;
+        if (msgEl) msgEl.textContent = message;
+        
+        toastEl.className = 'toast show ' + type;
+        
+        if (iconEl) {
+            if (type === 'success') iconEl.className = 'fas fa-check-circle';
+            else if (type === 'error') iconEl.className = 'fas fa-exclamation-circle';
+            else iconEl.className = 'fas fa-info-circle';
+        }
+        
+        setTimeout(() => {
+            toastEl.classList.remove('show');
+        }, 3000);
+    }
+
+    function resetForm() {
+        if (confirm('Descartar alterações não salvas?')) {
+            fillForm(userData);
+            showToast('Info', 'Formulário restaurado');
+        }
+    }
+
+    function logout() {
+        if (confirm('Deseja realmente sair?')) {
+            auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            });
+        }
+    }
+
+    async function deleteAccount() {
+        if (!currentUser) { showToast('Erro', 'Usuário não autenticado', 'error'); return; }
+        if (!confirm('ATENÇÃO: Esta ação não pode ser desfeita. Deseja realmente excluir sua conta?')) return;
+        if (!confirm('Todos seus dados serão permanentemente removidos. Confirma?')) return;
+
+        showLoading(true);
+        
+        try {
+            await db.collection('motoristas').doc(currentUser.uid).delete();
+            await currentUser.delete();
+            showToast('Conta excluída', 'Redirecionando...', 'success');
             setTimeout(() => {
-                toastEl.classList.remove('show');
-            }, 3000);
+                window.location.href = 'index.html';
+            }, 2000);
+        } catch (error) {
+            showLoading(false);
+            showToast('Erro', 'Não foi possível excluir a conta. Faça login novamente.', 'error');
         }
+    }
 
-        function resetForm() {
-            if (confirm('Descartar alterações não salvas?')) {
-                fillForm(userData);
-                showToast('Info', 'Formulário restaurado');
-            }
-        }
-
-        function logout() {
-            if (confirm('Deseja realmente sair?')) {
-                auth.signOut().then(() => {
-                    window.location.href = 'login.html';
-                });
-            }
-        }
-
-        function deleteAccount() {
-            if (!confirm('ATENÇÃO: Esta ação não pode ser desfeita. Deseja realmente excluir sua conta?')) return;
-            if (!confirm('Todos seus dados serão permanentemente removidos. Confirma?')) return;
-
-            showLoading(true);
-            
-            // Delete from Firestore
-            db.collection('motoristas').doc(currentUser.uid).delete()
-                .then(() => {
-                    // Delete Auth account
-                    return currentUser.delete();
-                })
-                .then(() => {
-                    showToast('Conta excluída', 'Redirecionando...', 'success');
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 2000);
-                })
-                .catch(error => {
-                    showLoading(false);
-                    showToast('Erro', 'Não foi possível excluir a conta. Faça login novamente.', 'error');
-                });
-        }
-    </script>
+    // EXPOR FUNÇÕES PARA O HTML
+    window.handlePhotoUpload = handlePhotoUpload;
+    window.handleVehiclePhoto = handleVehiclePhoto;
+    window.removeVehiclePhoto = removeVehiclePhoto;
+    window.handleDocumentUpload = handleDocumentUpload;
+    window.saveProfile = saveProfile;
+    window.resetForm = resetForm;
+    window.logout = logout;
+    window.deleteAccount = deleteAccount;
+    window.showToast = showToast;
+</script>
 </body>
 </html>
