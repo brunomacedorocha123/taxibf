@@ -1282,191 +1282,289 @@
         </div>
     </div>
 
-    <script type="module">
-        // Importar Firebase SDK (já está na head, mas precisamos usar aqui)
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        <script type="module">
+        console.log("🚕 Iniciando dashboard-taxista...");
+        
+        // Suas credenciais Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDsLnfKynKVsn66paVJjCnbHeH8pGBahCw",
+            authDomain: "taxibf-1f545.firebaseapp.com",
+            projectId: "taxibf-1f545",
+            storageBucket: "taxibf-1f545.firebasestorage.app",
+            messagingSenderId: "965457489049",
+            appId: "1:965457489049:web:cd0baf070944e3927bdc08"
+        };
 
-        // Esperar o DOM carregar
+        // Import Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        console.log("🔥 Firebase inicializado");
+
+        // Elementos DOM
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const userAvatar = document.getElementById('userAvatar');
+        const userInitials = document.getElementById('userInitials');
+        const dropdownAvatar = document.getElementById('dropdownAvatar');
+        const dropdownInitials = document.getElementById('dropdownInitials');
+        const dropdownName = document.getElementById('dropdownName');
+        const dropdownEmail = document.getElementById('dropdownEmail');
+        const profileDropdown = document.getElementById('profileDropdown');
+        
+        // Dados do perfil
+        const alvaraNumber = document.getElementById('alvaraNumber');
+        const placaVeiculo = document.getElementById('placaVeiculo');
+        const tipoVeiculo = document.getElementById('tipoVeiculo');
+        const bairroAtuacao = document.getElementById('bairroAtuacao');
+        const verificationBadge = document.getElementById('verificationBadge');
+        
+        // Stats
+        const corridasHoje = document.getElementById('corridasHoje');
+        const avaliacaoMedia = document.getElementById('avaliacaoMedia');
+        const faturamentoHoje = document.getElementById('faturamentoHoje');
+        const tempoOnline = document.getElementById('tempoOnline');
+        
+        // Status buttons
+        const btnAvailable = document.getElementById('btnAvailable');
+        const btnBusy = document.getElementById('btnBusy');
+        const btnOffline = document.getElementById('btnOffline');
+        
+        // Map elements
+        const mapTitle = document.getElementById('mapTitle');
+        const mapSubtitle = document.getElementById('mapSubtitle');
+        
+        // Alert
+        const alertCard = document.getElementById('alertCard');
+        const alertTitle = document.getElementById('alertTitle');
+        const alertMessage = document.getElementById('alertMessage');
+        
+        // Variáveis
+        let currentStatus = 'offline';
+        let gpsActive = false;
+
+        // Quando DOM carregar
         document.addEventListener('DOMContentLoaded', function() {
-            initializeApp();
-        });
-
-        async function initializeApp() {
-            console.log("🚀 Inicializando dashboard...");
+            console.log("📱 DOM carregado");
             
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            const loadingMessage = document.getElementById('loadingMessage');
-            const alertCard = document.getElementById('alertCard');
-            const alertTitle = document.getElementById('alertTitle');
-            const alertMessage = document.getElementById('alertMessage');
-            
-            loadingMessage.textContent = "Verificando autenticação...";
+            // Mostrar loading suave
+            loadingMessage.textContent = "Carregando seu dashboard...";
             loadingOverlay.classList.add('active');
             
+            // Configurar event listeners
+            setupEventListeners();
+            
+            // Verificar autenticação
+            checkAuth();
+        });
+
+        function setupEventListeners() {
+            console.log("🔗 Configurando event listeners...");
+            
+            // Menu do usuário
+            userAvatar.addEventListener('click', toggleProfileDropdown);
+            
+            // Fechar dropdown ao clicar fora
+            document.addEventListener('click', function(event) {
+                if (!userAvatar.contains(event.target) && !profileDropdown.contains(event.target)) {
+                    profileDropdown.classList.remove('active');
+                }
+            });
+            
+            // Logout
+            document.getElementById('dropdownLogout').addEventListener('click', logout);
+            document.getElementById('btnLogout').addEventListener('click', logout);
+            
+            // Status buttons
+            btnAvailable.addEventListener('click', () => requestStatusChange('available'));
+            btnBusy.addEventListener('click', () => requestStatusChange('busy'));
+            btnOffline.addEventListener('click', () => requestStatusChange('offline'));
+            
+            // Mobile menu
+            document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+                document.getElementById('navMenu').classList.toggle('active');
+            });
+            
+            // Modal
+            document.getElementById('modalClose').addEventListener('click', closeModal);
+            document.getElementById('modalCancel').addEventListener('click', closeModal);
+            document.getElementById('modalConfirm').addEventListener('click', confirmStatusChange);
+            
+            // Botões de ação
+            document.getElementById('btnEditProfile').addEventListener('click', () => window.location.href = 'perfil-taxista.html');
+            document.getElementById('btnDocuments').addEventListener('click', () => window.location.href = 'documentos-taxista.html');
+            document.getElementById('btnHelp').addEventListener('click', () => window.location.href = 'ajuda-taxista.html');
+            
+            // GPS
+            document.getElementById('btnLocation').addEventListener('click', updateLocation);
+            
+            console.log("✅ Event listeners configurados");
+        }
+
+        function checkAuth() {
+            console.log("🔐 Verificando autenticação...");
+            
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    console.log("✅ Usuário autenticado:", user.uid);
+                    currentUser = user;
+                    await loadUserData(user);
+                } else {
+                    console.log("❌ Usuário não autenticado, redirecionando...");
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+
+        async function loadUserData(user) {
+            console.log("📥 Carregando dados do usuário...");
+            
             try {
-                // Verificar se Firebase está disponível
-                if (typeof firebaseAuth === 'undefined') {
-                    throw new Error('Firebase não inicializado');
+                // 1. Buscar dados básicos do usuário
+                const userDocRef = doc(db, "users", user.uid);
+                const userDoc = await getDoc(userDocRef);
+                
+                if (!userDoc.exists()) {
+                    console.error("❌ Usuário não encontrado no Firestore");
+                    showAlert("Erro", "Perfil não encontrado. Tente novamente.");
+                    return;
                 }
                 
-                // Monitorar estado de autenticação
-                onAuthStateChanged(firebaseAuth, async (user) => {
-                    if (user) {
-                        console.log("✅ Usuário autenticado:", user.uid);
-                        await loadUserData(user);
-                        loadingOverlay.classList.remove('active');
-                    } else {
-                        console.log("❌ Usuário não autenticado, redirecionando...");
-                        window.location.href = "login.html";
-                    }
-                });
+                userData = userDoc.data();
+                console.log("📊 Dados do usuário:", userData);
+                
+                // Verificar se é taxista
+                if (userData.tipoPerfil !== "taxista") {
+                    console.log("⚠️ Usuário não é taxista, redirecionando...");
+                    window.location.href = 'dashboard-passageiro.html';
+                    return;
+                }
+                
+                // 2. Atualizar interface com dados do usuário
+                updateUserInterface(user, userData);
+                
+                // 3. Buscar dados do taxista
+                await loadTaxistaData(user.uid);
+                
+                // 4. Esconder loading
+                setTimeout(() => {
+                    loadingOverlay.classList.remove('active');
+                    console.log("🎉 Dashboard carregado com sucesso!");
+                }, 500);
                 
             } catch (error) {
-                console.error("Erro na inicialização:", error);
-                loadingMessage.textContent = "Erro ao conectar com o servidor";
-                alertTitle.textContent = "Erro de Conexão";
-                alertMessage.textContent = "Não foi possível conectar ao sistema. Verifique sua conexão.";
-                alertCard.style.display = 'flex';
+                console.error("❌ Erro ao carregar dados:", error);
+                showAlert("Erro", "Não foi possível carregar seus dados: " + error.message);
                 loadingOverlay.classList.remove('active');
             }
         }
 
-        async function loadUserData(user) {
-            console.log("📥 Carregando dados do usuário:", user.uid);
+        async function loadTaxistaData(userId) {
+            console.log("🚖 Carregando dados do taxista...");
             
             try {
-                // 1. Buscar dados do usuário na coleção 'users'
-                const userDocRef = doc(firebaseDB, "users", user.uid);
-                const userDoc = await getDoc(userDocRef);
-                
-                if (!userDoc.exists()) {
-                    console.log("❌ Usuário não encontrado na coleção 'users'");
-                    // Usuário ainda não tem perfil, redirecionar para completar perfil
-                    window.location.href = "escolha-perfil.html";
-                    return;
-                }
-                
-                const userData = userDoc.data();
-                console.log("📊 Dados do usuário:", userData);
-                
-                // 2. Verificar se é taxista
-                if (userData.tipoPerfil !== "taxista") {
-                    console.log("❌ Usuário não é taxista");
-                    window.location.href = "dashboard-cliente.html";
-                    return;
-                }
-                
-                // 3. Atualizar interface com dados REAIS
-                updateUserInterface(user, userData);
-                
-                // 4. Buscar dados específicos do taxista (se existirem)
-                await loadTaxistaData(user.uid);
-                
-            } catch (error) {
-                console.error("Erro ao carregar dados:", error);
-                showAlert("Erro", "Não foi possível carregar seus dados. Tente novamente.");
-            }
-        }
-
-        async function loadTaxistaData(userId) {
-            try {
-                // Verificar se existe perfil de taxista
-                const taxistaDocRef = doc(firebaseDB, "taxistasPerfil", userId);
+                // Buscar perfil de taxista
+                const taxistaDocRef = doc(db, "taxistasPerfil", userId);
                 const taxistaDoc = await getDoc(taxistaDocRef);
                 
-                if (taxistaDoc.exists()) {
-                    const taxistaData = taxistaDoc.data();
-                    console.log("🚖 Dados do taxista:", taxistaData);
-                    updateTaxistaInterface(taxistaData);
+                if (!taxistaDoc.exists()) {
+                    console.log("⚠️ Perfil de taxista não encontrado, redirecionando para completar perfil...");
+                    showAlert("Perfil Incompleto", "Complete seu perfil de taxista para começar a trabalhar.");
                     
-                    // Verificar se precisa completar perfil
-                    if (!taxistaData.numeroAlvara || !taxistaData.placaVeiculo) {
-                        showAlert("Perfil Incompleto", "Complete seu perfil de taxista para começar a trabalhar.");
-                    }
-                } else {
-                    console.log("⚠️ Perfil de taxista não encontrado, redirecionando...");
-                    window.location.href = "perfil-taxista.html";
+                    // Redirecionar depois de 3 segundos
+                    setTimeout(() => {
+                        window.location.href = 'perfil-taxista.html';
+                    }, 3000);
+                    return;
                 }
                 
+                taxistaData = taxistaDoc.data();
+                console.log("📊 Dados do taxista:", taxistaData);
+                
+                // 5. Atualizar interface com dados do taxista
+                updateTaxistaInterface(taxistaData);
+                
+                // 6. Verificar alertas
+                checkAlerts(taxistaData);
+                
+                // 7. Verificar GPS
+                checkGPS();
+                
             } catch (error) {
-                console.error("Erro ao carregar dados do taxista:", error);
+                console.error("❌ Erro ao carregar dados do taxista:", error);
+                showAlert("Atenção", "Algumas informações não puderam ser carregadas.");
             }
         }
 
         function updateUserInterface(user, userData) {
-            console.log("🎨 Atualizando interface com dados reais...");
+            console.log("🎨 Atualizando interface do usuário...");
             
-            // Atualizar avatar e informações
-            const nome = userData.nomeCompleto || user.displayName || "Usuário";
-            const email = user.email || "email@exemplo.com";
+            // Nome e email
+            const nome = userData.nomeCompleto || user.displayName || "Taxista";
+            const email = user.email || "sem-email@exemplo.com";
             
-            // Iniciais
+            // Iniciais para avatar
             const initials = getInitials(nome);
-            document.getElementById('userInitials').textContent = initials;
-            document.getElementById('dropdownInitials').textContent = initials;
-            document.getElementById('dropdownName').textContent = nome;
-            document.getElementById('dropdownEmail').textContent = email;
             
-            // Se tiver ID único
-            if (userData.idUnico) {
-                document.getElementById('userAvatar').title = userData.idUnico;
-            }
+            // Atualizar elementos
+            userInitials.textContent = initials;
+            dropdownInitials.textContent = initials;
+            dropdownName.textContent = nome;
+            dropdownEmail.textContent = email;
+            
+            console.log("✅ Interface do usuário atualizada");
         }
 
-        function updateTaxistaInterface(taxistaData) {
+        function updateTaxistaInterface(data) {
             console.log("🎨 Atualizando interface do taxista...");
             
-            // Atualizar dados do perfil
-            const alvaraNumber = document.getElementById('alvaraNumber');
-            const placaVeiculo = document.getElementById('placaVeiculo');
-            const tipoVeiculo = document.getElementById('tipoVeiculo');
-            const bairroAtuacao = document.getElementById('bairroAtuacao');
-            
-            // Remover estado de loading
+            // Remover estado de loading dos campos
             alvaraNumber.classList.remove('loading');
             placaVeiculo.classList.remove('loading');
             tipoVeiculo.classList.remove('loading');
             bairroAtuacao.classList.remove('loading');
+            corridasHoje.classList.remove('loading');
+            avaliacaoMedia.classList.remove('loading');
+            faturamentoHoje.classList.remove('loading');
+            tempoOnline.classList.remove('loading');
             
-            // Preencher com dados REAIS
-            alvaraNumber.textContent = taxistaData.numeroAlvara || "Não informado";
-            placaVeiculo.textContent = taxistaData.placaVeiculo || "Não informado";
-            tipoVeiculo.textContent = taxistaData.modeloVeiculo || "Não informado";
-            bairroAtuacao.textContent = taxistaData.bairroAtuacao || "Não informado";
+            // Preencher dados do alvará e veículo
+            alvaraNumber.textContent = data.numeroAlvara || "Não informado";
+            placaVeiculo.textContent = data.placaVeiculo || "Não informado";
+            tipoVeiculo.textContent = data.modeloVeiculo || "Não informado";
+            bairroAtuacao.textContent = data.bairroAtuacao || "Não informado";
             
             // Atualizar status
-            const status = taxistaData.status || 'offline';
-            updateStatusUI(status);
+            currentStatus = data.status || 'offline';
+            updateStatusUI(currentStatus);
             
             // Atualizar verificação
-            updateVerificationStatus(taxistaData.verificado);
+            updateVerificationStatus(data.verificado || false);
             
             // Atualizar estatísticas
-            updateStatistics(taxistaData);
+            updateStatistics(data);
             
-            // Atualizar botões
+            // Habilitar botões
             enableButtons();
             
-            // Esconder alerta
-            document.getElementById('alertCard').style.display = 'none';
+            console.log("✅ Interface do taxista atualizada");
         }
 
         function updateStatusUI(status) {
             console.log("🔄 Atualizando status para:", status);
             
-            const btnAvailable = document.getElementById('btnAvailable');
-            const btnBusy = document.getElementById('btnBusy');
-            const btnOffline = document.getElementById('btnOffline');
-            const mapTitle = document.getElementById('mapTitle');
-            const mapSubtitle = document.getElementById('mapSubtitle');
-            
-            // Resetar todos os botões
+            // Remover classe active de todos os botões
             btnAvailable.classList.remove('active');
             btnBusy.classList.remove('active');
             btnOffline.classList.remove('active');
             
-            // Ativar botão correto
+            // Adicionar classe active ao botão correto
             switch(status) {
                 case 'available':
                     btnAvailable.classList.add('active');
@@ -1485,50 +1583,55 @@
                     break;
             }
             
-            // Habilitar botão de localização se disponível
-            document.getElementById('btnLocation').disabled = status !== 'available';
+            // Habilitar/desabilitar botão de localização
+            document.getElementById('btnLocation').disabled = (status !== 'available');
         }
 
         function updateVerificationStatus(isVerified) {
-            const verificationBadge = document.getElementById('verificationBadge');
+            console.log("🛡️ Atualizando status de verificação:", isVerified);
             
             verificationBadge.innerHTML = '';
             
             if (isVerified) {
                 verificationBadge.className = 'verified-badge';
                 verificationBadge.innerHTML = '<i class="fas fa-shield-alt"></i> VERIFICADO';
-                document.getElementById('userAvatar').classList.add('verified');
+                userAvatar.classList.add('verified');
             } else {
                 verificationBadge.className = 'pending-badge';
                 verificationBadge.innerHTML = '<i class="fas fa-clock"></i> PENDENTE';
-                document.getElementById('userAvatar').classList.remove('verified');
+                userAvatar.classList.remove('verified');
             }
         }
 
-        function updateStatistics(taxistaData) {
-            const corridasHoje = document.getElementById('corridasHoje');
-            const avaliacaoMedia = document.getElementById('avaliacaoMedia');
-            const faturamentoHoje = document.getElementById('faturamentoHoje');
-            const tempoOnline = document.getElementById('tempoOnline');
+        function updateStatistics(data) {
+            console.log("📈 Atualizando estatísticas...");
             
-            // Remover loading
-            corridasHoje.classList.remove('loading');
-            avaliacaoMedia.classList.remove('loading');
-            faturamentoHoje.classList.remove('loading');
-            tempoOnline.classList.remove('loading');
+            // Corridas hoje (simulação)
+            corridasHoje.textContent = data.totalCorridas || 0;
             
-            // Preencher com dados REAIS ou padrão
-            corridasHoje.textContent = taxistaData.totalCorridas || 0;
-            avaliacaoMedia.textContent = taxistaData.notaMedia ? taxistaData.notaMedia.toFixed(1) : '0.0';
-            faturamentoHoje.textContent = taxistaData.faturamentoHoje ? `R$ ${taxistaData.faturamentoHoje.toFixed(2)}` : 'R$ 0,00';
-            tempoOnline.textContent = taxistaData.tempoOnline || '0h';
+            // Avaliação média
+            avaliacaoMedia.textContent = data.notaMedia ? data.notaMedia.toFixed(1) : '0.0';
+            
+            // Faturamento hoje (simulação)
+            const faturamento = data.faturamentoHoje || 0;
+            faturamentoHoje.textContent = faturamento > 0 ? `R$ ${faturamento.toFixed(2)}` : 'R$ 0,00';
+            
+            // Tempo online (simulação)
+            tempoOnline.textContent = data.tempoOnline || '0h';
         }
 
         function enableButtons() {
+            console.log("🔘 Habilitando botões...");
+            
             // Habilitar botões de status
-            document.getElementById('btnAvailable').disabled = false;
-            document.getElementById('btnBusy').disabled = false;
-            document.getElementById('btnOffline').disabled = false;
+            btnAvailable.disabled = false;
+            btnBusy.disabled = false;
+            btnOffline.disabled = false;
+            
+            // Habilitar botões de ação
+            document.getElementById('btnEditProfile').disabled = false;
+            document.getElementById('btnDocuments').disabled = false;
+            document.getElementById('btnHelp').disabled = false;
             
             // Habilitar botão de assinatura
             const btnSubscription = document.getElementById('btnSubscription');
@@ -1537,169 +1640,35 @@
             btnSubscription.innerHTML = '<i class="fas fa-plus-circle"></i> ASSINAR AGORA';
             btnSubscription.className = 'btn-subscription primary';
             
-            // Habilitar botões de ação
-            document.getElementById('btnEditProfile').disabled = false;
-            document.getElementById('btnNotifications').disabled = false;
-            document.getElementById('btnDocuments').disabled = false;
-            document.getElementById('btnHelp').disabled = false;
-            
-            // Verificar GPS
-            checkGPS();
-        }
-
-        // Event Listeners
-        function setupEventListeners() {
-            // Menu do usuário
-            document.getElementById('userAvatar').addEventListener('click', toggleProfileDropdown);
-            
-            // Fechar dropdown ao clicar fora
-            document.addEventListener('click', function(event) {
-                const userAvatar = document.getElementById('userAvatar');
-                const profileDropdown = document.getElementById('profileDropdown');
-                
-                if (!userAvatar.contains(event.target) && !profileDropdown.contains(event.target)) {
-                    profileDropdown.classList.remove('active');
-                }
-            });
-            
-            // Logout
-            document.getElementById('dropdownLogout').addEventListener('click', logout);
-            document.getElementById('btnLogout').addEventListener('click', logout);
-            
-            // Status buttons
-            document.getElementById('btnAvailable').addEventListener('click', () => requestStatusChange('available'));
-            document.getElementById('btnBusy').addEventListener('click', () => requestStatusChange('busy'));
-            document.getElementById('btnOffline').addEventListener('click', () => requestStatusChange('offline'));
-            
-            // Mobile menu
-            document.getElementById('mobileMenuBtn').addEventListener('click', function() {
-                document.getElementById('navMenu').classList.toggle('active');
-            });
-            
-            // Ações rápidas
-            document.getElementById('btnEditProfile').addEventListener('click', () => window.location.href = 'perfil-taxista.html');
-            document.getElementById('btnNotifications').addEventListener('click', () => window.location.href = 'notificacoes-taxista.html');
-            document.getElementById('btnDocuments').addEventListener('click', () => window.location.href = 'documentos-taxista.html');
-            document.getElementById('btnHelp').addEventListener('click', () => window.location.href = 'ajuda-taxista.html');
-            
-            // Modal
-            document.getElementById('modalClose').addEventListener('click', closeModal);
-            document.getElementById('modalCancel').addEventListener('click', closeModal);
-            document.getElementById('modalConfirm').addEventListener('click', confirmStatusChange);
-            
-            // GPS
-            document.getElementById('btnLocation').addEventListener('click', updateLocation);
-        }
-
-        // Funções auxiliares
-        function getInitials(name) {
-            if (!name || typeof name !== 'string') return '??';
-            return name.split(' ')
-                .map(part => part[0])
-                .join('')
-                .toUpperCase()
-                .substring(0, 2);
-        }
-
-        function toggleProfileDropdown() {
-            document.getElementById('profileDropdown').classList.toggle('active');
-        }
-
-        async function logout() {
-            if (confirm('Tem certeza que deseja sair?')) {
-                try {
-                    await signOut(firebaseAuth);
-                    window.location.href = 'login.html';
-                } catch (error) {
-                    console.error('Erro ao fazer logout:', error);
-                    alert('Erro ao sair. Tente novamente.');
-                }
-            }
-        }
-
-        async function requestStatusChange(newStatus) {
-            const currentStatus = getCurrentStatus();
-            if (newStatus === currentStatus) return;
-            
-            // Mostrar modal de confirmação
-            const statusText = getStatusText(newStatus);
-            document.getElementById('modalTitle').textContent = `Alterar para ${statusText}`;
-            document.getElementById('modalMessage').textContent = `Tem certeza que deseja alterar seu status para ${statusText}?`;
-            document.getElementById('statusNote').value = '';
-            
-            document.getElementById('statusModal').classList.add('active');
-            window.pendingStatus = newStatus;
-        }
-
-        function getCurrentStatus() {
-            if (document.getElementById('btnAvailable').classList.contains('active')) return 'available';
-            if (document.getElementById('btnBusy').classList.contains('active')) return 'busy';
-            return 'offline';
-        }
-
-        function getStatusText(status) {
-            const textos = {
-                'available': 'Disponível',
-                'busy': 'Ocupado',
-                'offline': 'Ausente'
-            };
-            return textos[status] || 'Desconhecido';
-        }
-
-        function closeModal() {
-            document.getElementById('statusModal').classList.remove('active');
-            window.pendingStatus = null;
-            document.getElementById('statusNote').value = '';
-        }
-
-        async function confirmStatusChange() {
-            const newStatus = window.pendingStatus;
-            const note = document.getElementById('statusNote').value.trim();
-            
-            if (!newStatus) return;
-            
-            const user = firebaseAuth.currentUser;
-            if (!user) {
-                alert('Usuário não autenticado');
-                closeModal();
-                return;
-            }
-            
-            try {
-                // Atualizar status no Firestore
-                await updateDoc(doc(firebaseDB, "taxistasPerfil", user.uid), {
-                    status: newStatus,
-                    dataAtualizacao: new Date().toISOString()
-                });
-                
-                // Atualizar UI
-                updateStatusUI(newStatus);
-                
-                // Mostrar notificação
-                showNotification(`Status alterado para ${getStatusText(newStatus)}`);
-                
-                closeModal();
-                
-            } catch (error) {
-                console.error('Erro ao atualizar status:', error);
-                alert('Erro ao atualizar status. Tente novamente.');
-            }
+            console.log("✅ Botões habilitados");
         }
 
         function checkGPS() {
+            console.log("📍 Verificando GPS...");
+            
             if (!navigator.geolocation) {
+                console.log("❌ Geolocalização não suportada pelo navegador");
                 updateGPSDisplay(false);
                 return;
             }
             
             navigator.geolocation.getCurrentPosition(
                 (position) => {
+                    console.log("✅ GPS ativo");
+                    gpsActive = true;
                     updateGPSDisplay(true);
+                    
+                    // Se estiver disponível, atualizar localização no Firestore
+                    if (currentStatus === 'available' && currentUser && taxistaData) {
+                        updateLocationInFirestore(position.coords);
+                    }
                 },
                 (error) => {
+                    console.warn("⚠️ GPS não autorizado:", error.message);
+                    gpsActive = false;
                     updateGPSDisplay(false);
-                    console.warn('GPS não autorizado:', error.message);
-                }
+                },
+                { enableHighAccuracy: true, timeout: 5000 }
             );
         }
 
@@ -1725,56 +1694,183 @@
             }
         }
 
-        async function updateLocation() {
-            if (!navigator.geolocation) {
-                alert('Seu navegador não suporta geolocalização.');
+        async function updateLocationInFirestore(coords) {
+            if (!currentUser || !taxistaData) return;
+            
+            try {
+                await updateDoc(doc(db, "taxistasPerfil", currentUser.uid), {
+                    ultimaLocalizacao: {
+                        lat: coords.latitude,
+                        lng: coords.longitude,
+                        timestamp: new Date().toISOString()
+                    },
+                    dataAtualizacao: new Date().toISOString()
+                });
+                
+                console.log("📍 Localização atualizada no Firestore");
+                
+            } catch (error) {
+                console.error("❌ Erro ao atualizar localização:", error);
+            }
+        }
+
+        function checkAlerts(data) {
+            console.log("⚠️ Verificando alertas...");
+            
+            const alerts = [];
+            
+            // Verificar se perfil está completo
+            if (!data.numeroAlvara || !data.placaVeiculo) {
+                alerts.push({
+                    title: 'Perfil Incompleto',
+                    message: 'Complete seu perfil com alvará e placa do veículo.',
+                    type: 'warning'
+                });
+            }
+            
+            // Verificar verificação
+            if (!data.verificado) {
+                alerts.push({
+                    title: 'Verificação Pendente',
+                    message: 'Seus documentos estão em análise.',
+                    type: 'warning'
+                });
+            }
+            
+            // Mostrar primeiro alerta se existir
+            if (alerts.length > 0) {
+                const alert = alerts[0];
+                alertTitle.textContent = alert.title;
+                alertMessage.textContent = alert.message;
+                alertCard.style.display = 'flex';
+            } else {
+                alertCard.style.display = 'none';
+            }
+        }
+
+        // Funções auxiliares
+        function getInitials(name) {
+            if (!name || typeof name !== 'string') return 'TA';
+            return name.split(' ')
+                .map(part => part[0])
+                .join('')
+                .toUpperCase()
+                .substring(0, 2);
+        }
+
+        function toggleProfileDropdown() {
+            profileDropdown.classList.toggle('active');
+        }
+
+        async function logout() {
+            if (confirm('Tem certeza que deseja sair?')) {
+                try {
+                    await signOut(auth);
+                    window.location.href = 'login.html';
+                } catch (error) {
+                    console.error('❌ Erro ao fazer logout:', error);
+                    alert('Erro ao sair. Tente novamente.');
+                }
+            }
+        }
+
+        function requestStatusChange(newStatus) {
+            if (newStatus === currentStatus) return;
+            
+            // Mostrar modal de confirmação
+            document.getElementById('modalTitle').textContent = `Alterar Status`;
+            document.getElementById('modalMessage').textContent = `Tem certeza que deseja alterar seu status para ${getStatusText(newStatus)}?`;
+            document.getElementById('statusNote').value = '';
+            
+            document.getElementById('statusModal').classList.add('active');
+            
+            // Salvar status pendente
+            window.pendingStatus = newStatus;
+        }
+
+        function getStatusText(status) {
+            const textos = {
+                'available': 'Disponível',
+                'busy': 'Ocupado',
+                'offline': 'Ausente'
+            };
+            return textos[status] || 'Desconhecido';
+        }
+
+        function closeModal() {
+            document.getElementById('statusModal').classList.remove('active');
+            window.pendingStatus = null;
+            document.getElementById('statusNote').value = '';
+        }
+
+        async function confirmStatusChange() {
+            const newStatus = window.pendingStatus;
+            const note = document.getElementById('statusNote').value.trim();
+            
+            if (!newStatus || !currentUser) {
+                closeModal();
                 return;
             }
             
+            try {
+                // Atualizar status no Firestore
+                await updateDoc(doc(db, "taxistasPerfil", currentUser.uid), {
+                    status: newStatus,
+                    ultimaAtualizacaoStatus: new Date().toISOString(),
+                    observacaoStatus: note || '',
+                    dataAtualizacao: new Date().toISOString()
+                });
+                
+                // Atualizar localmente
+                currentStatus = newStatus;
+                updateStatusUI(newStatus);
+                
+                // Mostrar notificação
+                showNotification(`Status alterado para ${getStatusText(newStatus)}`);
+                
+                closeModal();
+                
+            } catch (error) {
+                console.error('❌ Erro ao atualizar status:', error);
+                alert('Erro ao atualizar status. Tente novamente.');
+            }
+        }
+
+        function updateLocation() {
+            if (!gpsActive) {
+                alert('Ative a localização do seu navegador primeiro.');
+                return;
+            }
+            
+            loadingMessage.textContent = "Atualizando localização...";
+            loadingOverlay.classList.add('active');
+            
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
-                    const user = firebaseAuth.currentUser;
-                    if (!user) return;
-                    
-                    try {
-                        // Salvar localização no Firestore
-                        await updateDoc(doc(firebaseDB, "taxistasPerfil", user.uid), {
-                            ultimaLocalizacao: {
-                                lat: position.coords.latitude,
-                                lng: position.coords.longitude,
-                                timestamp: new Date().toISOString()
-                            }
-                        });
-                        
-                        showNotification('Localização atualizada!');
-                    } catch (error) {
-                        console.error('Erro ao salvar localização:', error);
-                    }
+                    await updateLocationInFirestore(position.coords);
+                    loadingOverlay.classList.remove('active');
+                    showNotification('Localização atualizada!');
                 },
                 (error) => {
-                    alert('Permissão de localização negada. Ative nas configurações do navegador.');
+                    loadingOverlay.classList.remove('active');
+                    alert('Erro ao obter localização: ' + error.message);
                 },
                 { enableHighAccuracy: true }
             );
         }
 
-        function showNotification(message) {
-            // Implementação simples de notificação
-            alert(message);
-        }
-
         function showAlert(title, message) {
-            const alertCard = document.getElementById('alertCard');
-            const alertTitle = document.getElementById('alertTitle');
-            const alertMessage = document.getElementById('alertMessage');
-            
             alertTitle.textContent = title;
             alertMessage.textContent = message;
             alertCard.style.display = 'flex';
         }
 
-        // Configurar event listeners após DOM carregado
-        setTimeout(setupEventListeners, 1000);
+        function showNotification(message) {
+            // Implementação simples - você pode usar um toast library depois
+            alert(message);
+        }
+
+        console.log("✅ Script do dashboard carregado com sucesso!");
     </script>
 </body>
 </html>
