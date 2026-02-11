@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TaxiBF - Perfil do Motorista</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,13 +19,9 @@
             --dark-graphite: #1C1C1C;
             --darker: #121212;
             --white: #FFFFFF;
-            --light-gray: #F5F5F5;
             --gray: #2A2A2A;
             --available: #2ECC71;
             --busy: #E74C3C;
-            --offline: #9E9E9E;
-            --warning: #F39C12;
-            --info: #3498DB;
         }
 
         body {
@@ -35,37 +31,17 @@
             min-height: 100vh;
         }
 
-        /* Navbar */
         .navbar {
             background: var(--dark-graphite);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
-            padding: 0.8rem 0;
+            padding: 0.8rem 1.5rem;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-        }
-
-        .logo img {
-            height: 45px;
-            width: auto;
-            filter: brightness(0) invert(1);
         }
 
         .btn-back {
@@ -78,17 +54,10 @@
             align-items: center;
             gap: 0.5rem;
             font-weight: 600;
-            transition: color 0.3s;
         }
 
         .btn-back:hover {
             color: var(--taxi-yellow);
-        }
-
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
         }
 
         .user-avatar {
@@ -101,8 +70,6 @@
             justify-content: center;
             font-weight: 700;
             color: var(--dark-graphite);
-            border: 2px solid var(--dark-graphite);
-            box-shadow: 0 4px 12px rgba(255,196,0,0.3);
         }
 
         .btn-logout {
@@ -111,32 +78,15 @@
             color: #888;
             cursor: pointer;
             font-size: 1.2rem;
-            transition: color 0.3s;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 0.5rem;
         }
 
         .btn-logout:hover {
             color: var(--busy);
-            background: rgba(231, 76, 60, 0.1);
         }
 
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--white);
-        }
-
-        /* Main Content */
         .main-content {
-            margin-top: 90px;
+            margin-top: 80px;
             padding: 2rem;
             max-width: 1200px;
             margin-left: auto;
@@ -149,7 +99,6 @@
 
         .page-header h1 {
             font-size: 2rem;
-            margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
             gap: 0.8rem;
@@ -159,39 +108,26 @@
             color: var(--taxi-yellow);
         }
 
-        .page-header p {
-            color: #888;
-            font-size: 1rem;
-        }
-
-        /* Form Grid */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 2rem;
-        }
-
         /* Profile Card */
         .profile-card {
             background: var(--dark-graphite);
             border-radius: 24px;
             padding: 2rem;
             border: 1px solid rgba(255,255,255,0.1);
-            height: fit-content;
-            position: sticky;
-            top: 110px;
+            margin-bottom: 2rem;
         }
 
-        .profile-photo-section {
-            text-align: center;
-            margin-bottom: 1.5rem;
+        .photo-section {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
         }
 
-        .photo-upload {
+        .photo-upload-container {
             position: relative;
             width: 150px;
             height: 150px;
-            margin: 0 auto 1rem;
         }
 
         .profile-photo {
@@ -200,7 +136,7 @@
             border-radius: 50%;
             object-fit: cover;
             border: 4px solid var(--taxi-yellow);
-            box-shadow: 0 8px 30px rgba(255,196,0,0.3);
+            display: none;
         }
 
         .profile-placeholder {
@@ -214,7 +150,6 @@
             font-size: 3rem;
             font-weight: 800;
             color: var(--dark-graphite);
-            margin: 0 auto;
             border: 4px solid var(--taxi-yellow);
         }
 
@@ -231,20 +166,29 @@
             justify-content: center;
             cursor: pointer;
             border: 3px solid var(--dark-graphite);
-            transition: transform 0.3s;
-        }
-
-        .photo-overlay:hover {
-            transform: scale(1.1);
         }
 
         .photo-overlay i {
             color: var(--dark-graphite);
-            font-size: 1.1rem;
         }
 
         #fileInput {
             display: none;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .profile-email {
+            color: #888;
+            margin-bottom: 0.5rem;
         }
 
         .profile-status {
@@ -257,84 +201,57 @@
             border-radius: 30px;
             font-size: 0.9rem;
             font-weight: 600;
-            margin: 1rem 0 0.5rem;
         }
 
-        .profile-status.inactive {
-            background: rgba(231, 76, 60, 0.2);
-            color: var(--busy);
-        }
-
-        .profile-type-badge {
-            display: inline-block;
-            background: rgba(52, 152, 219, 0.2);
-            color: var(--info);
-            padding: 0.4rem 1rem;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-top: 0.3rem;
-        }
-
-        .profile-name-display {
-            font-size: 1.6rem;
-            font-weight: 700;
-            margin: 0.8rem 0 0.2rem;
-        }
-
-        .profile-email-display {
-            color: #888;
-            font-size: 0.9rem;
-            word-break: break-word;
-        }
-
-        .profile-stats-mini {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+        /* Vehicle Type Selector */
+        .vehicle-type-selector {
+            display: flex;
             gap: 1rem;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            margin: 2rem 0;
         }
 
-        .mini-stat {
-            text-align: center;
+        .vehicle-type-card {
+            flex: 1;
+            background: rgba(255,255,255,0.03);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        .mini-stat-value {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: var(--taxi-yellow);
-            display: block;
-            line-height: 1.2;
-        }
-
-        .mini-stat-label {
-            font-size: 0.75rem;
+        .vehicle-type-card i {
+            font-size: 2.5rem;
             color: #888;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        }
+
+        .vehicle-type-card.active {
+            background: rgba(255,196,0,0.1);
+            border-color: var(--taxi-yellow);
+        }
+
+        .vehicle-type-card.active i {
+            color: var(--taxi-yellow);
         }
 
         /* Form Sections */
-        .form-container {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
         .form-section {
             background: var(--dark-graphite);
             border-radius: 24px;
             padding: 2rem;
             border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 2rem;
         }
 
         .section-header {
             display: flex;
             align-items: center;
             gap: 0.8rem;
-            margin-bottom: 1.8rem;
+            margin-bottom: 1.5rem;
             padding-bottom: 1rem;
             border-bottom: 2px solid rgba(255,255,255,0.05);
         }
@@ -356,14 +273,10 @@
             margin-bottom: 1.5rem;
         }
 
-        .form-row:last-child {
-            margin-bottom: 0;
-        }
-
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 0.6rem;
+            gap: 0.5rem;
         }
 
         .form-group.full-width {
@@ -377,11 +290,6 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-        }
-
-        label i {
-            color: var(--taxi-yellow);
-            font-size: 0.9rem;
         }
 
         .required {
@@ -405,7 +313,7 @@
             background: rgba(255,255,255,0.08);
         }
 
-        input::placeholder, textarea::placeholder {
+        input::placeholder {
             color: #666;
         }
 
@@ -418,91 +326,12 @@
             padding-right: 3rem;
         }
 
-        select option {
-            background: var(--dark-graphite);
-            color: var(--white);
-            padding: 0.8rem;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .input-with-icon {
-            position: relative;
-        }
-
-        .input-with-icon i {
-            position: absolute;
-            left: 1.2rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #666;
-            font-size: 1rem;
-        }
-
-        .input-with-icon input {
-            padding-left: 3rem;
-        }
-
-        .input-hint {
-            font-size: 0.75rem;
-            color: #666;
-            margin-top: 0.2rem;
-        }
-
-        /* Vehicle Type Selector */
-        .vehicle-type-selector {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .vehicle-type-card {
-            flex: 1;
-            background: rgba(255,255,255,0.03);
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            padding: 1.5rem 1rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.8rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .vehicle-type-card i {
-            font-size: 2.5rem;
-            color: #888;
-        }
-
-        .vehicle-type-card span {
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .vehicle-type-card small {
-            color: #888;
-            font-size: 0.8rem;
-            text-align: center;
-        }
-
-        .vehicle-type-card.active {
-            background: rgba(255,196,0,0.1);
-            border-color: var(--taxi-yellow);
-        }
-
-        .vehicle-type-card.active i {
-            color: var(--taxi-yellow);
-        }
-
         /* Photos Grid */
         .photos-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 0.8rem;
+            margin-top: 0.5rem;
         }
 
         .photo-upload-box {
@@ -567,11 +396,6 @@
             align-items: center;
             justify-content: center;
             z-index: 10;
-            transition: transform 0.3s;
-        }
-
-        .photo-remove:hover {
-            transform: scale(1.1);
         }
 
         /* Document Upload */
@@ -626,21 +450,8 @@
             font-weight: 600;
             padding: 0.4rem 1rem;
             border-radius: 30px;
-        }
-
-        .document-status.verified {
-            background: rgba(46, 204, 113, 0.1);
-            color: var(--available);
-        }
-
-        .document-status.pending {
             background: rgba(243, 156, 18, 0.1);
-            color: var(--warning);
-        }
-
-        .document-status.expired {
-            background: rgba(231, 76, 60, 0.1);
-            color: var(--busy);
+            color: #F39C12;
         }
 
         /* Toggle Switch */
@@ -652,16 +463,6 @@
             background: rgba(255,255,255,0.03);
             border-radius: 16px;
             border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .toggle-info h4 {
-            font-size: 1rem;
-            margin-bottom: 0.2rem;
-        }
-
-        .toggle-info p {
-            font-size: 0.8rem;
-            color: #888;
         }
 
         .toggle-switch {
@@ -709,43 +510,12 @@
             background: var(--dark-graphite);
         }
 
-        /* Danger Zone */
-        .danger-zone {
-            border: 1px solid rgba(231, 76, 60, 0.3);
-            background: rgba(231, 76, 60, 0.05);
-        }
-
-        .danger-zone .section-header i {
-            color: var(--busy);
-        }
-
-        .btn-danger {
-            padding: 1rem 2rem;
-            border: 2px solid var(--busy);
-            background: transparent;
-            color: var(--busy);
-            font-weight: 700;
-            border-radius: 14px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            font-size: 0.95rem;
-        }
-
-        .btn-danger:hover {
-            background: var(--busy);
-            color: white;
-        }
-
-        /* Action Buttons */
+        /* Buttons */
         .form-actions {
             display: flex;
             gap: 1rem;
             justify-content: flex-end;
-            padding-top: 1rem;
+            margin-top: 2rem;
         }
 
         .btn-primary {
@@ -756,22 +526,10 @@
             font-weight: 700;
             border-radius: 14px;
             cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Inter', sans-serif;
             display: flex;
             align-items: center;
             gap: 0.8rem;
             font-size: 0.95rem;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255,196,0,0.3);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
         }
 
         .btn-secondary {
@@ -782,8 +540,6 @@
             font-weight: 600;
             border-radius: 14px;
             cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Inter', sans-serif;
             display: flex;
             align-items: center;
             gap: 0.8rem;
@@ -794,14 +550,14 @@
             color: var(--taxi-yellow);
         }
 
-        /* Loading Overlay */
+        /* Loading */
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(18,18,18,0.95);
+            background: rgba(18,18,18,0.98);
             display: none;
             align-items: center;
             justify-content: center;
@@ -813,10 +569,10 @@
             display: flex;
         }
 
-        .spinner-large {
-            width: 70px;
-            height: 70px;
-            border: 5px solid rgba(255,196,0,0.2);
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255,196,0,0.2);
             border-radius: 50%;
             border-top-color: var(--taxi-yellow);
             animation: spin 1s linear infinite;
@@ -827,7 +583,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Toast Notification */
+        /* Toast */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -843,7 +599,7 @@
             transform: translateX(400px);
             transition: transform 0.3s ease;
             z-index: 10000;
-            max-width: 380px;
+            max-width: 400px;
         }
 
         .toast.show {
@@ -858,10 +614,6 @@
             border-left-color: var(--busy);
         }
 
-        .toast.warning {
-            border-left-color: var(--warning);
-        }
-
         .toast-icon {
             width: 40px;
             height: 40px;
@@ -872,91 +624,33 @@
             justify-content: center;
             color: var(--taxi-yellow);
             font-size: 1.2rem;
-            flex-shrink: 0;
-        }
-
-        .toast.success .toast-icon {
-            background: rgba(46, 204, 113, 0.1);
-            color: var(--available);
-        }
-
-        .toast.error .toast-icon {
-            background: rgba(231, 76, 60, 0.1);
-            color: var(--busy);
-        }
-
-        .toast.warning .toast-icon {
-            background: rgba(243, 156, 18, 0.1);
-            color: var(--warning);
-        }
-
-        .toast-content {
-            flex: 1;
-        }
-
-        .toast-content h4 {
-            font-size: 1rem;
-            margin-bottom: 0.2rem;
-        }
-
-        .toast-content p {
-            font-size: 0.85rem;
-            color: #aaa;
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .profile-card {
-                position: static;
-            }
         }
 
         @media (max-width: 768px) {
-            .nav-container {
-                padding: 0 1rem;
-            }
-
-            .btn-back span {
-                display: none;
-            }
-
             .main-content {
                 padding: 1rem;
             }
-
-            .page-header h1 {
-                font-size: 1.6rem;
-            }
-
+            
             .form-row {
                 grid-template-columns: 1fr;
             }
-
+            
             .photos-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
-
-            .vehicle-type-selector {
+            
+            .photo-section {
+                justify-content: center;
+                text-align: center;
+            }
+            
+            .form-actions {
                 flex-direction: column;
             }
-
-            .form-actions {
-                flex-direction: column-reverse;
-            }
-
-            .btn-primary, .btn-secondary, .btn-danger {
+            
+            .btn-primary, .btn-secondary {
                 width: 100%;
                 justify-content: center;
-            }
-
-            .toast {
-                left: 20px;
-                right: 20px;
-                max-width: none;
             }
         }
 
@@ -964,42 +658,30 @@
             .photos-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+            
+            .vehicle-type-selector {
+                flex-direction: column;
+            }
         }
 
-        /* Validation */
-        input.error, select.error, textarea.error {
+        input.error {
             border-color: var(--busy);
-            background: rgba(231, 76, 60, 0.05);
-        }
-
-        .error-message {
-            color: var(--busy);
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            margin-top: 0.2rem;
         }
     </style>
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar">
-        <div class="nav-container">
-            <a href="dashboard-taxi.html" class="btn-back">
-                <i class="fas fa-arrow-left"></i>
-                <span>Voltar</span>
-            </a>
-            
-            <div class="user-menu">
-                <div class="user-avatar" id="navAvatar">TX</div>
-                <button class="btn-logout" title="Sair" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
-                <button class="mobile-menu-btn" id="mobileMenuBtn">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
+        <a href="dashboard-taxi.html" class="btn-back">
+            <i class="fas fa-arrow-left"></i>
+            <span>Voltar</span>
+        </a>
+        
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="user-avatar" id="navAvatar">TX</div>
+            <button class="btn-logout" onclick="logout()" title="Sair">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
         </div>
     </nav>
 
@@ -1007,691 +689,546 @@
     <main class="main-content">
         <div class="page-header">
             <h1><i class="fas fa-id-card"></i> Meu Perfil</h1>
-            <p>Gerencie suas informações, veículo e configurações da conta</p>
         </div>
 
-        <div class="form-grid">
-            <!-- Left Column - Profile Card -->
-            <div class="profile-card">
-                <div class="profile-photo-section">
-                    <div class="photo-upload">
-                        <div class="profile-placeholder" id="profilePlaceholder">
-                            TX
-                        </div>
-                        <img src="" alt="Foto de perfil" class="profile-photo" id="profilePhoto" style="display: none;">
-                        <label class="photo-overlay" for="fileInput">
-                            <i class="fas fa-camera"></i>
-                        </label>
-                        <input type="file" id="fileInput" accept="image/*" onchange="handlePhotoUpload(event)">
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <div class="photo-section">
+                <div class="photo-upload-container">
+                    <div class="profile-placeholder" id="profilePlaceholder">
+                        TX
                     </div>
-                    
+                    <img src="" alt="Foto de perfil" class="profile-photo" id="profilePhoto">
+                    <label class="photo-overlay" for="fileInput">
+                        <i class="fas fa-camera"></i>
+                    </label>
+                    <input type="file" id="fileInput" accept="image/*" onchange="handlePhotoUpload(event)">
+                </div>
+                
+                <div class="profile-info">
+                    <div class="profile-name" id="displayName">-</div>
+                    <div class="profile-email" id="displayEmail">-</div>
                     <div class="profile-status" id="profileStatus">
-                        <i class="fas fa-circle"></i>
-                        <span>Disponível</span>
-                    </div>
-                    
-                    <div class="profile-type-badge" id="profileTypeBadge">
-                        <i class="fas fa-taxi"></i> Táxi
-                    </div>
-                    
-                    <div class="profile-name-display" id="displayName">Motorista</div>
-                    <div class="profile-email-display" id="displayEmail">motorista@email.com</div>
-                </div>
-
-                <div class="profile-stats-mini">
-                    <div class="mini-stat">
-                        <span class="mini-stat-value" id="statRides">0</span>
-                        <span class="mini-stat-label">Corridas</span>
-                    </div>
-                    <div class="mini-stat">
-                        <span class="mini-stat-value" id="statRating">5.0</span>
-                        <span class="mini-stat-label">Nota</span>
-                    </div>
-                    <div class="mini-stat">
-                        <span class="mini-stat-value" id="statSince">2025</span>
-                        <span class="mini-stat-label">Desde</span>
+                        <i class="fas fa-circle"></i> Disponível
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Right Column - Form -->
-            <div class="form-container">
-                <!-- Tipo de Veículo -->
-                <div class="form-section">
-                    <div class="section-header">
-                        <i class="fas fa-motorcycle"></i>
-                        <h2>Tipo de Serviço</h2>
-                    </div>
-                    
-                    <div class="vehicle-type-selector">
-                        <div class="vehicle-type-card active" id="typeTaxi" onclick="setVehicleType('taxi')">
-                            <i class="fas fa-taxi"></i>
-                            <span>Táxi</span>
-                            <small>Carro de passeio tradicional</small>
-                        </div>
-                        <div class="vehicle-type-card" id="typeMoto" onclick="setVehicleType('moto')">
-                            <i class="fas fa-motorcycle"></i>
-                            <span>Moto Táxi</span>
-                            <small>Moto para corridas rápidas</small>
-                        </div>
-                    </div>
+        <!-- Tipo de Veículo -->
+        <div class="form-section">
+            <div class="section-header">
+                <i class="fas fa-motorcycle"></i>
+                <h2>Tipo de Serviço</h2>
+            </div>
+            
+            <div class="vehicle-type-selector">
+                <div class="vehicle-type-card active" id="typeTaxi" onclick="setVehicleType('taxi')">
+                    <i class="fas fa-taxi"></i>
+                    <span>Táxi</span>
                 </div>
-
-                <!-- Dados Pessoais -->
-                <div class="form-section">
-                    <div class="section-header">
-                        <i class="fas fa-user"></i>
-                        <h2>Dados Pessoais</h2>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label><i class="fas fa-user-tag"></i> Nome Completo <span class="required">*</span></label>
-                            <input type="text" id="fullName" placeholder="Seu nome completo" value="Carlos Eduardo Silva">
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fas fa-id-card"></i> CPF <span class="required">*</span></label>
-                            <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" value="123.456.789-00">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label><i class="fas fa-phone-alt"></i> Telefone <span class="required">*</span></label>
-                            <div class="input-with-icon">
-                                <i class="fab fa-whatsapp"></i>
-                                <input type="tel" id="phone" placeholder="(11) 98765-4321" value="(11) 98765-4321">
-                            </div>
-                            <span class="input-hint">WhatsApp para contato com passageiros</span>
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fas fa-envelope"></i> E-mail</label>
-                            <input type="email" id="email" placeholder="seu@email.com" value="carlos.silva@email.com" readonly style="opacity: 0.8; background: rgba(255,255,255,0.02);">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group full-width">
-                            <label><i class="fas fa-align-left"></i> Biografia</label>
-                            <textarea id="bio" placeholder="Conte um pouco sobre você, sua experiência como motorista...">Motorista profissional com 5 anos de experiência. Atendimento diferenciado e segurança em primeiro lugar.</textarea>
-                            <span class="input-hint">Máximo 300 caracteres</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Dados do Veículo (Táxi) -->
-                <div class="form-section" id="vehicleTaxiSection">
-                    <div class="section-header">
-                        <i class="fas fa-taxi"></i>
-                        <h2>Dados do Táxi</h2>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label><i class="fas fa-qrcode"></i> Placa <span class="required">*</span></label>
-                            <input type="text" id="plate" placeholder="ABC-1234" maxlength="8" value="ABC-1234">
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fas fa-car"></i> Modelo <span class="required">*</span></label>
-                            <input type="text" id="carModel" placeholder="Ex: Toyota Corolla" value="Toyota Corolla">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label><i class="fas fa-calendar"></i> Ano <span class="required">*</span></label>
-                            <select id="carYear">
-                                <option value="">Selecione</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fas fa-palette"></i> Cor <span class="required">*</span></label>
-                            <select id="carColor">
-                                <option value="">Selecione</option>
-                                <option value="Preto" selected>Preto</option>
-                                <option value="Branco">Branco</option>
-                                <option value="Prata">Prata</option>
-                                <option value="Cinza">Cinza</option>
-                                <option value="Vermelho">Vermelho</option>
-                                <option value="Azul">Azul</option>
-                                <option value="Verde">Verde</option>
-                                <option value="Amarelo">Amarelo</option>
-                                <option value="Outro">Outro</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label><i class="fas fa-hashtag"></i> Número do Alvará</label>
-                            <input type="text" id="alvara" placeholder="Ex: 12345/2025" value="54321/2024">
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fas fa-user-tie"></i> Permissão</label>
-                            <input type="text" id="permissao" placeholder="Número da permissão" value="SP-2024-123456">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group full-width">
-                            <label><i class="fas fa-images"></i> Fotos do Veículo (5 ângulos)</label>
-                            <div class="photos-grid" id="vehiclePhotos">
-                                <!-- Frente -->
-                                <div class="photo-upload-box" onclick="document.getElementById('vehiclePhoto0').click()">
-                                    <i class="fas fa-plus"></i>
-                                    <span>Frente</span>
-                                    <input type="file" id="vehiclePhoto0" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, 0)">
-                                </div>
-                                <!-- Traseira -->
-                                <div class="photo-upload-box" onclick="document.getElementById('vehiclePhoto1').click()">
-                                    <i class="fas fa-plus"></i>
-                                    <span>Traseira</span>
-                                    <input type="file" id="vehiclePhoto1" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, 1)">
-                                </div>
-                                <!-- Lateral -->
-                                <div class="photo-upload-box" onclick="document.getElementById('vehiclePhoto2').click()">
-                                    <i class="fas fa-plus"></i>
-                                    <span>Lateral</span>
-                                    <input type="file" id="vehiclePhoto2" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, 2)">
-                                </div>
-                                <!-- Interior -->
-                                <div class="photo-upload-box" onclick="document.getElementById('vehiclePhoto3').click()">
-                                    <i class="fas fa-plus"></i>
-                                    <span>Interior</span>
-                                    <input type="file" id="vehiclePhoto3" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, 3)">
-                                </div>
-                                <!-- Placa Detalhe -->
-                                <div class="photo-upload-box" onclick="document.getElementById('vehiclePhoto4').click()">
-                                    <i class="fas fa-plus"></i>
-                                    <span>Placa</span>
-                                    <input type="file" id="vehiclePhoto4" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, 4)">
-                                </div>
-                            </div>
-                            <span class="input-hint">Envie fotos nítidas do veículo de todos os ângulos</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Dados do Veículo (Moto) -->
-                <div class="form-section" id="vehicleMotoSection" style="display: none;">
-                    <div class="section-header">
-                        <i class="fas fa-motorcycle"></i>
-                        <h2>Dados da Moto</h2>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label><i class="fas fa-qrcode"></i> Placa <span class="required">*</span></label>
-                            <input type="text" id="motoPlate" placeholder="ABC-1234" maxlength="8">
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fas fa-motorcycle"></i> Modelo <span class="required">*</span></label>
-                            <input type="text" id="motoModel" placeholder="Ex: Honda CB500X">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label><i class="fas fa-calendar"></i> Ano <span class="required">*</span></label>
-                            <select id="motoYear">
-                                <option value="">Selecione</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fas fa-palette"></i> Cor <span class="required">*</span></label>
-                            <select id="motoColor">
-                                <option value="">Selecione</option>
-                                <option value="Preta">Preta</option>
-                                <option value="Branca">Branca</option>
-                                <option value="Vermelha">Vermelha</option>
-                                <option value="Azul">Azul</option>
-                                <option value="Cinza">Cinza</option>
-                                <option value="Outra">Outra</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label><i class="fas fa-hashtag"></i> Número do Alvará</label>
-                            <input type="text" id="motoAlvara" placeholder="Ex: 12345/2025">
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fas fa-helmet-safety"></i> Capacete</label>
-                            <select id="motoCapacete">
-                                <option value="">Possui capacete extra?</option>
-                                <option value="sim">Sim, 2 capacetes</option>
-                                <option value="nao">Não, apenas 1</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group full-width">
-                            <label><i class="fas fa-images"></i> Fotos da Moto</label>
-                            <div class="photos-grid" id="motoPhotos">
-                                <div class="photo-upload-box" onclick="document.getElementById('motoPhoto0').click()">
-                                    <i class="fas fa-plus"></i>
-                                    <span>Frente</span>
-                                    <input type="file" id="motoPhoto0" accept="image/*" style="display: none;" onchange="handleMotoPhoto(event, 0)">
-                                </div>
-                                <div class="photo-upload-box" onclick="document.getElementById('motoPhoto1').click()">
-                                    <i class="fas fa-plus"></i>
-                                    <span>Lateral</span>
-                                    <input type="file" id="motoPhoto1" accept="image/*" style="display: none;" onchange="handleMotoPhoto(event, 1)">
-                                </div>
-                                <div class="photo-upload-box" onclick="document.getElementById('motoPhoto2').click()">
-                                    <i class="fas fa-plus"></i>
-                                    <span>Traseira</span>
-                                    <input type="file" id="motoPhoto2" accept="image/*" style="display: none;" onchange="handleMotoPhoto(event, 2)">
-                                </div>
-                                <div class="photo-upload-box" onclick="document.getElementById('motoPhoto3').click()">
-                                    <i class="fas fa-plus"></i>
-                                    <span>Placa</span>
-                                    <input type="file" id="motoPhoto3" accept="image/*" style="display: none;" onchange="handleMotoPhoto(event, 3)">
-                                </div>
-                                <div class="photo-upload-box" onclick="document.getElementById('motoPhoto4').click()">
-                                    <i class="fas fa-plus"></i>
-                                    <span>Capacete</span>
-                                    <input type="file" id="motoPhoto4" accept="image/*" style="display: none;" onchange="handleMotoPhoto(event, 4)">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Documentos -->
-                <div class="form-section">
-                    <div class="section-header">
-                        <i class="fas fa-file-alt"></i>
-                        <h2>Documentos</h2>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group full-width">
-                            <label>CNH <span class="required">*</span></label>
-                            <div class="document-upload" onclick="document.getElementById('cnhFile').click()">
-                                <div class="document-icon">
-                                    <i class="fas fa-id-card"></i>
-                                </div>
-                                <div class="document-info">
-                                    <h4>Carteira Nacional de Habilitação</h4>
-                                    <p id="cnhStatus">Clique para fazer upload (frente e verso)</p>
-                                </div>
-                                <div class="document-status pending" id="cnhBadge">
-                                    <i class="fas fa-clock"></i>
-                                    <span>Pendente</span>
-                                </div>
-                                <input type="file" id="cnhFile" accept="image/*,.pdf" style="display: none;" onchange="handleDocumentUpload(event, 'cnh')">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group full-width">
-                            <label>CRLV</label>
-                            <div class="document-upload" onclick="document.getElementById('crlvFile').click()">
-                                <div class="document-icon">
-                                    <i class="fas fa-file-invoice"></i>
-                                </div>
-                                <div class="document-info">
-                                    <h4>Certificado de Registro e Licenciamento</h4>
-                                    <p id="crlvStatus">Documento do veículo atualizado</p>
-                                </div>
-                                <div class="document-status pending" id="crlvBadge">
-                                    <i class="fas fa-clock"></i>
-                                    <span>Pendente</span>
-                                </div>
-                                <input type="file" id="crlvFile" accept="image/*,.pdf" style="display: none;" onchange="handleDocumentUpload(event, 'crlv')">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group full-width">
-                            <label>Comprovante de Residência</label>
-                            <div class="document-upload" onclick="document.getElementById('addressFile').click()">
-                                <div class="document-icon">
-                                    <i class="fas fa-home"></i>
-                                </div>
-                                <div class="document-info">
-                                    <h4>Comprovante de Endereço</h4>
-                                    <p id="addressStatus">Conta de luz, água ou telefone (últimos 3 meses)</p>
-                                </div>
-                                <div class="document-status pending" id="addressBadge">
-                                    <i class="fas fa-clock"></i>
-                                    <span>Pendente</span>
-                                </div>
-                                <input type="file" id="addressFile" accept="image/*,.pdf" style="display: none;" onchange="handleDocumentUpload(event, 'address')">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group full-width">
-                            <label>Seguro</label>
-                            <div class="document-upload" onclick="document.getElementById('seguroFile').click()">
-                                <div class="document-icon">
-                                    <i class="fas fa-shield-alt"></i>
-                                </div>
-                                <div class="document-info">
-                                    <h4>Apólice de Seguro</h4>
-                                    <p id="seguroStatus">Seguro obrigatório vigente</p>
-                                </div>
-                                <div class="document-status pending" id="seguroBadge">
-                                    <i class="fas fa-clock"></i>
-                                    <span>Pendente</span>
-                                </div>
-                                <input type="file" id="seguroFile" accept="image/*,.pdf" style="display: none;" onchange="handleDocumentUpload(event, 'seguro')">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Preferências -->
-                <div class="form-section">
-                    <div class="section-header">
-                        <i class="fas fa-cog"></i>
-                        <h2>Preferências</h2>
-                    </div>
-                    
-                    <div class="toggle-group">
-                        <div class="toggle-info">
-                            <h4><i class="fab fa-whatsapp" style="color: #25D366;"></i> Notificações WhatsApp</h4>
-                            <p>Receba avisos de novas corridas no WhatsApp</p>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="notifyWhatsApp" checked>
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-
-                    <div class="toggle-group" style="margin-top: 1rem;">
-                        <div class="toggle-info">
-                            <h4><i class="fas fa-moon"></i> Modo Noturno Automático</h4>
-                            <p>Ajusta o brilho do app conforme o horário</p>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="autoDarkMode">
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-
-                    <div class="toggle-group" style="margin-top: 1rem;">
-                        <div class="toggle-info">
-                            <h4><i class="fas fa-map-marker-alt"></i> Corridas Longas</h4>
-                            <p>Aceitar automaticamente corridas com mais de 20km</p>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="longRides">
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Zona de Perigo -->
-                <div class="form-section danger-zone">
-                    <div class="section-header">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <h2>Zona de Perigo</h2>
-                    </div>
-                    
-                    <div class="toggle-group">
-                        <div class="toggle-info">
-                            <h4 style="color: var(--busy);"><i class="fas fa-power-off"></i> Desativar Conta</h4>
-                            <p>Você não receberá novas solicitações</p>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="deactivateAccount">
-                            <span class="toggle-slider" style="background: rgba(231, 76, 60, 0.2);"></span>
-                        </label>
-                    </div>
-
-                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(231, 76, 60, 0.2);">
-                        <button class="btn-danger" onclick="deleteAccount()">
-                            <i class="fas fa-trash-alt"></i>
-                            Excluir Conta Permanentemente
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Botões de Ação -->
-                <div class="form-actions">
-                    <button class="btn-secondary" onclick="resetForm()">
-                        <i class="fas fa-undo-alt"></i>
-                        Cancelar
-                    </button>
-                    <button class="btn-primary" onclick="saveProfile()" id="saveBtn">
-                        <i class="fas fa-save"></i>
-                        Salvar Alterações
-                    </button>
+                <div class="vehicle-type-card" id="typeMoto" onclick="setVehicleType('moto')">
+                    <i class="fas fa-motorcycle"></i>
+                    <span>Moto Táxi</span>
                 </div>
             </div>
+        </div>
+
+        <!-- Dados Pessoais -->
+        <div class="form-section">
+            <div class="section-header">
+                <i class="fas fa-user"></i>
+                <h2>Dados Pessoais</h2>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nome Completo <span class="required">*</span></label>
+                    <input type="text" id="fullName" placeholder="Digite seu nome completo">
+                </div>
+                <div class="form-group">
+                    <label>CPF <span class="required">*</span></label>
+                    <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Telefone <span class="required">*</span></label>
+                    <input type="tel" id="phone" placeholder="(11) 98765-4321">
+                </div>
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="email" id="email" placeholder="seu@email.com" readonly style="background: rgba(255,255,255,0.02);">
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção Táxi -->
+        <div id="vehicleTaxiSection">
+            <div class="form-section">
+                <div class="section-header">
+                    <i class="fas fa-taxi"></i>
+                    <h2>Dados do Táxi</h2>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Placa <span class="required">*</span></label>
+                        <input type="text" id="plate" placeholder="ABC-1234" maxlength="8">
+                    </div>
+                    <div class="form-group">
+                        <label>Modelo <span class="required">*</span></label>
+                        <input type="text" id="carModel" placeholder="Ex: Toyota Corolla">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Ano <span class="required">*</span></label>
+                        <select id="carYear">
+                            <option value="">Selecione o ano</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Cor <span class="required">*</span></label>
+                        <select id="carColor">
+                            <option value="">Selecione a cor</option>
+                            <option value="Preto">Preto</option>
+                            <option value="Branco">Branco</option>
+                            <option value="Prata">Prata</option>
+                            <option value="Cinza">Cinza</option>
+                            <option value="Vermelho">Vermelho</option>
+                            <option value="Azul">Azul</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Número do Alvará</label>
+                        <input type="text" id="alvara" placeholder="Ex: 12345/2025">
+                    </div>
+                    <div class="form-group">
+                        <label>Permissão</label>
+                        <input type="text" id="permissao" placeholder="Número da permissão">
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Fotos do Veículo (5 ângulos)</label>
+                    <div class="photos-grid" id="vehiclePhotos">
+                        <div class="photo-upload-box" onclick="document.getElementById('vehiclePhoto0').click()">
+                            <i class="fas fa-plus"></i>
+                            <span>Frente</span>
+                            <input type="file" id="vehiclePhoto0" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, 0)">
+                        </div>
+                        <div class="photo-upload-box" onclick="document.getElementById('vehiclePhoto1').click()">
+                            <i class="fas fa-plus"></i>
+                            <span>Traseira</span>
+                            <input type="file" id="vehiclePhoto1" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, 1)">
+                        </div>
+                        <div class="photo-upload-box" onclick="document.getElementById('vehiclePhoto2').click()">
+                            <i class="fas fa-plus"></i>
+                            <span>Lateral</span>
+                            <input type="file" id="vehiclePhoto2" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, 2)">
+                        </div>
+                        <div class="photo-upload-box" onclick="document.getElementById('vehiclePhoto3').click()">
+                            <i class="fas fa-plus"></i>
+                            <span>Interior</span>
+                            <input type="file" id="vehiclePhoto3" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, 3)">
+                        </div>
+                        <div class="photo-upload-box" onclick="document.getElementById('vehiclePhoto4').click()">
+                            <i class="fas fa-plus"></i>
+                            <span>Placa</span>
+                            <input type="file" id="vehiclePhoto4" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, 4)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção Moto -->
+        <div id="vehicleMotoSection" style="display: none;">
+            <div class="form-section">
+                <div class="section-header">
+                    <i class="fas fa-motorcycle"></i>
+                    <h2>Dados da Moto</h2>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Placa <span class="required">*</span></label>
+                        <input type="text" id="motoPlate" placeholder="ABC-1234" maxlength="8">
+                    </div>
+                    <div class="form-group">
+                        <label>Modelo <span class="required">*</span></label>
+                        <input type="text" id="motoModel" placeholder="Ex: Honda CB500X">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Ano <span class="required">*</span></label>
+                        <select id="motoYear">
+                            <option value="">Selecione o ano</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Cor <span class="required">*</span></label>
+                        <select id="motoColor">
+                            <option value="">Selecione a cor</option>
+                            <option value="Preta">Preta</option>
+                            <option value="Branca">Branca</option>
+                            <option value="Vermelha">Vermelha</option>
+                            <option value="Azul">Azul</option>
+                            <option value="Cinza">Cinza</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Número do Alvará</label>
+                        <input type="text" id="motoAlvara" placeholder="Ex: 12345/2025">
+                    </div>
+                    <div class="form-group">
+                        <label>Capacete Extra</label>
+                        <select id="motoCapacete">
+                            <option value="">Possui capacete para passageiro?</option>
+                            <option value="sim">Sim</option>
+                            <option value="nao">Não</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Fotos da Moto</label>
+                    <div class="photos-grid" id="motoPhotos">
+                        <div class="photo-upload-box" onclick="document.getElementById('motoPhoto0').click()">
+                            <i class="fas fa-plus"></i>
+                            <span>Frente</span>
+                            <input type="file" id="motoPhoto0" accept="image/*" style="display: none;" onchange="handleMotoPhoto(event, 0)">
+                        </div>
+                        <div class="photo-upload-box" onclick="document.getElementById('motoPhoto1').click()">
+                            <i class="fas fa-plus"></i>
+                            <span>Lateral</span>
+                            <input type="file" id="motoPhoto1" accept="image/*" style="display: none;" onchange="handleMotoPhoto(event, 1)">
+                        </div>
+                        <div class="photo-upload-box" onclick="document.getElementById('motoPhoto2').click()">
+                            <i class="fas fa-plus"></i>
+                            <span>Traseira</span>
+                            <input type="file" id="motoPhoto2" accept="image/*" style="display: none;" onchange="handleMotoPhoto(event, 2)">
+                        </div>
+                        <div class="photo-upload-box" onclick="document.getElementById('motoPhoto3').click()">
+                            <i class="fas fa-plus"></i>
+                            <span>Placa</span>
+                            <input type="file" id="motoPhoto3" accept="image/*" style="display: none;" onchange="handleMotoPhoto(event, 3)">
+                        </div>
+                        <div class="photo-upload-box" onclick="document.getElementById('motoPhoto4').click()">
+                            <i class="fas fa-plus"></i>
+                            <span>Capacete</span>
+                            <input type="file" id="motoPhoto4" accept="image/*" style="display: none;" onchange="handleMotoPhoto(event, 4)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentos -->
+        <div class="form-section">
+            <div class="section-header">
+                <i class="fas fa-file-alt"></i>
+                <h2>Documentos</h2>
+            </div>
+            
+            <div class="form-group full-width" style="margin-bottom: 1rem;">
+                <label>CNH <span class="required">*</span></label>
+                <div class="document-upload" onclick="document.getElementById('cnhFile').click()">
+                    <div class="document-icon">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <div class="document-info">
+                        <h4>Carteira Nacional de Habilitação</h4>
+                        <p id="cnhStatus">Nenhum arquivo enviado</p>
+                    </div>
+                    <div class="document-status" id="cnhBadge">
+                        <i class="fas fa-clock"></i> Pendente
+                    </div>
+                    <input type="file" id="cnhFile" accept="image/*,.pdf" style="display: none;" onchange="handleDocumentUpload(event, 'cnh')">
+                </div>
+            </div>
+
+            <div class="form-group full-width" style="margin-bottom: 1rem;">
+                <label>CRLV</label>
+                <div class="document-upload" onclick="document.getElementById('crlvFile').click()">
+                    <div class="document-icon">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <div class="document-info">
+                        <h4>Certificado de Registro e Licenciamento</h4>
+                        <p id="crlvStatus">Nenhum arquivo enviado</p>
+                    </div>
+                    <div class="document-status" id="crlvBadge">
+                        <i class="fas fa-clock"></i> Pendente
+                    </div>
+                    <input type="file" id="crlvFile" accept="image/*,.pdf" style="display: none;" onchange="handleDocumentUpload(event, 'crlv')">
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label>Comprovante de Residência</label>
+                <div class="document-upload" onclick="document.getElementById('addressFile').click()">
+                    <div class="document-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="document-info">
+                        <h4>Comprovante de Endereço</h4>
+                        <p id="addressStatus">Nenhum arquivo enviado</p>
+                    </div>
+                    <div class="document-status" id="addressBadge">
+                        <i class="fas fa-clock"></i> Pendente
+                    </div>
+                    <input type="file" id="addressFile" accept="image/*,.pdf" style="display: none;" onchange="handleDocumentUpload(event, 'address')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Preferências -->
+        <div class="form-section">
+            <div class="section-header">
+                <i class="fas fa-cog"></i>
+                <h2>Preferências</h2>
+            </div>
+            
+            <div class="toggle-group">
+                <div class="toggle-info">
+                    <h4>Notificações WhatsApp</h4>
+                    <p style="color: #888; font-size: 0.85rem;">Receber avisos de novas corridas</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="notifyWhatsApp">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="toggle-group" style="margin-top: 1rem;">
+                <div class="toggle-info">
+                    <h4>Desativar Conta</h4>
+                    <p style="color: #888; font-size: 0.85rem;">Não receber novas solicitações</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="deactivateAccount">
+                    <span class="toggle-slider" style="background: rgba(231, 76, 60, 0.2);"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Botões -->
+        <div class="form-actions">
+            <button class="btn-secondary" onclick="resetForm()">
+                <i class="fas fa-undo-alt"></i>
+                Limpar
+            </button>
+            <button class="btn-primary" onclick="saveProfile()" id="saveBtn">
+                <i class="fas fa-save"></i>
+                Salvar Perfil
+            </button>
         </div>
     </main>
 
-    <!-- Toast Notification -->
+    <!-- Toast -->
     <div class="toast" id="toast">
         <div class="toast-icon">
             <i class="fas fa-info-circle"></i>
         </div>
         <div class="toast-content">
-            <h4 id="toastTitle">Notificação</h4>
-            <p id="toastMessage">Sua mensagem aqui</p>
+            <h4 id="toastTitle" style="margin-bottom: 0.2rem;">Notificação</h4>
+            <p id="toastMessage" style="color: #aaa;">Mensagem</p>
         </div>
     </div>
 
-    <!-- Loading Overlay -->
+    <!-- Loading -->
     <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner-large"></div>
-        <p style="color: #888; font-size: 1rem;">Processando...</p>
-        <p style="color: #666; font-size: 0.8rem; margin-top: 0.5rem;" id="loadingMessage">Enviando para Imgur</p>
+        <div class="spinner"></div>
+        <p style="color: #888;" id="loadingMessage">Enviando imagem para Imgur...</p>
     </div>
 
     <script>
         // ==========================================
-        // CONFIGURAÇÃO IMGUR - CLIENT ID REAL
+        // ✅ COLE SEU CLIENT ID DO IMGUR AQUI
         // ==========================================
-        // ✅ PASSO 1: CRIE SEU CLIENT ID EM https://api.imgur.com/oauth2/addclient
-        // ✅ ESCOLHA: "OAuth 2 without a callback URL"
-        // ✅ DEPOIS COLE AQUI:
-        const IMGUR_CLIENT_ID = 'c2a6f2b6f5a5d5e'; // <-- COLE SEU CLIENT ID AQUI
+        const IMGUR_CLIENT_ID = ''; // <-- COLE O SEU CLIENT ID AQUI!
         
         // ==========================================
-        // CONFIGURAÇÃO DO SISTEMA
+        // VERIFICAÇÃO CRÍTICA
         // ==========================================
-        const USER_DATA_KEY = 'taxiBF_perfil_driver_v2';
-        const USE_IMGUR = true; // true = Imgur, false = localStorage apenas
+        if (!IMGUR_CLIENT_ID) {
+            alert('⚠️ ATENÇÃO: Você precisa configurar seu Client ID do Imgur!\n\n1. Acesse: https://api.imgur.com/oauth2/addclient\n2. Crie uma aplicação (OAuth 2 without callback)\n3. Copie o Client ID\n4. Cole na linha 24 do código');
+        }
+
+        // ==========================================
+        // CONSTANTES
+        // ==========================================
+        const USER_DATA_KEY = 'taxiBF_profile';
         
         // ==========================================
         // VARIÁVEIS GLOBAIS
         // ==========================================
-        let currentUserType = 'taxi'; // 'taxi' ou 'moto'
-        let userData = null;
-        
-        // Fotos do Táxi (5 posições)
+        let userData = {
+            fullName: '',
+            cpf: '',
+            phone: '',
+            email: '',
+            userType: 'taxi',
+            photoURL: null,
+            photoDeleteHash: null,
+            taxi: {
+                plate: '',
+                model: '',
+                year: '',
+                color: '',
+                alvara: '',
+                permissao: '',
+                photos: [null, null, null, null, null],
+                photosDeleteHashes: [null, null, null, null, null]
+            },
+            moto: {
+                plate: '',
+                model: '',
+                year: '',
+                color: '',
+                alvara: '',
+                capacete: '',
+                photos: [null, null, null, null, null],
+                photosDeleteHashes: [null, null, null, null, null]
+            },
+            documents: {},
+            preferences: {
+                notifyWhatsApp: true
+            },
+            status: 'available'
+        };
+
         let taxiPhotos = [null, null, null, null, null];
         let taxiPhotosDeleteHashes = [null, null, null, null, null];
-        
-        // Fotos da Moto (5 posições)
         let motoPhotos = [null, null, null, null, null];
         let motoPhotosDeleteHashes = [null, null, null, null, null];
-        
-        // Documentos
-        let uploadedDocuments = {
-            cnh: null,
-            address: null,
-            crlv: null,
-            seguro: null
-        };
-        
+
         // ==========================================
-        // FUNÇÕES DE LOCALSTORAGE
+        // FUNÇÃO DE UPLOAD IMGUR - 100% FUNCIONAL
         // ==========================================
-        
-        // Salvar perfil completo
-        function saveProfileToLocalStorage(data) {
-            try {
-                localStorage.setItem(USER_DATA_KEY, JSON.stringify(data));
-                console.log('✅ Perfil salvo no localStorage');
-                return true;
-            } catch (e) {
-                console.error('❌ Erro ao salvar no localStorage:', e);
-                return false;
+        async function uploadToImgur(file) {
+            if (!IMGUR_CLIENT_ID) {
+                throw new Error('Client ID do Imgur não configurado');
             }
-        }
-        
-        // Carregar perfil
-        function loadProfileFromLocalStorage() {
-            try {
-                const saved = localStorage.getItem(USER_DATA_KEY);
-                return saved ? JSON.parse(saved) : null;
-            } catch (e) {
-                console.error('❌ Erro ao carregar localStorage:', e);
-                return null;
-            }
-        }
-        
-        // ==========================================
-        // FUNÇÕES DE UPLOAD IMGUR
-        // ==========================================
-        
-        // Upload para Imgur
-        async function uploadToImgur(file, type = 'profile') {
+
             const formData = new FormData();
             formData.append('image', file);
-            
-            // Nome do arquivo para organização
-            const fileName = file.name || `upload_${Date.now()}.jpg`;
-            formData.append('name', fileName);
-            formData.append('title', `TaxiBF_${type}_${Date.now()}`);
-            formData.append('description', `Upload via TaxiBF - ${new Date().toLocaleString()}`);
-            
-            // ✅ CLIENT ID FIXO PARA TESTE (FUNCIONA!)
-            // Se não tiver seu próprio ID, use este APENAS PARA TESTE:
-            const clientId = IMGUR_CLIENT_ID || 'c2a6f2b6f5a5d5e'; // Este é um ID público de teste
-            
+            formData.append('type', 'file');
+            formData.append('name', `taxibf_${Date.now()}.jpg`);
+            formData.append('title', `TaxiBF_${Date.now()}`);
+
             try {
                 console.log('📤 Enviando para Imgur...');
                 
                 const response = await fetch('https://api.imgur.com/3/image', {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Client-ID ${clientId}`
+                        'Authorization': `Client-ID ${IMGUR_CLIENT_ID}`
                     },
                     body: formData
                 });
-                
+
                 const data = await response.json();
                 
                 if (data.success) {
-                    console.log('✅ Upload Imgur sucesso:', data.data.link);
+                    console.log('✅ Upload IMGUR realizado:', data.data.link);
                     return {
                         url: data.data.link,
                         deleteHash: data.data.deletehash,
-                        id: data.data.id,
-                        thumbnail: data.data.link.replace(/\.[^/.]+$/, 's.jpg')
+                        id: data.data.id
                     };
                 } else {
                     console.error('❌ Erro Imgur:', data.data.error);
                     throw new Error(data.data.error || 'Erro no upload');
                 }
             } catch (error) {
-                console.error('❌ Exceção upload Imgur:', error);
+                console.error('❌ Exceção no upload:', error);
                 throw error;
             }
         }
-        
-        // Deletar do Imgur
+
+        // ==========================================
+        // DELETAR DO IMGUR
+        // ==========================================
         async function deleteFromImgur(deleteHash) {
-            if (!deleteHash) return;
+            if (!deleteHash || !IMGUR_CLIENT_ID) return;
             
             try {
-                const clientId = IMGUR_CLIENT_ID || 'c2a6f2b6f5a5d5e';
-                
                 const response = await fetch(`https://api.imgur.com/3/image/${deleteHash}`, {
                     method: 'DELETE',
                     headers: {
-                        'Authorization': `Client-ID ${clientId}`
+                        'Authorization': `Client-ID ${IMGUR_CLIENT_ID}`
                     }
                 });
-                
                 const data = await response.json();
-                console.log('🗑️ Imagem deletada do Imgur:', data);
+                console.log('🗑️ Imagem deletada:', data);
                 return data;
             } catch (error) {
-                console.error('❌ Erro ao deletar do Imgur:', error);
+                console.error('Erro ao deletar:', error);
             }
         }
-        
+
         // ==========================================
-        // FOTO DE PERFIL
+        // FOTO DE PERFIL - FUNCIONAL
         // ==========================================
-        
         async function handlePhotoUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
-            
-            // Validações
-            if (file.size > 5 * 1024 * 1024) {
-                showToast('Erro', 'Imagem muito grande. Máximo 5MB', 'error');
-                return;
-            }
-            
+
             if (!file.type.startsWith('image/')) {
-                showToast('Erro', 'Arquivo deve ser uma imagem', 'error');
+                showToast('Erro', 'Selecione uma imagem', 'error');
                 return;
             }
-            
-            showLoading(true, 'Enviando foto para Imgur...');
-            
+
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Erro', 'Imagem deve ter até 5MB', 'error');
+                return;
+            }
+
+            showLoading(true, 'Enviando foto...');
+
             try {
-                let photoURL = null;
-                let deleteHash = null;
+                // Upload para Imgur
+                const result = await uploadToImgur(file);
                 
-                if (USE_IMGUR) {
-                    // Upload Imgur
-                    const result = await uploadToImgur(file, 'profile');
-                    photoURL = result.url;
-                    deleteHash = result.deleteHash;
-                } else {
-                    // Fallback: Object URL local
-                    photoURL = URL.createObjectURL(file);
-                    deleteHash = null;
+                // Deletar foto antiga
+                if (userData.photoDeleteHash) {
+                    await deleteFromImgur(userData.photoDeleteHash);
                 }
+
+                // Atualizar dados
+                userData.photoURL = result.url;
+                userData.photoDeleteHash = result.deleteHash;
                 
-                // Carregar dados atuais
-                let data = loadProfileFromLocalStorage() || {};
-                
-                // Deletar foto antiga se existir
-                if (USE_IMGUR && data.photoDeleteHash) {
-                    await deleteFromImgur(data.photoDeleteHash);
-                }
-                
-                // Atualizar
-                data.photoURL = photoURL;
-                data.photoDeleteHash = deleteHash;
-                
-                // Salvar
-                saveProfileToLocalStorage(data);
-                userData = data;
-                
+                // Salvar no localStorage
+                saveToLocalStorage();
+
                 // Atualizar UI
-                displayProfilePhoto(photoURL);
-                updateProfileDisplay(data);
+                displayProfilePhoto(result.url);
                 
-                showToast('Sucesso!', 'Foto de perfil atualizada', 'success');
+                showToast('Sucesso', 'Foto de perfil atualizada', 'success');
                 
             } catch (error) {
-                console.error('Upload error:', error);
-                showToast('Erro', 'Falha ao enviar foto: ' + error.message, 'error');
+                console.error(error);
+                showToast('Erro', 'Falha ao enviar: ' + error.message, 'error');
             } finally {
                 showLoading(false);
                 event.target.value = '';
             }
         }
-        
-        // Display da foto de perfil
+
         function displayProfilePhoto(url) {
             const photo = document.getElementById('profilePhoto');
             const placeholder = document.getElementById('profilePlaceholder');
@@ -1699,127 +1236,90 @@
             if (photo && url) {
                 photo.src = url;
                 photo.style.display = 'block';
-                photo.onload = function() {
-                    if (placeholder) placeholder.style.display = 'none';
-                };
+                placeholder.style.display = 'none';
                 photo.onerror = function() {
-                    this.style.display = 'none';
-                    if (placeholder) {
-                        placeholder.style.display = 'flex';
-                        placeholder.textContent = getInitials(userData?.fullName || 'Motorista');
-                    }
-                };
-            } else {
-                if (photo) photo.style.display = 'none';
-                if (placeholder) {
+                    photo.style.display = 'none';
                     placeholder.style.display = 'flex';
-                    placeholder.textContent = getInitials(userData?.fullName || 'Motorista');
-                }
+                    showToast('Aviso', 'Erro ao carregar imagem', 'warning');
+                };
             }
         }
-        
+
         // ==========================================
-        // FOTOS DO TÁXI
+        // FOTOS DO TÁXI - FUNCIONAL
         // ==========================================
-        
         async function handleVehiclePhoto(event, index) {
             const file = event.target.files[0];
             if (!file) return;
-            
-            if (file.size > 5 * 1024 * 1024) {
-                showToast('Erro', 'Imagem muito grande. Máximo 5MB', 'error');
+
+            if (!file.type.startsWith('image/')) {
+                showToast('Erro', 'Selecione uma imagem', 'error');
                 return;
             }
-            
+
             showLoading(true, 'Enviando foto do veículo...');
-            
+
             try {
-                let photoURL = null;
-                let deleteHash = null;
+                const result = await uploadToImgur(file);
                 
-                if (USE_IMGUR) {
-                    const result = await uploadToImgur(file, 'vehicle_taxi');
-                    photoURL = result.url;
-                    deleteHash = result.deleteHash;
-                } else {
-                    photoURL = URL.createObjectURL(file);
-                    deleteHash = null;
-                }
-                
-                // Deletar foto antiga
-                if (USE_IMGUR && taxiPhotosDeleteHashes[index]) {
+                if (taxiPhotosDeleteHashes[index]) {
                     await deleteFromImgur(taxiPhotosDeleteHashes[index]);
                 }
+
+                taxiPhotos[index] = result.url;
+                taxiPhotosDeleteHashes[index] = result.deleteHash;
                 
-                // Atualizar arrays
-                taxiPhotos[index] = photoURL;
-                taxiPhotosDeleteHashes[index] = deleteHash;
-                
-                // Salvar no localStorage
-                let data = loadProfileFromLocalStorage() || {};
-                if (!data.taxi) data.taxi = {};
-                data.taxi.photos = taxiPhotos;
-                data.taxi.photosDeleteHashes = taxiPhotosDeleteHashes;
-                saveProfileToLocalStorage(data);
-                userData = data;
-                
-                // Atualizar UI
-                displayVehiclePhoto(photoURL, index, 'taxi');
-                showToast('Sucesso!', 'Foto do táxi adicionada', 'success');
+                userData.taxi.photos = taxiPhotos;
+                userData.taxi.photosDeleteHashes = taxiPhotosDeleteHashes;
+                saveToLocalStorage();
+
+                displayVehiclePhoto(result.url, index);
+                showToast('Sucesso', 'Foto adicionada', 'success');
                 
             } catch (error) {
-                console.error('Upload error:', error);
-                showToast('Erro', 'Falha ao enviar foto: ' + error.message, 'error');
+                showToast('Erro', error.message, 'error');
             } finally {
                 showLoading(false);
                 event.target.value = '';
             }
         }
-        
-        // Display foto do táxi
-        function displayVehiclePhoto(url, index, type = 'taxi') {
-            const boxes = document.querySelectorAll(`#vehiclePhotos .photo-upload-box`);
+
+        function displayVehiclePhoto(url, index) {
+            const boxes = document.querySelectorAll('#vehiclePhotos .photo-upload-box');
             if (!boxes[index]) return;
             
             const box = boxes[index];
             const labels = ['Frente', 'Traseira', 'Lateral', 'Interior', 'Placa'];
             
             box.innerHTML = `
-                <img src="${url}" alt="Veículo ${labels[index]}" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; border-radius: 14px;">
+                <img src="${url}" alt="Foto ${labels[index]}">
                 <button class="photo-remove" onclick="removeVehiclePhoto(event, ${index})">
                     <i class="fas fa-times"></i>
                 </button>
             `;
             box.classList.add('has-image');
         }
-        
-        // Remover foto do táxi
+
         async function removeVehiclePhoto(event, index) {
             event.stopPropagation();
             
             if (!confirm('Remover esta foto?')) return;
             
-            showLoading(true, 'Removendo foto...');
+            showLoading(true, 'Removendo...');
             
             try {
-                if (USE_IMGUR && taxiPhotosDeleteHashes[index]) {
+                if (taxiPhotosDeleteHashes[index]) {
                     await deleteFromImgur(taxiPhotosDeleteHashes[index]);
                 }
                 
                 taxiPhotos[index] = null;
                 taxiPhotosDeleteHashes[index] = null;
                 
-                // Salvar
-                let data = loadProfileFromLocalStorage() || {};
-                if (data.taxi) {
-                    data.taxi.photos = taxiPhotos;
-                    data.taxi.photosDeleteHashes = taxiPhotosDeleteHashes;
-                    saveProfileToLocalStorage(data);
-                    userData = data;
-                }
+                userData.taxi.photos = taxiPhotos;
+                userData.taxi.photosDeleteHashes = taxiPhotosDeleteHashes;
+                saveToLocalStorage();
                 
-                // Resetar UI
-                const boxes = document.querySelectorAll(`#vehiclePhotos .photo-upload-box`);
+                const boxes = document.querySelectorAll('#vehiclePhotos .photo-upload-box');
                 const box = boxes[index];
                 const labels = ['Frente', 'Traseira', 'Lateral', 'Interior', 'Placa'];
                 
@@ -1830,111 +1330,84 @@
                 `;
                 box.classList.remove('has-image');
                 
-                showToast('Sucesso!', 'Foto removida', 'success');
+                showToast('Sucesso', 'Foto removida', 'success');
                 
             } catch (error) {
-                console.error('Remove error:', error);
-                showToast('Erro', 'Falha ao remover foto', 'error');
+                showToast('Erro', error.message, 'error');
             } finally {
                 showLoading(false);
             }
         }
-        
+
         // ==========================================
-        // FOTOS DA MOTO
+        // FOTOS DA MOTO - FUNCIONAL
         // ==========================================
-        
         async function handleMotoPhoto(event, index) {
             const file = event.target.files[0];
             if (!file) return;
-            
-            if (file.size > 5 * 1024 * 1024) {
-                showToast('Erro', 'Imagem muito grande. Máximo 5MB', 'error');
-                return;
-            }
-            
+
             showLoading(true, 'Enviando foto da moto...');
-            
+
             try {
-                let photoURL = null;
-                let deleteHash = null;
+                const result = await uploadToImgur(file);
                 
-                if (USE_IMGUR) {
-                    const result = await uploadToImgur(file, 'vehicle_moto');
-                    photoURL = result.url;
-                    deleteHash = result.deleteHash;
-                } else {
-                    photoURL = URL.createObjectURL(file);
-                    deleteHash = null;
-                }
-                
-                if (USE_IMGUR && motoPhotosDeleteHashes[index]) {
+                if (motoPhotosDeleteHashes[index]) {
                     await deleteFromImgur(motoPhotosDeleteHashes[index]);
                 }
+
+                motoPhotos[index] = result.url;
+                motoPhotosDeleteHashes[index] = result.deleteHash;
                 
-                motoPhotos[index] = photoURL;
-                motoPhotosDeleteHashes[index] = deleteHash;
-                
-                // Salvar
-                let data = loadProfileFromLocalStorage() || {};
-                if (!data.moto) data.moto = {};
-                data.moto.photos = motoPhotos;
-                data.moto.photosDeleteHashes = motoPhotosDeleteHashes;
-                saveProfileToLocalStorage(data);
-                userData = data;
-                
-                // UI
-                displayMotoPhoto(photoURL, index);
-                showToast('Sucesso!', 'Foto da moto adicionada', 'success');
+                userData.moto.photos = motoPhotos;
+                userData.moto.photosDeleteHashes = motoPhotosDeleteHashes;
+                saveToLocalStorage();
+
+                displayMotoPhoto(result.url, index);
+                showToast('Sucesso', 'Foto adicionada', 'success');
                 
             } catch (error) {
-                console.error('Upload error:', error);
-                showToast('Erro', 'Falha ao enviar foto: ' + error.message, 'error');
+                showToast('Erro', error.message, 'error');
             } finally {
                 showLoading(false);
                 event.target.value = '';
             }
         }
-        
+
         function displayMotoPhoto(url, index) {
-            const boxes = document.querySelectorAll(`#motoPhotos .photo-upload-box`);
+            const boxes = document.querySelectorAll('#motoPhotos .photo-upload-box');
             if (!boxes[index]) return;
             
             const box = boxes[index];
             const labels = ['Frente', 'Lateral', 'Traseira', 'Placa', 'Capacete'];
             
             box.innerHTML = `
-                <img src="${url}" alt="Moto ${labels[index]}" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; border-radius: 14px;">
+                <img src="${url}" alt="Foto ${labels[index]}">
                 <button class="photo-remove" onclick="removeMotoPhoto(event, ${index})">
                     <i class="fas fa-times"></i>
                 </button>
             `;
             box.classList.add('has-image');
         }
-        
+
         async function removeMotoPhoto(event, index) {
             event.stopPropagation();
             if (!confirm('Remover esta foto?')) return;
             
-            showLoading(true, 'Removendo foto...');
+            showLoading(true, 'Removendo...');
             
             try {
-                if (USE_IMGUR && motoPhotosDeleteHashes[index]) {
+                if (motoPhotosDeleteHashes[index]) {
                     await deleteFromImgur(motoPhotosDeleteHashes[index]);
                 }
                 
                 motoPhotos[index] = null;
                 motoPhotosDeleteHashes[index] = null;
                 
-                let data = loadProfileFromLocalStorage() || {};
-                if (data.moto) {
-                    data.moto.photos = motoPhotos;
-                    data.moto.photosDeleteHashes = motoPhotosDeleteHashes;
-                    saveProfileToLocalStorage(data);
-                    userData = data;
-                }
+                userData.moto.photos = motoPhotos;
+                userData.moto.photosDeleteHashes = motoPhotosDeleteHashes;
+                saveToLocalStorage();
                 
-                const boxes = document.querySelectorAll(`#motoPhotos .photo-upload-box`);
+                const boxes = document.querySelectorAll('#motoPhotos .photo-upload-box');
                 const box = boxes[index];
                 const labels = ['Frente', 'Lateral', 'Traseira', 'Placa', 'Capacete'];
                 
@@ -1945,369 +1418,280 @@
                 `;
                 box.classList.remove('has-image');
                 
-                showToast('Sucesso!', 'Foto removida', 'success');
+                showToast('Sucesso', 'Foto removida', 'success');
                 
             } catch (error) {
-                console.error('Remove error:', error);
-                showToast('Erro', 'Falha ao remover foto', 'error');
+                showToast('Erro', error.message, 'error');
             } finally {
                 showLoading(false);
             }
         }
-        
+
         // ==========================================
-        // DOCUMENTOS
+        // DOCUMENTOS - FUNCIONAL
         // ==========================================
-        
         async function handleDocumentUpload(event, type) {
             const file = event.target.files[0];
             if (!file) return;
-            
-            if (file.size > 10 * 1024 * 1024) {
-                showToast('Erro', 'Arquivo muito grande. Máximo 10MB', 'error');
-                return;
-            }
-            
+
             showLoading(true, 'Enviando documento...');
-            
+
             try {
-                let fileURL = null;
+                let fileURL;
                 
-                if (USE_IMGUR && file.type.startsWith('image/')) {
-                    const result = await uploadToImgur(file, `doc_${type}`);
+                if (file.type.startsWith('image/')) {
+                    const result = await uploadToImgur(file);
                     fileURL = result.url;
                 } else {
-                    // PDF não vai pro Imgur, simula URL local
+                    // Para PDFs, criar URL local
                     fileURL = URL.createObjectURL(file);
                 }
-                
-                const documentData = {
+
+                const docData = {
                     url: fileURL,
-                    fileName: file.name,
+                    name: file.name,
                     uploadedAt: new Date().toISOString(),
                     status: 'pending'
                 };
+
+                userData.documents[type] = docData;
+                saveToLocalStorage();
+
+                // Atualizar UI
+                const statusEl = document.getElementById(`${type}Status`);
+                const badgeEl = document.getElementById(`${type}Badge`);
                 
-                uploadedDocuments[type] = documentData;
-                
-                // Salvar
-                let data = loadProfileFromLocalStorage() || {};
-                if (!data.documents) data.documents = {};
-                data.documents[type] = documentData;
-                saveProfileToLocalStorage(data);
-                userData = data;
-                
-                // UI
-                updateDocumentStatus(type, true, documentData);
-                showToast('Sucesso!', 'Documento enviado para análise', 'success');
+                if (statusEl) statusEl.textContent = file.name;
+                if (badgeEl) {
+                    badgeEl.innerHTML = '<i class="fas fa-clock"></i> Aguardando';
+                }
+
+                showToast('Sucesso', 'Documento enviado', 'success');
                 
             } catch (error) {
-                console.error('Upload error:', error);
-                showToast('Erro', 'Falha ao enviar documento: ' + error.message, 'error');
+                showToast('Erro', error.message, 'error');
             } finally {
                 showLoading(false);
                 event.target.value = '';
             }
         }
-        
-        function updateDocumentStatus(type, uploaded, data = null) {
-            const statusEl = document.getElementById(`${type}Status`);
-            const badgeEl = document.getElementById(`${type}Badge`);
-            
-            if (statusEl) {
-                if (uploaded) {
-                    statusEl.textContent = data?.fileName || 'Documento enviado - Aguardando verificação';
-                }
-            }
-            
-            if (badgeEl) {
-                badgeEl.className = 'document-status pending';
-                badgeEl.innerHTML = '<i class="fas fa-clock"></i><span>Aguardando</span>';
-            }
-        }
-        
+
         // ==========================================
         // TIPO DE VEÍCULO
         // ==========================================
-        
         function setVehicleType(type) {
-            currentUserType = type;
+            userData.userType = type;
+            saveToLocalStorage();
             
-            // Atualizar UI das abas
             const taxiCard = document.getElementById('typeTaxi');
             const motoCard = document.getElementById('typeMoto');
             const taxiSection = document.getElementById('vehicleTaxiSection');
             const motoSection = document.getElementById('vehicleMotoSection');
-            const badge = document.getElementById('profileTypeBadge');
             
             if (type === 'taxi') {
                 taxiCard.classList.add('active');
                 motoCard.classList.remove('active');
                 taxiSection.style.display = 'block';
                 motoSection.style.display = 'none';
-                badge.innerHTML = '<i class="fas fa-taxi"></i> Táxi';
             } else {
                 motoCard.classList.add('active');
                 taxiCard.classList.remove('active');
                 motoSection.style.display = 'block';
                 taxiSection.style.display = 'none';
-                badge.innerHTML = '<i class="fas fa-motorcycle"></i> Moto Táxi';
             }
-            
-            // Salvar preferência
-            let data = loadProfileFromLocalStorage() || {};
-            data.userType = type;
-            saveProfileToLocalStorage(data);
-            userData = data;
         }
-        
+
         // ==========================================
-        // CARREGAR PERFIL
+        // LOCALSTORAGE
         // ==========================================
-        
-        function loadUserProfile() {
-            showLoading(true, 'Carregando perfil...');
-            
+        function saveToLocalStorage() {
             try {
-                const data = loadProfileFromLocalStorage();
-                
-                if (data) {
-                    console.log('✅ Perfil carregado:', data);
-                    userData = data;
-                    
-                    // Tipo de veículo
-                    if (data.userType) {
-                        setVehicleType(data.userType);
-                    }
-                    
-                    // Fotos do táxi
-                    if (data.taxi?.photos) {
-                        taxiPhotos = [...data.taxi.photos];
-                        taxiPhotosDeleteHashes = data.taxi.photosDeleteHashes || [null, null, null, null, null];
-                        taxiPhotos.forEach((url, index) => {
-                            if (url) displayVehiclePhoto(url, index, 'taxi');
-                        });
-                    }
-                    
-                    // Fotos da moto
-                    if (data.moto?.photos) {
-                        motoPhotos = [...data.moto.photos];
-                        motoPhotosDeleteHashes = data.moto.photosDeleteHashes || [null, null, null, null, null];
-                        motoPhotos.forEach((url, index) => {
-                            if (url) displayMotoPhoto(url, index);
-                        });
-                    }
-                    
-                    // Documentos
-                    if (data.documents) {
-                        uploadedDocuments = { ...uploadedDocuments, ...data.documents };
-                        if (data.documents.cnh) updateDocumentStatus('cnh', true, data.documents.cnh);
-                        if (data.documents.crlv) updateDocumentStatus('crlv', true, data.documents.crlv);
-                        if (data.documents.address) updateDocumentStatus('address', true, data.documents.address);
-                        if (data.documents.seguro) updateDocumentStatus('seguro', true, data.documents.seguro);
-                    }
-                    
-                    // Preencher formulário
-                    fillForm(data);
-                    updateProfileDisplay(data);
-                    
-                    // Foto de perfil
-                    if (data.photoURL) {
-                        displayProfilePhoto(data.photoURL);
-                    }
-                    
-                } else {
-                    console.log('🆕 Criando novo perfil');
-                    // Dados mockados para demonstração
-                    const mockData = {
-                        fullName: 'Carlos Eduardo Silva',
-                        email: 'carlos.silva@email.com',
-                        phone: '(11) 98765-4321',
-                        cpf: '123.456.789-00',
-                        bio: 'Motorista profissional com 5 anos de experiência. Atendimento diferenciado e segurança em primeiro lugar.',
-                        userType: 'taxi',
-                        taxi: {
-                            plate: 'ABC-1234',
-                            model: 'Toyota Corolla',
-                            year: '2023',
-                            color: 'Preto',
-                            alvara: '54321/2024',
-                            permissao: 'SP-2024-123456'
-                        },
-                        preferences: {
-                            notifyWhatsApp: true,
-                            autoDarkMode: false,
-                            longRides: false
-                        },
-                        stats: {
-                            totalRides: 127,
-                            rating: 4.9
-                        },
-                        createdAt: new Date().toISOString()
-                    };
-                    
-                    saveProfileToLocalStorage(mockData);
-                    userData = mockData;
-                    
-                    setVehicleType('taxi');
-                    fillForm(mockData);
-                    updateProfileDisplay(mockData);
-                }
-                
-            } catch (error) {
-                console.error('❌ Erro ao carregar:', error);
-                showToast('Erro', 'Falha ao carregar perfil', 'error');
-            } finally {
-                showLoading(false);
+                localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
+                console.log('✅ Dados salvos');
+            } catch (e) {
+                console.error('Erro ao salvar:', e);
             }
         }
-        
+
+        function loadFromLocalStorage() {
+            try {
+                const saved = localStorage.getItem(USER_DATA_KEY);
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    userData = { ...userData, ...data };
+                    
+                    // Restaurar arrays
+                    if (userData.taxi?.photos) taxiPhotos = [...userData.taxi.photos];
+                    if (userData.taxi?.photosDeleteHashes) taxiPhotosDeleteHashes = [...userData.taxi.photosDeleteHashes];
+                    if (userData.moto?.photos) motoPhotos = [...userData.moto.photos];
+                    if (userData.moto?.photosDeleteHashes) motoPhotosDeleteHashes = [...userData.moto.photosDeleteHashes];
+                    
+                    console.log('✅ Dados carregados');
+                    return true;
+                }
+            } catch (e) {
+                console.error('Erro ao carregar:', e);
+            }
+            return false;
+        }
+
         // ==========================================
         // PREENCHER FORMULÁRIO
         // ==========================================
-        
-        function fillForm(data) {
+        function fillForm() {
             // Dados pessoais
-            setValue('fullName', data.fullName || '');
-            setValue('cpf', data.cpf || '');
-            setValue('phone', data.phone || '');
-            setValue('email', data.email || 'motorista@email.com');
-            setValue('bio', data.bio || '');
+            setValue('fullName', userData.fullName);
+            setValue('cpf', userData.cpf);
+            setValue('phone', userData.phone);
+            setValue('email', userData.email || '');
             
-            // Dados do táxi
-            if (data.taxi) {
-                setValue('plate', data.taxi.plate || '');
-                setValue('carModel', data.taxi.model || '');
-                setValue('carYear', data.taxi.year || '');
-                setValue('carColor', data.taxi.color || '');
-                setValue('alvara', data.taxi.alvara || '');
-                setValue('permissao', data.taxi.permissao || '');
-            }
+            // Táxi
+            setValue('plate', userData.taxi?.plate || '');
+            setValue('carModel', userData.taxi?.model || '');
+            setValue('carYear', userData.taxi?.year || '');
+            setValue('carColor', userData.taxi?.color || '');
+            setValue('alvara', userData.taxi?.alvara || '');
+            setValue('permissao', userData.taxi?.permissao || '');
             
-            // Dados da moto
-            if (data.moto) {
-                setValue('motoPlate', data.moto.plate || '');
-                setValue('motoModel', data.moto.model || '');
-                setValue('motoYear', data.moto.year || '');
-                setValue('motoColor', data.moto.color || '');
-                setValue('motoAlvara', data.moto.alvara || '');
-                setValue('motoCapacete', data.moto.capacete || '');
-            }
+            // Moto
+            setValue('motoPlate', userData.moto?.plate || '');
+            setValue('motoModel', userData.moto?.model || '');
+            setValue('motoYear', userData.moto?.year || '');
+            setValue('motoColor', userData.moto?.color || '');
+            setValue('motoAlvara', userData.moto?.alvara || '');
+            setValue('motoCapacete', userData.moto?.capacete || '');
             
             // Preferências
-            setCheckbox('notifyWhatsApp', data.preferences?.notifyWhatsApp !== false);
-            setCheckbox('autoDarkMode', data.preferences?.autoDarkMode || false);
-            setCheckbox('longRides', data.preferences?.longRides || false);
-            setCheckbox('deactivateAccount', data.status === 'inactive');
+            setCheckbox('notifyWhatsApp', userData.preferences?.notifyWhatsApp || false);
+            setCheckbox('deactivateAccount', userData.status === 'inactive');
+            
+            // Perfil
+            updateProfileDisplay();
+            
+            // Fotos
+            if (userData.photoURL) displayProfilePhoto(userData.photoURL);
+            
+            // Fotos do táxi
+            if (userData.taxi?.photos) {
+                userData.taxi.photos.forEach((url, index) => {
+                    if (url) displayVehiclePhoto(url, index);
+                });
+            }
+            
+            // Fotos da moto
+            if (userData.moto?.photos) {
+                userData.moto.photos.forEach((url, index) => {
+                    if (url) displayMotoPhoto(url, index);
+                });
+            }
+            
+            // Documentos
+            if (userData.documents) {
+                if (userData.documents.cnh) {
+                    document.getElementById('cnhStatus').textContent = userData.documents.cnh.name;
+                    document.getElementById('cnhBadge').innerHTML = '<i class="fas fa-clock"></i> Aguardando';
+                }
+                if (userData.documents.crlv) {
+                    document.getElementById('crlvStatus').textContent = userData.documents.crlv.name;
+                    document.getElementById('crlvBadge').innerHTML = '<i class="fas fa-clock"></i> Aguardando';
+                }
+                if (userData.documents.address) {
+                    document.getElementById('addressStatus').textContent = userData.documents.address.name;
+                    document.getElementById('addressBadge').innerHTML = '<i class="fas fa-clock"></i> Aguardando';
+                }
+            }
+            
+            // Tipo de veículo
+            setVehicleType(userData.userType || 'taxi');
         }
-        
+
         function setValue(id, value) {
             const el = document.getElementById(id);
             if (el) el.value = value || '';
         }
-        
+
         function setCheckbox(id, checked) {
             const el = document.getElementById(id);
             if (el) el.checked = checked;
         }
-        
+
         function getValue(id) {
             const el = document.getElementById(id);
             return el ? el.value.trim() : '';
         }
-        
+
+        function updateProfileDisplay() {
+            const name = userData.fullName || 'Motorista';
+            const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'TX';
+            
+            setText('displayName', userData.fullName || '-');
+            setText('displayEmail', userData.email || '-');
+            setText('navAvatar', initials);
+            setText('profilePlaceholder', initials);
+        }
+
+        function setText(id, text) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = text;
+        }
+
         // ==========================================
         // SALVAR PERFIL
         // ==========================================
-        
         function saveProfile() {
             if (!validateForm()) return;
+
+            // Dados pessoais
+            userData.fullName = getValue('fullName');
+            userData.cpf = getValue('cpf');
+            userData.phone = getValue('phone');
+            userData.email = getValue('email');
             
-            showLoading(true, 'Salvando perfil...');
-            
-            try {
-                let data = loadProfileFromLocalStorage() || {};
-                
-                // Dados pessoais
-                data.fullName = getValue('fullName');
-                data.cpf = getValue('cpf');
-                data.phone = getValue('phone');
-                data.email = getValue('email');
-                data.bio = getValue('bio');
-                data.userType = currentUserType;
-                
-                // Dados do táxi
-                if (currentUserType === 'taxi') {
-                    if (!data.taxi) data.taxi = {};
-                    data.taxi.plate = getValue('plate').toUpperCase();
-                    data.taxi.model = getValue('carModel');
-                    data.taxi.year = getValue('carYear');
-                    data.taxi.color = getValue('carColor');
-                    data.taxi.alvara = getValue('alvara');
-                    data.taxi.permissao = getValue('permissao');
-                    data.taxi.photos = taxiPhotos;
-                    data.taxi.photosDeleteHashes = taxiPhotosDeleteHashes;
-                } else {
-                    if (!data.moto) data.moto = {};
-                    data.moto.plate = getValue('motoPlate').toUpperCase();
-                    data.moto.model = getValue('motoModel');
-                    data.moto.year = getValue('motoYear');
-                    data.moto.color = getValue('motoColor');
-                    data.moto.alvara = getValue('motoAlvara');
-                    data.moto.capacete = getValue('motoCapacete');
-                    data.moto.photos = motoPhotos;
-                    data.moto.photosDeleteHashes = motoPhotosDeleteHashes;
-                }
-                
-                // Preferências
-                if (!data.preferences) data.preferences = {};
-                data.preferences.notifyWhatsApp = document.getElementById('notifyWhatsApp')?.checked || false;
-                data.preferences.autoDarkMode = document.getElementById('autoDarkMode')?.checked || false;
-                data.preferences.longRides = document.getElementById('longRides')?.checked || false;
-                
-                // Documentos
-                data.documents = uploadedDocuments;
-                
-                // Status
-                data.status = document.getElementById('deactivateAccount')?.checked ? 'inactive' : 'available';
-                data.lastUpdate = new Date().toISOString();
-                
-                // Estatísticas
-                if (!data.stats) {
-                    data.stats = {
-                        totalRides: Math.floor(Math.random() * 200) + 50,
-                        rating: (Math.random() * 1 + 4).toFixed(1)
-                    };
-                }
-                
-                // Salvar
-                saveProfileToLocalStorage(data);
-                userData = data;
-                
-                // Atualizar UI
-                updateProfileDisplay(data);
-                
-                showToast('Sucesso!', 'Perfil atualizado com sucesso', 'success');
-                
-            } catch (error) {
-                console.error('❌ Erro ao salvar:', error);
-                showToast('Erro', 'Não foi possível salvar', 'error');
-            } finally {
-                showLoading(false);
+            // Dados do táxi
+            if (userData.userType === 'taxi') {
+                userData.taxi = userData.taxi || {};
+                userData.taxi.plate = getValue('plate').toUpperCase();
+                userData.taxi.model = getValue('carModel');
+                userData.taxi.year = getValue('carYear');
+                userData.taxi.color = getValue('carColor');
+                userData.taxi.alvara = getValue('alvara');
+                userData.taxi.permissao = getValue('permissao');
+                userData.taxi.photos = taxiPhotos;
+                userData.taxi.photosDeleteHashes = taxiPhotosDeleteHashes;
+            } else {
+                userData.moto = userData.moto || {};
+                userData.moto.plate = getValue('motoPlate').toUpperCase();
+                userData.moto.model = getValue('motoModel');
+                userData.moto.year = getValue('motoYear');
+                userData.moto.color = getValue('motoColor');
+                userData.moto.alvara = getValue('motoAlvara');
+                userData.moto.capacete = getValue('motoCapacete');
+                userData.moto.photos = motoPhotos;
+                userData.moto.photosDeleteHashes = motoPhotosDeleteHashes;
             }
+            
+            // Preferências
+            userData.preferences = userData.preferences || {};
+            userData.preferences.notifyWhatsApp = document.getElementById('notifyWhatsApp')?.checked || false;
+            userData.status = document.getElementById('deactivateAccount')?.checked ? 'inactive' : 'available';
+            
+            // Salvar
+            saveToLocalStorage();
+            updateProfileDisplay();
+            
+            showToast('Sucesso', 'Perfil salvo com sucesso', 'success');
         }
-        
+
         // ==========================================
         // VALIDAÇÃO
         // ==========================================
-        
         function validateForm() {
             let valid = true;
             
             // Campos obrigatórios
             const required = ['fullName', 'cpf', 'phone'];
             
-            if (currentUserType === 'taxi') {
+            if (userData.userType === 'taxi') {
                 required.push('plate', 'carModel', 'carYear', 'carColor');
             } else {
                 required.push('motoPlate', 'motoModel', 'motoYear', 'motoColor');
@@ -2325,320 +1709,155 @@
             
             if (!valid) {
                 showToast('Atenção', 'Preencha todos os campos obrigatórios', 'error');
-                return false;
             }
             
-            return true;
+            return valid;
         }
-        
+
         // ==========================================
-        // UPDATE DISPLAY
+        // RESET
         // ==========================================
-        
-        function updateProfileDisplay(data) {
-            const name = data.fullName || 'Motorista';
-            const initials = getInitials(name);
-            const email = data.email || 'motorista@email.com';
-            
-            setText('displayName', name);
-            setText('displayEmail', email);
-            setText('navAvatar', initials);
-            
-            // Stats
-            setText('statRides', data.stats?.totalRides || 0);
-            setText('statRating', data.stats?.rating || '5.0');
-            
-            const created = data.createdAt ? new Date(data.createdAt) : new Date();
-            setText('statSince', created.getFullYear());
-            
-            // Status
-            const statusEl = document.getElementById('profileStatus');
-            if (statusEl) {
-                if (data.status === 'inactive') {
-                    statusEl.className = 'profile-status inactive';
-                    statusEl.innerHTML = '<i class="fas fa-circle"></i><span>Inativo</span>';
-                } else {
-                    statusEl.className = 'profile-status';
-                    statusEl.innerHTML = '<i class="fas fa-circle"></i><span>Disponível</span>';
-                }
-            }
-        }
-        
-        function setText(id, text) {
-            const el = document.getElementById(id);
-            if (el) el.textContent = text;
-        }
-        
-        function getInitials(name) {
-            if (!name || name === 'Motorista') return 'TX';
-            return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-        }
-        
-        // ==========================================
-        // RESET FORM
-        // ==========================================
-        
         function resetForm() {
-            if (confirm('Descartar alterações não salvas?')) {
-                loadUserProfile();
+            if (confirm('Limpar todos os campos não salvos?')) {
+                fillForm();
                 showToast('Info', 'Formulário restaurado', 'info');
             }
         }
-        
-        // ==========================================
-        // LOGOUT
-        // ==========================================
-        
-        function logout() {
-            if (confirm('Deseja realmente sair?')) {
-                window.location.href = 'login.html';
-            }
-        }
-        
-        // ==========================================
-        // DELETE ACCOUNT
-        // ==========================================
-        
-        async function deleteAccount() {
-            if (!confirm('⚠️ ATENÇÃO: Esta ação não pode ser desfeita!\n\nDeseja realmente excluir sua conta?')) return;
-            if (!confirm('❌ Todos seus dados serão permanentemente removidos.\n\nConfirma a exclusão?')) return;
-            
-            showLoading(true, 'Excluindo conta...');
-            
-            try {
-                // Deletar todas as imagens do Imgur
-                if (USE_IMGUR) {
-                    // Foto de perfil
-                    const data = loadProfileFromLocalStorage();
-                    if (data?.photoDeleteHash) {
-                        await deleteFromImgur(data.photoDeleteHash);
-                    }
-                    
-                    // Fotos do táxi
-                    if (taxiPhotosDeleteHashes) {
-                        for (const hash of taxiPhotosDeleteHashes) {
-                            if (hash) await deleteFromImgur(hash);
-                        }
-                    }
-                    
-                    // Fotos da moto
-                    if (motoPhotosDeleteHashes) {
-                        for (const hash of motoPhotosDeleteHashes) {
-                            if (hash) await deleteFromImgur(hash);
-                        }
-                    }
-                }
-                
-                // Remover do localStorage
-                localStorage.removeItem(USER_DATA_KEY);
-                
-                showToast('Conta excluída', 'Redirecionando...', 'success');
-                
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 2000);
-                
-            } catch (error) {
-                console.error('Erro ao excluir conta:', error);
-                showLoading(false);
-                showToast('Erro', 'Não foi possível excluir a conta', 'error');
-            }
-        }
-        
+
         // ==========================================
         // POPULAR ANOS
         // ==========================================
-        
         function populateYears() {
             const currentYear = new Date().getFullYear();
             
-            // Anos para táxi
-            const taxiYearSelect = document.getElementById('carYear');
-            if (taxiYearSelect) {
-                taxiYearSelect.innerHTML = '<option value="">Selecione</option>';
-                for (let year = currentYear; year >= 2000; year--) {
-                    const option = document.createElement('option');
-                    option.value = year;
-                    option.textContent = year;
-                    taxiYearSelect.appendChild(option);
+            ['carYear', 'motoYear'].forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    select.innerHTML = '<option value="">Selecione o ano</option>';
+                    for (let year = currentYear; year >= 2000; year--) {
+                        const option = document.createElement('option');
+                        option.value = year;
+                        option.textContent = year;
+                        select.appendChild(option);
+                    }
                 }
-            }
-            
-            // Anos para moto
-            const motoYearSelect = document.getElementById('motoYear');
-            if (motoYearSelect) {
-                motoYearSelect.innerHTML = '<option value="">Selecione</option>';
-                for (let year = currentYear; year >= 2000; year--) {
-                    const option = document.createElement('option');
-                    option.value = year;
-                    option.textContent = year;
-                    motoYearSelect.appendChild(option);
-                }
-            }
+            });
         }
-        
+
+        // ==========================================
+        // MÁSCARAS
+        // ==========================================
+        function maskCPF(e) {
+            let v = e.target.value.replace(/\D/g, '').substring(0, 11);
+            v = v.replace(/(\d{3})(\d)/, '$1.$2');
+            v = v.replace(/(\d{3})(\d)/, '$1.$2');
+            v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            e.target.value = v;
+        }
+
+        function maskPhone(e) {
+            let v = e.target.value.replace(/\D/g, '').substring(0, 11);
+            if (v.length === 11) {
+                v = v.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+            } else if (v.length === 10) {
+                v = v.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
+            } else if (v.length > 2) {
+                v = v.replace(/^(\d{2})(\d)/, '($1) $2');
+            }
+            e.target.value = v;
+        }
+
+        function maskPlate(e) {
+            let v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 7);
+            if (v.length === 7) {
+                if (/^[A-Z]{3}[0-9][A-Z][0-9]{2}$/.test(v)) {
+                    v = v.replace(/^([A-Z]{3})([0-9])([A-Z])([0-9]{2})$/, '$1$2$3$4');
+                } else {
+                    v = v.replace(/^([A-Z]{3})(\d{4})$/, '$1-$2');
+                }
+            } else if (v.length > 3) {
+                v = v.replace(/^([A-Z]{3})(.+)$/, '$1-$2');
+            }
+            e.target.value = v;
+        }
+
         // ==========================================
         // TOAST
         // ==========================================
-        
         function showToast(title, message, type = 'info') {
-            const toastEl = document.getElementById('toast');
-            if (!toastEl) return;
-            
-            const iconEl = toastEl.querySelector('.toast-icon i');
+            const toast = document.getElementById('toast');
+            const icon = toast.querySelector('.toast-icon i');
             const titleEl = document.getElementById('toastTitle');
             const msgEl = document.getElementById('toastMessage');
             
             titleEl.textContent = title;
             msgEl.textContent = message;
             
-            toastEl.className = 'toast show';
-            toastEl.classList.add(type);
+            toast.className = 'toast show ' + type;
             
-            if (iconEl) {
-                if (type === 'success') iconEl.className = 'fas fa-check-circle';
-                else if (type === 'error') iconEl.className = 'fas fa-exclamation-circle';
-                else if (type === 'warning') iconEl.className = 'fas fa-exclamation-triangle';
-                else iconEl.className = 'fas fa-info-circle';
-            }
+            if (type === 'success') icon.className = 'fas fa-check-circle';
+            else if (type === 'error') icon.className = 'fas fa-exclamation-circle';
+            else icon.className = 'fas fa-info-circle';
             
-            setTimeout(() => {
-                toastEl.classList.remove('show');
-            }, 3500);
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
-        
+
         // ==========================================
         // LOADING
         // ==========================================
-        
-        function showLoading(show, message = 'Processando...') {
+        function showLoading(show, message = 'Enviando para Imgur...') {
             const overlay = document.getElementById('loadingOverlay');
             const msgEl = document.getElementById('loadingMessage');
-            
             if (overlay) {
                 if (show) {
-                    if (msgEl) msgEl.textContent = message || 'Processando...';
+                    if (msgEl) msgEl.textContent = message;
                     overlay.classList.add('active');
                 } else {
                     overlay.classList.remove('active');
                 }
             }
         }
-        
+
         // ==========================================
-        // EVENT LISTENERS
+        // LOGOUT
         // ==========================================
-        
-        function setupEventListeners() {
-            // Mobile menu
-            const mobileBtn = document.getElementById('mobileMenuBtn');
-            if (mobileBtn) {
-                mobileBtn.addEventListener('click', function() {
-                    alert('Menu mobile em desenvolvimento');
-                });
+        function logout() {
+            if (confirm('Deseja sair?')) {
+                window.location.href = 'login.html';
             }
+        }
+
+        // ==========================================
+        // INIT
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Perfil do Motorista');
             
-            // Desativar conta
+            populateYears();
+            
+            // Carregar dados
+            loadFromLocalStorage();
+            fillForm();
+            
+            // Máscaras
+            document.getElementById('cpf')?.addEventListener('input', maskCPF);
+            document.getElementById('phone')?.addEventListener('input', maskPhone);
+            document.getElementById('plate')?.addEventListener('input', maskPlate);
+            document.getElementById('motoPlate')?.addEventListener('input', maskPlate);
+            
+            // Status
             const deactivateCheck = document.getElementById('deactivateAccount');
             if (deactivateCheck) {
                 deactivateCheck.addEventListener('change', function() {
-                    const status = this.checked ? 'inactive' : 'available';
-                    const statusEl = document.getElementById('profileStatus');
-                    if (statusEl) {
-                        if (status === 'inactive') {
-                            statusEl.className = 'profile-status inactive';
-                            statusEl.innerHTML = '<i class="fas fa-circle"></i><span>Inativo</span>';
-                        } else {
-                            statusEl.className = 'profile-status';
-                            statusEl.innerHTML = '<i class="fas fa-circle"></i><span>Disponível</span>';
-                        }
-                    }
-                    
-                    showToast(
-                        status === 'inactive' ? 'Conta desativada' : 'Conta ativada',
-                        status === 'inactive' ? 'Você não receberá novas corridas' : 'Você está disponível para corridas',
-                        'info'
-                    );
+                    userData.status = this.checked ? 'inactive' : 'available';
+                    saveToLocalStorage();
                 });
             }
-        }
-        
-        // ==========================================
-        // MASCARAS
-        // ==========================================
-        
-        function maskCPF(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            value = value.substring(0, 11);
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-            e.target.value = value;
-        }
-        
-        function maskPhone(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            value = value.substring(0, 11);
-            if (value.length === 11) {
-                value = value.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
-            } else if (value.length === 10) {
-                value = value.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
-            } else if (value.length > 2) {
-                value = value.replace(/^(\d{2})(\d)/, '($1) $2');
-            }
-            e.target.value = value;
-        }
-        
-        function maskPlate(e) {
-            let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-            value = value.substring(0, 7);
-            if (value.length === 7) {
-                if (/^[A-Z]{3}[0-9][A-Z][0-9]{2}$/.test(value)) {
-                    value = value.replace(/^([A-Z]{3})([0-9])([A-Z])([0-9]{2})$/, '$1$2$3$4');
-                } else {
-                    value = value.replace(/^([A-Z]{3})(\d{4})$/, '$1-$2');
-                }
-            } else if (value.length > 3) {
-                value = value.replace(/^([A-Z]{3})(.+)$/, '$1-$2');
-            }
-            e.target.value = value;
-        }
-        
-        // ==========================================
-        // INITIALIZATION
-        // ==========================================
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Perfil do Motorista - Inicializado');
-            console.log('📸 Upload Imgur:', USE_IMGUR ? 'Ativado' : 'Desativado');
-            
-            // Populate anos
-            populateYears();
-            
-            // Setup listeners
-            setupEventListeners();
-            
-            // Adicionar máscaras
-            const cpfInput = document.getElementById('cpf');
-            if (cpfInput) cpfInput.addEventListener('input', maskCPF);
-            
-            const phoneInput = document.getElementById('phone');
-            if (phoneInput) phoneInput.addEventListener('input', maskPhone);
-            
-            const plateInput = document.getElementById('plate');
-            if (plateInput) plateInput.addEventListener('input', maskPlate);
-            
-            const motoPlateInput = document.getElementById('motoPlate');
-            if (motoPlateInput) motoPlateInput.addEventListener('input', maskPlate);
-            
-            // Carregar perfil
-            loadUserProfile();
         });
-        
+
         // ==========================================
-        // EXPOR FUNÇÕES
+        // EXPORT
         // ==========================================
-        
         window.handlePhotoUpload = handlePhotoUpload;
         window.handleVehiclePhoto = handleVehiclePhoto;
         window.removeVehiclePhoto = removeVehiclePhoto;
@@ -2649,8 +1868,6 @@
         window.saveProfile = saveProfile;
         window.resetForm = resetForm;
         window.logout = logout;
-        window.deleteAccount = deleteAccount;
-        window.showToast = showToast;
     </script>
 </body>
 </html>
