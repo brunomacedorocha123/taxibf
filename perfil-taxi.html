@@ -3,8 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Completar Perfil - Taxista</title>
+    <title>TaxiBF - Perfil do Motorista</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
     <style>
+        :root {
+            --taxi-yellow: #FFC400;
+            --dark-graphite: #1C1C1C;
+            --darker: #121212;
+            --white: #FFFFFF;
+            --light-gray: #F5F5F5;
+            --gray: #2A2A2A;
+            --available: #2ECC71;
+            --busy: #E74C3C;
+            --offline: #9E9E9E;
+            --warning: #F39C12;
+            --info: #3498DB;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,479 +35,1762 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', sans-serif;
+            background: var(--darker);
+            color: var(--white);
             min-height: 100vh;
-            padding: 20px;
         }
 
-        .container {
-            max-width: 500px;
+        /* Navbar */
+        .navbar {
+            background: var(--dark-graphite);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
             margin: 0 auto;
-        }
-
-        .profile-card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            color: #333;
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 500;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .upload-area {
-            border: 2px dashed #ddd;
-            border-radius: 10px;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            transition: border-color 0.3s;
-        }
-
-        .upload-area:hover {
-            border-color: #667eea;
-        }
-
-        .upload-icon {
-            font-size: 40px;
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-
-        .preview-image {
-            max-width: 150px;
-            max-height: 150px;
-            border-radius: 50%;
-            margin: 15px auto;
-            display: block;
-        }
-
-        .status-options {
+            padding: 0 2rem;
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .status-btn {
-            flex: 1;
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            background: white;
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+            transform: scale(2.5);
+            margin-left: 15px;
+            filter: brightness(0) invert(1);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #888;
+            text-decoration: none;
+            font-weight: 500;
             cursor: pointer;
-            text-align: center;
-            transition: all 0.3s;
+            transition: color 0.3s;
+            position: relative;
+            padding: 0.5rem 0;
         }
 
-        .status-btn.active {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
+        .nav-item:hover, .nav-item.active {
+            color: var(--taxi-yellow);
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--taxi-yellow);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .btn-back {
+            background: none;
             border: none;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            width: 100%;
+            color: var(--white);
             cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .btn-back:hover {
+            color: var(--taxi-yellow);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--taxi-yellow), #FFD700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--dark-graphite);
+            cursor: pointer;
+            border: 3px solid var(--dark-graphite);
+            box-shadow: 0 4px 12px rgba(255,196,0,0.3);
+        }
+
+        .btn-logout {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 1.3rem;
+            transition: color 0.3s;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-logout:hover {
+            color: var(--busy);
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--white);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 100px;
+            padding: 2rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .page-header p {
+            color: #888;
+            font-size: 1rem;
+        }
+
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: var(--dark-graphite);
+            border-radius: 24px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 120px;
+        }
+
+        .profile-photo-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .photo-upload {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .profile-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--taxi-yellow);
+            box-shadow: 0 8px 30px rgba(255,196,0,0.3);
+        }
+
+        .photo-overlay {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 45px;
+            height: 45px;
+            background: var(--taxi-yellow);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 4px solid var(--dark-graphite);
             transition: transform 0.3s;
         }
 
-        .btn-primary:hover {
+        .photo-overlay:hover {
+            transform: scale(1.1);
+        }
+
+        .photo-overlay i {
+            color: var(--dark-graphite);
+            font-size: 1.2rem;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .profile-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(46, 204, 113, 0.2);
+            color: var(--available);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .profile-status.inactive {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--busy);
+        }
+
+        .profile-status i {
+            font-size: 0.6rem;
+        }
+
+        .profile-name-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .profile-email-display {
+            color: #888;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+
+        .profile-stats-mini {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .mini-stat {
+            text-align: center;
+        }
+
+        .mini-stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--taxi-yellow);
+            display: block;
+        }
+
+        .mini-stat-label {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Form Sections */
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .form-section {
+            background: var(--dark-graphite);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(255,255,255,0.05);
+        }
+
+        .section-header i {
+            color: var(--taxi-yellow);
+            font-size: 1.3rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #aaa;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        label .required {
+            color: var(--busy);
+        }
+
+        input, select, textarea {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--taxi-yellow);
+            background: rgba(255,255,255,0.08);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #666;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23FFC400' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 3rem;
+        }
+
+        select option {
+            background: var(--dark-graphite);
+            color: var(--white);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .input-with-icon input {
+            padding-left: 3rem;
+        }
+
+        .input-hint {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.3rem;
+        }
+
+        /* Toggle Switch */
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .toggle-info h4 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .toggle-info p {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 32px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.1);
+            transition: 0.3s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 4px;
+            bottom: 4px;
+            background: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background: var(--taxi-yellow);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(28px);
+            background: var(--dark-graphite);
+        }
+
+        /* Vehicle Photos */
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .photo-upload-box {
+            aspect-ratio: 4/3;
+            background: rgba(255,255,255,0.03);
+            border: 2px dashed rgba(255,255,255,0.1);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-upload-box:hover {
+            border-color: var(--taxi-yellow);
+            background: rgba(255,196,0,0.05);
+        }
+
+        .photo-upload-box.has-image {
+            border-style: solid;
+            border-color: var(--taxi-yellow);
+        }
+
+        .photo-upload-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .photo-upload-box i {
+            font-size: 2rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .photo-upload-box span {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .photo-remove {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 30px;
+            height: 30px;
+            background: var(--busy);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: transform 0.3s;
+        }
+
+        .photo-remove:hover {
+            transform: scale(1.1);
+        }
+
+        /* Action Buttons */
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            padding-top: 1rem;
+        }
+
+        .btn-primary {
+            padding: 1rem 2rem;
+            border: none;
+            background: var(--taxi-yellow);
+            color: var(--dark-graphite);
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255,196,0,0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            padding: 1rem 2rem;
+            border: 2px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: var(--white);
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--taxi-yellow);
+            color: var(--taxi-yellow);
+        }
+
+        .btn-danger {
+            padding: 1rem 2rem;
+            border: 2px solid var(--busy);
+            background: transparent;
+            color: var(--busy);
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-danger:hover {
+            background: var(--busy);
+            color: white;
+        }
+
+        /* Danger Zone */
+        .danger-zone {
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            background: rgba(231, 76, 60, 0.05);
+        }
+
+        .danger-zone .section-header {
+            border-bottom-color: rgba(231, 76, 60, 0.2);
+        }
+
+        .danger-zone .section-header i {
+            color: var(--busy);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(18,18,18,0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            flex-direction: column;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner-large {
+            width: 70px;
+            height: 70px;
+            border: 5px solid rgba(255,196,0,0.2);
+            border-radius: 50%;
+            border-top-color: var(--taxi-yellow);
+            animation: spin 1s linear infinite;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--dark-graphite);
+            border-left: 4px solid var(--taxi-yellow);
+            padding: 1.2rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 10000;
+            max-width: 350px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left-color: var(--available);
+        }
+
+        .toast.error {
+            border-left-color: var(--busy);
+        }
+
+        .toast-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,196,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--taxi-yellow);
+            font-size: 1.2rem;
+        }
+
+        .toast.success .toast-icon {
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--available);
+        }
+
+        .toast.error .toast-icon {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--busy);
+        }
+
+        .toast-content h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .toast-content p {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-card {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--dark-graphite);
+                flex-direction: column;
+                padding: 2rem;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .nav-item.active::after {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .main-content {
+                padding: 1rem;
+                margin-top: 90px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .photos-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .logo img {
+                transform: scale(1.8);
+                margin-left: 5px;
+            }
+
+            .form-actions {
+                flex-direction: column-reverse;
+            }
+
+            .btn-primary, .btn-secondary, .btn-danger {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Validation States */
+        input.error, select.error, textarea.error {
+            border-color: var(--busy);
+            background: rgba(231, 76, 60, 0.05);
         }
 
         .error-message {
-            color: #e74c3c;
-            font-size: 14px;
-            margin-top: 5px;
-            display: none;
+            color: var(--busy);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-top: 0.3rem;
         }
 
-        .success-message {
-            background: #2ecc71;
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            margin-top: 20px;
-            display: none;
+        /* Document Upload */
+        .document-upload {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border: 2px dashed rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .document-upload:hover {
+            border-color: var(--taxi-yellow);
+            background: rgba(255,196,0,0.05);
+        }
+
+        .document-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,196,0,0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--taxi-yellow);
+            font-size: 1.5rem;
+        }
+
+        .document-info {
+            flex: 1;
+        }
+
+        .document-info h4 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .document-info p {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .document-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .document-status.verified {
+            color: var(--available);
+        }
+
+        .document-status.pending {
+            color: var(--warning);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="profile-card">
-            <div class="header">
-                <h1>🐕 Completar Perfil de Taxista</h1>
-                <p>Complete suas informações para começar a trabalhar</p>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="painel-taxista.html" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+                <span>Voltar ao Painel</span>
+            </a>
+            
+            <div class="nav-menu" id="navMenu">
+                <a href="painel-taxista.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showToast('Em desenvolvimento', 'Funcionalidade em breve')">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Agenda</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showToast('Em desenvolvimento', 'Funcionalidade em breve')">
+                    <i class="fas fa-users"></i>
+                    <span>Passageiros</span>
+                </a>
+                <a href="perfil-taxi.html" class="nav-item active">
+                    <i class="fas fa-user"></i>
+                    <span>Perfil</span>
+                </a>
             </div>
 
-            <form id="taxiProfileForm">
-                <!-- Dados Pessoais -->
-                <div class="form-group">
-                    <label>Como gostaria de ser chamado?</label>
-                    <input type="text" id="apelido" placeholder="Ex: Seu Zé, João" required>
+            <div class="user-menu">
+                <div class="user-avatar" id="navAvatar">JM</div>
+                <button class="btn-logout" title="Sair" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-id-card"></i> Meu Perfil</h1>
+            <p>Gerencie suas informações pessoais, dados do veículo e configurações da conta</p>
+        </div>
+
+        <div class="form-grid">
+            <!-- Left Column - Profile Card -->
+            <div class="profile-card">
+                <div class="profile-photo-section">
+                    <div class="photo-upload">
+                        <img src="" alt="Foto de perfil" class="profile-photo" id="profilePhoto" style="display: none;">
+                        <div class="profile-photo" id="profilePlaceholder" style="background: linear-gradient(135deg, var(--taxi-yellow), #FFD700); display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 800; color: var(--dark-graphite);">
+                            JM
+                        </div>
+                        <label class="photo-overlay" for="fileInput">
+                            <i class="fas fa-camera"></i>
+                        </label>
+                        <input type="file" id="fileInput" accept="image/*" onchange="handlePhotoUpload(event)">
+                    </div>
+                    
+                    <div class="profile-status" id="profileStatus">
+                        <i class="fas fa-circle"></i>
+                        <span>Ativo</span>
+                    </div>
+                    
+                    <div class="profile-name-display" id="displayName">João Motorista</div>
+                    <div class="profile-email-display" id="displayEmail">joao@email.com</div>
                 </div>
 
-                <!-- Dados do Alvará e Veículo -->
-                <div class="form-group">
-                    <label>Número do Alvará</label>
-                    <input type="text" id="numeroAlvara" placeholder="Digite o número do alvará" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Placa do Veículo</label>
-                    <input type="text" id="placaVeiculo" placeholder="ABC-1234" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Modelo do Veículo (Opcional)</label>
-                    <input type="text" id="modeloVeiculo" placeholder="Ex: Toyota Corolla">
-                </div>
-
-                <div class="form-group">
-                    <label>Cor do Veículo (Opcional)</label>
-                    <input type="text" id="corVeiculo" placeholder="Ex: Preto, Branco">
-                </div>
-
-                <!-- Upload de Foto -->
-                <div class="form-group">
-                    <label>Foto de Perfil</label>
-                    <div class="upload-area" id="uploadArea">
-                        <div class="upload-icon">📷</div>
-                        <p>Clique para adicionar foto</p>
-                        <input type="file" id="fotoInput" accept="image/*" style="display: none;">
-                        <img id="previewFoto" class="preview-image" style="display: none;">
+                <div class="profile-stats-mini">
+                    <div class="mini-stat">
+                        <span class="mini-stat-value" id="statRides">127</span>
+                        <span class="mini-stat-label">Corridas</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-value" id="statRating">4.8</span>
+                        <span class="mini-stat-label">Nota</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-value" id="statSince">2024</span>
+                        <span class="mini-stat-label">Desde</span>
                     </div>
                 </div>
-
-                <!-- Status de Trabalho -->
-                <div class="form-group">
-                    <label>Status Atual</label>
-                    <div class="status-options">
-                        <div class="status-btn active" data-status="disponivel">✅ Disponível</div>
-                        <div class="status-btn" data-status="ocupado">🚗 Ocupado</div>
-                        <div class="status-btn" data-status="ausente">⏸️ Ausente</div>
-                    </div>
-                    <input type="hidden" id="status" value="disponivel">
-                </div>
-
-                <!-- Horário de Trabalho (Opcional) -->
-                <div class="form-group">
-                    <label>Horário que normalmente trabalha (Opcional)</label>
-                    <select id="horarioTrabalho">
-                        <option value="">Selecione o horário</option>
-                        <option value="manha">Manhã (06:00 - 12:00)</option>
-                        <option value="tarde">Tarde (12:00 - 18:00)</option>
-                        <option value="noite">Noite (18:00 - 00:00)</option>
-                        <option value="madrugada">Madrugada (00:00 - 06:00)</option>
-                        <option value="integral">Integral (24h)</option>
-                    </select>
-                </div>
-
-                <!-- Upload de Documentos (Futuro) -->
-                <div class="form-group">
-                    <label>Upload de Documentos (Em breve)</label>
-                    <div class="upload-area" style="opacity: 0.6; cursor: not-allowed;">
-                        <div class="upload-icon">📄</div>
-                        <p>Em breve: CNH, CRLV, Alvará</p>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-primary">💾 Salvar Perfil</button>
-            </form>
-
-            <div id="successMessage" class="success-message">
-                Perfil salvo com sucesso! ✅
             </div>
 
-            <div id="errorMessage" class="error-message"></div>
+            <!-- Right Column - Form -->
+            <div class="form-container">
+                <!-- Personal Info -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <i class="fas fa-user"></i>
+                        <h2>Dados Pessoais</h2>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nome Completo <span class="required">*</span></label>
+                            <input type="text" id="fullName" placeholder="Seu nome completo" required>
+                        </div>
+                        <div class="form-group">
+                            <label>CPF <span class="required">*</span></label>
+                            <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Telefone <span class="required">*</span></label>
+                            <div class="input-with-icon">
+                                <i class="fab fa-whatsapp"></i>
+                                <input type="tel" id="phone" placeholder="(11) 98765-4321" required>
+                            </div>
+                            <span class="input-hint">Este número será usado para contato com passageiros</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="email" placeholder="seu@email.com" readonly style="opacity: 0.6;">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label>Biografia</label>
+                            <textarea id="bio" placeholder="Conte um pouco sobre você e sua experiência como motorista..."></textarea>
+                            <span class="input-hint">Máximo 500 caracteres</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vehicle Info -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <i class="fas fa-car"></i>
+                        <h2>Dados do Veículo</h2>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Placa <span class="required">*</span></label>
+                            <input type="text" id="plate" placeholder="ABC-1234" maxlength="8" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Modelo <span class="required">*</span></label>
+                            <input type="text" id="carModel" placeholder="Ex: Toyota Corolla" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Ano <span class="required">*</span></label>
+                            <select id="carYear" required>
+                                <option value="">Selecione</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Cor <span class="required">*</span></label>
+                            <select id="carColor" required>
+                                <option value="">Selecione</option>
+                                <option value="Preto">Preto</option>
+                                <option value="Branco">Branco</option>
+                                <option value="Prata">Prata</option>
+                                <option value="Cinza">Cinza</option>
+                                <option value="Vermelho">Vermelho</option>
+                                <option value="Azul">Azul</option>
+                                <option value="Verde">Verde</option>
+                                <option value="Amarelo">Amarelo</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label>Fotos do Veículo</label>
+                            <div class="photos-grid" id="vehiclePhotos">
+                                <div class="photo-upload-box" onclick="document.getElementById('vehiclePhoto1').click()">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Frente</span>
+                                    <input type="file" id="vehiclePhoto1" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, 0)">
+                                </div>
+                                <div class="photo-upload-box" onclick="document.getElementById('vehiclePhoto2').click()">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Lateral</span>
+                                    <input type="file" id="vehiclePhoto2" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, 1)">
+                                </div>
+                                <div class="photo-upload-box" onclick="document.getElementById('vehiclePhoto3').click()">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Interior</span>
+                                    <input type="file" id="vehiclePhoto3" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, 2)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documents -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <i class="fas fa-file-alt"></i>
+                        <h2>Documentos</h2>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label>CNH <span class="required">*</span></label>
+                            <div class="document-upload" onclick="document.getElementById('cnhFile').click()">
+                                <div class="document-icon">
+                                    <i class="fas fa-id-card"></i>
+                                </div>
+                                <div class="document-info">
+                                    <h4>Carteira Nacional de Habilitação</h4>
+                                    <p id="cnhStatus">Clique para fazer upload</p>
+                                </div>
+                                <div class="document-status pending" id="cnhBadge">
+                                    <i class="fas fa-clock"></i>
+                                    <span>Pendente</span>
+                                </div>
+                                <input type="file" id="cnhFile" accept="image/*,.pdf" style="display: none;" onchange="handleDocumentUpload(event, 'cnh')">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label>Comprovante de Residência</label>
+                            <div class="document-upload" onclick="document.getElementById('addressFile').click()">
+                                <div class="document-icon">
+                                    <i class="fas fa-home"></i>
+                                </div>
+                                <div class="document-info">
+                                    <h4>Comprovante de Endereço</h4>
+                                    <p id="addressStatus">Conta de luz, água ou telefone (últimos 3 meses)</p>
+                                </div>
+                                <div class="document-status pending" id="addressBadge">
+                                    <i class="fas fa-clock"></i>
+                                    <span>Pendente</span>
+                                </div>
+                                <input type="file" id="addressFile" accept="image/*,.pdf" style="display: none;" onchange="handleDocumentUpload(event, 'address')">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preferences -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <i class="fas fa-cog"></i>
+                        <h2>Preferências</h2>
+                    </div>
+                    
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4>Receber notificações por WhatsApp</h4>
+                            <p>Será notificado quando houver novas solicitações</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="notifyWhatsApp" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-group" style="margin-top: 1rem;">
+                        <div class="toggle-info">
+                            <h4>Modo Noturno Automático</h4>
+                            <p>Ajusta o brilho do app conforme o horário</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoDarkMode">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="form-section danger-zone">
+                    <div class="section-header">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h2>Zona de Perigo</h2>
+                    </div>
+                    
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4 style="color: var(--busy);">Desativar Conta Temporariamente</h4>
+                            <p>Você não aparecerá no diretório enquanto estiver inativo</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="deactivateAccount">
+                            <span class="toggle-slider" style="background: rgba(231, 76, 60, 0.2);"></span>
+                        </label>
+                    </div>
+
+                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(231, 76, 60, 0.2);">
+                        <button class="btn-danger" onclick="deleteAccount()">
+                            <i class="fas fa-trash-alt"></i>
+                            Excluir Conta Permanentemente
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="form-actions">
+                    <button class="btn-secondary" onclick="resetForm()">
+                        <i class="fas fa-undo"></i>
+                        Cancelar
+                    </button>
+                    <button class="btn-primary" onclick="saveProfile()" id="saveBtn">
+                        <i class="fas fa-save"></i>
+                        Salvar Alterações
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-icon">
+            <i class="fas fa-info-circle"></i>
+        </div>
+        <div class="toast-content">
+            <h4 id="toastTitle">Notificação</h4>
+            <p id="toastMessage">Mensagem aqui</p>
         </div>
     </div>
 
-    <!-- Firebase e seus scripts -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-storage-compat.js"></script>
-    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner-large"></div>
+        <p style="color: #888; margin-top: 1rem;">Salvando...</p>
+    </div>
+
     <script>
-        // Sua configuração Firebase (substitua com suas chaves)
+        // Firebase Configuration - SUBSTITUA COM SUAS CREDENCIAIS
         const firebaseConfig = {
             apiKey: "SUA_API_KEY",
-            authDomain: "SEU_AUTH_DOMAIN",
-            projectId: "SEU_PROJECT_ID",
-            storageBucket: "SEU_STORAGE_BUCKET",
+            authDomain: "SEU_PROJETO.firebaseapp.com",
+            projectId: "SEU_PROJETO",
+            storageBucket: "SEU_PROJETO.appspot.com",
             messagingSenderId: "SEU_SENDER_ID",
             appId: "SEU_APP_ID"
         };
 
-        // Inicializar Firebase
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
         const storage = firebase.storage();
 
-        // Variáveis globais
+        // Global Variables
         let currentUser = null;
-        let fotoFile = null;
+        let userData = {};
+        let vehiclePhotos = [null, null, null];
+        let uploadedDocuments = {
+            cnh: null,
+            address: null
+        };
 
-        // Quando a página carrega
-        document.addEventListener('DOMContentLoaded', async function() {
-            // Verificar se usuário está logado
-            auth.onAuthStateChanged(async (user) => {
+        // DOM Elements
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const toast = document.getElementById('toast');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navMenu = document.getElementById('navMenu');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            setupEventListeners();
+            populateYears();
+            
+            // Check auth state
+            auth.onAuthStateChanged((user) => {
                 if (user) {
                     currentUser = user;
-                    console.log("Usuário logado:", user.uid);
-                    
-                    // Verificar se já tem perfil de taxista
-                    const perfilRef = db.collection('taxistasPerfil').doc(user.uid);
-                    const perfilDoc = await perfilRef.get();
-                    
-                    if (perfilDoc.exists) {
-                        // Já tem perfil, preencher formulário
-                        const data = perfilDoc.data();
-                        document.getElementById('apelido').value = data.apelido || '';
-                        document.getElementById('numeroAlvara').value = data.numeroAlvara || '';
-                        document.getElementById('placaVeiculo').value = data.placaVeiculo || '';
-                        document.getElementById('modeloVeiculo').value = data.modeloVeiculo || '';
-                        document.getElementById('corVeiculo').value = data.corVeiculo || '';
-                        document.getElementById('status').value = data.status || 'disponivel';
-                        document.getElementById('horarioTrabalho').value = data.horarioTrabalho || '';
-                        
-                        // Atualizar botões de status
-                        updateStatusButtons(data.status || 'disponivel');
-                        
-                        // Carregar foto se existir
-                        if (data.fotoPerfilUrl) {
-                            document.getElementById('previewFoto').src = data.fotoPerfilUrl;
-                            document.getElementById('previewFoto').style.display = 'block';
-                        }
-                    }
+                    loadUserProfile(user.uid);
                 } else {
-                    // Não está logado, redirecionar
                     window.location.href = 'login.html';
                 }
             });
-        });
+        }
 
-        // Upload de foto
-        document.getElementById('uploadArea').addEventListener('click', function() {
-            document.getElementById('fotoInput').click();
-        });
-
-        document.getElementById('fotoInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                fotoFile = file;
-                const reader = new FileReader();
-                
-                reader.onload = function(event) {
-                    const preview = document.getElementById('previewFoto');
-                    preview.src = event.target.result;
-                    preview.style.display = 'block';
-                };
-                
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Status buttons
-        document.querySelectorAll('.status-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                // Remover classe active de todos
-                document.querySelectorAll('.status-btn').forEach(b => {
-                    b.classList.remove('active');
-                });
-                
-                // Adicionar ao clicado
-                this.classList.add('active');
-                
-                // Atualizar input hidden
-                const status = this.getAttribute('data-status');
-                document.getElementById('status').value = status;
+        function setupEventListeners() {
+            // Mobile menu
+            mobileMenuBtn.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
             });
-        });
 
-        function updateStatusButtons(status) {
-            document.querySelectorAll('.status-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.getAttribute('data-status') === status) {
-                    btn.classList.add('active');
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!navMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    navMenu.classList.remove('active');
+                }
+            });
+
+            // Input masks
+            document.getElementById('cpf').addEventListener('input', maskCPF);
+            document.getElementById('phone').addEventListener('input', maskPhone);
+            document.getElementById('plate').addEventListener('input', maskPlate);
+
+            // Bio character limit
+            document.getElementById('bio').addEventListener('input', function() {
+                if (this.value.length > 500) {
+                    this.value = this.value.substring(0, 500);
                 }
             });
         }
 
-        // Salvar perfil
-        document.getElementById('taxiProfileForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            if (!currentUser) {
-                showError('Usuário não está logado!');
-                return;
+        function populateYears() {
+            const yearSelect = document.getElementById('carYear');
+            const currentYear = new Date().getFullYear();
+            for (let year = currentYear; year >= 2000; year--) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearSelect.appendChild(option);
             }
-            
-            const submitBtn = this.querySelector('.btn-primary');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Salvando...';
-            submitBtn.disabled = true;
+        }
+
+        // Load user data from Firestore
+        async function loadUserProfile(uid) {
+            showLoading(true);
             
             try {
-                let fotoUrl = '';
+                const doc = await db.collection('motoristas').doc(uid).get();
                 
-                // 1. Upload da foto (se houver nova)
-                if (fotoFile) {
-                    fotoUrl = await uploadFoto(fotoFile, currentUser.uid);
+                if (doc.exists) {
+                    userData = doc.data();
+                    fillForm(userData);
+                    updateProfileDisplay(userData);
                 } else {
-                    // Verificar se já tem foto no perfil
-                    const perfilRef = db.collection('taxistasPerfil').doc(currentUser.uid);
-                    const perfilDoc = await perfilRef.get();
-                    if (perfilDoc.exists && perfilDoc.data().fotoPerfilUrl) {
-                        fotoUrl = perfilDoc.data().fotoPerfilUrl;
-                    }
+                    // New user - create basic profile
+                    const newProfile = {
+                        uid: uid,
+                        email: currentUser.email,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        status: 'active',
+                        subscription: {
+                            active: true,
+                            plan: 'mensal',
+                            value: 29.90,
+                            nextPayment: null
+                        },
+                        stats: {
+                            totalRides: 0,
+                            rating: 0,
+                            favorites: 0
+                        }
+                    };
+                    
+                    await db.collection('motoristas').doc(uid).set(newProfile);
+                    userData = newProfile;
                 }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                showToast('Erro', 'Não foi possível carregar seu perfil', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function fillForm(data) {
+            // Personal info
+            document.getElementById('fullName').value = data.fullName || '';
+            document.getElementById('cpf').value = data.cpf || '';
+            document.getElementById('phone').value = data.phone || '';
+            document.getElementById('email').value = data.email || currentUser.email;
+            document.getElementById('bio').value = data.bio || '';
+
+            // Vehicle info
+            document.getElementById('plate').value = data.vehicle?.plate || '';
+            document.getElementById('carModel').value = data.vehicle?.model || '';
+            document.getElementById('carYear').value = data.vehicle?.year || '';
+            document.getElementById('carColor').value = data.vehicle?.color || '';
+
+            // Preferences
+            document.getElementById('notifyWhatsApp').checked = data.preferences?.notifyWhatsApp !== false;
+            document.getElementById('autoDarkMode').checked = data.preferences?.autoDarkMode || false;
+            document.getElementById('deactivateAccount').checked = data.status === 'inactive';
+
+            // Load photos if exist
+            if (data.photoURL) {
+                displayProfilePhoto(data.photoURL);
+            }
+            
+            if (data.vehicle?.photos) {
+                data.vehicle.photos.forEach((url, index) => {
+                    if (url) displayVehiclePhoto(url, index);
+                });
+            }
+
+            // Update document status
+            if (data.documents?.cnh) updateDocumentStatus('cnh', true);
+            if (data.documents?.address) updateDocumentStatus('address', true);
+        }
+
+        function updateProfileDisplay(data) {
+            const initials = getInitials(data.fullName || currentUser.displayName || 'Motorista');
+            
+            document.getElementById('displayName').textContent = data.fullName || 'Motorista';
+            document.getElementById('displayEmail').textContent = data.email || currentUser.email;
+            document.getElementById('navAvatar').textContent = initials;
+            
+            if (!data.photoURL) {
+                document.getElementById('profilePlaceholder').textContent = initials;
+            }
+
+            // Stats
+            document.getElementById('statRides').textContent = data.stats?.totalRides || 0;
+            document.getElementById('statRating').textContent = data.stats?.rating || '0.0';
+            
+            const createdAt = data.createdAt?.toDate?.() || new Date();
+            document.getElementById('statSince').textContent = createdAt.getFullYear();
+
+            // Status
+            const statusEl = document.getElementById('profileStatus');
+            if (data.status === 'inactive') {
+                statusEl.classList.add('inactive');
+                statusEl.innerHTML = '<i class="fas fa-circle"></i><span>Inativo</span>';
+            }
+        }
+
+        // Save profile to Firestore
+        async function saveProfile() {
+            if (!validateForm()) return;
+
+            showLoading(true);
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.disabled = true;
+
+            try {
+                const formData = {
+                    fullName: document.getElementById('fullName').value.trim(),
+                    cpf: document.getElementById('cpf').value,
+                    phone: document.getElementById('phone').value,
+                    bio: document.getElementById('bio').value.trim(),
+                    vehicle: {
+                        plate: document.getElementById('plate').value.toUpperCase(),
+                        model: document.getElementById('carModel').value.trim(),
+                        year: document.getElementById('carYear').value,
+                        color: document.getElementById('carColor').value,
+                        photos: vehiclePhotos
+                    },
+                    preferences: {
+                        notifyWhatsApp: document.getElementById('notifyWhatsApp').checked,
+                        autoDarkMode: document.getElementById('autoDarkMode').checked
+                    },
+                    status: document.getElementById('deactivateAccount').checked ? 'inactive' : 'active',
+                    documents: uploadedDocuments,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                // Update display name in Auth if changed
+                if (currentUser.displayName !== formData.fullName) {
+                    await currentUser.updateProfile({
+                        displayName: formData.fullName
+                    });
+                }
+
+                // Save to Firestore
+                await db.collection('motoristas').doc(currentUser.uid).update(formData);
                 
-                // 2. Pegar dados do usuário do Firestore (users)
-                const userDoc = await db.collection('users').doc(currentUser.uid).get();
-                const userData = userDoc.exists ? userDoc.data() : {};
+                // Update local data
+                userData = { ...userData, ...formData };
+                updateProfileDisplay(userData);
                 
-                // 3. Criar/atualizar perfil de taxista
-                const perfilData = {
-                    // Dados do usuário (vindos do login)
-                    nomeCompleto: userData.nomeCompleto || currentUser.displayName || '',
-                    email: currentUser.email || '',
-                    telefone: userData.telefone || '',
-                    idUnico: userData.idUnico || generateIdUnico(),
-                    
-                    // Dados do formulário
-                    apelido: document.getElementById('apelido').value,
-                    numeroAlvara: document.getElementById('numeroAlvara').value,
-                    placaVeiculo: document.getElementById('placaVeiculo').value.toUpperCase(),
-                    modeloVeiculo: document.getElementById('modeloVeiculo').value || '',
-                    corVeiculo: document.getElementById('corVeiculo').value || '',
-                    status: document.getElementById('status').value,
-                    horarioTrabalho: document.getElementById('horarioTrabalho').value || '',
-                    fotoPerfilUrl: fotoUrl,
-                    
-                    // Dados do sistema
-                    verificado: false,
-                    notaMedia: 0,
-                    totalCorridas: 0,
-                    dataCadastro: firebase.firestore.FieldValue.serverTimestamp(),
-                    dataAtualizacao: firebase.firestore.FieldValue.serverTimestamp(),
-                    ultimoAcesso: firebase.firestore.FieldValue.serverTimestamp()
+                showToast('Sucesso!', 'Perfil atualizado com sucesso', 'success');
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                showToast('Erro', 'Não foi possível salvar as alterações', 'error');
+            } finally {
+                showLoading(false);
+                saveBtn.disabled = false;
+            }
+        }
+
+        // Photo Upload Handlers
+        async function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Erro', 'Imagem muito grande. Máximo 5MB', 'error');
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                const storageRef = storage.ref(`motoristas/${currentUser.uid}/profile.jpg`);
+                await storageRef.put(file);
+                const url = await storageRef.getDownloadURL();
+                
+                await db.collection('motoristas').doc(currentUser.uid).update({
+                    photoURL: url
+                });
+
+                displayProfilePhoto(url);
+                showToast('Sucesso!', 'Foto atualizada', 'success');
+            } catch (error) {
+                console.error('Upload error:', error);
+                showToast('Erro', 'Falha ao enviar foto', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function displayProfilePhoto(url) {
+            document.getElementById('profilePhoto').src = url;
+            document.getElementById('profilePhoto').style.display = 'block';
+            document.getElementById('profilePlaceholder').style.display = 'none';
+        }
+
+        async function handleVehiclePhoto(event, index) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Erro', 'Imagem muito grande. Máximo 5MB', 'error');
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                const storageRef = storage.ref(`motoristas/${currentUser.uid}/vehicle_${index}.jpg`);
+                await storageRef.put(file);
+                const url = await storageRef.getDownloadURL();
+                
+                vehiclePhotos[index] = url;
+                displayVehiclePhoto(url, index);
+                
+                // Auto-save vehicle photos
+                await db.collection('motoristas').doc(currentUser.uid).update({
+                    'vehicle.photos': vehiclePhotos
+                });
+                
+                showToast('Sucesso!', 'Foto do veículo adicionada', 'success');
+            } catch (error) {
+                showToast('Erro', 'Falha ao enviar foto', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function displayVehiclePhoto(url, index) {
+            const boxes = document.querySelectorAll('.photo-upload-box');
+            const box = boxes[index];
+            
+            box.innerHTML = `
+                <img src="${url}" alt="Veículo">
+                <button class="photo-remove" onclick="removeVehiclePhoto(event, ${index})">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            box.classList.add('has-image');
+        }
+
+        async function removeVehiclePhoto(event, index) {
+            event.stopPropagation();
+            
+            if (!confirm('Remover esta foto?')) return;
+
+            showLoading(true);
+            
+            try {
+                vehiclePhotos[index] = null;
+                
+                const boxes = document.querySelectorAll('.photo-upload-box');
+                const box = boxes[index];
+                const labels = ['Frente', 'Lateral', 'Interior'];
+                
+                box.innerHTML = `
+                    <i class="fas fa-plus"></i>
+                    <span>${labels[index]}</span>
+                    <input type="file" id="vehiclePhoto${index + 1}" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, ${index})">
+                `;
+                box.classList.remove('has-image');
+                
+                await db.collection('motoristas').doc(currentUser.uid).update({
+                    'vehicle.photos': vehiclePhotos
+                });
+                
+                showToast('Sucesso!', 'Foto removida', 'success');
+            } catch (error) {
+                showToast('Erro', 'Falha ao remover foto', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Document Upload
+        async function handleDocumentUpload(event, type) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.size > 10 * 1024 * 1024) {
+                showToast('Erro', 'Arquivo muito grande. Máximo 10MB', 'error');
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                const ext = file.name.split('.').pop();
+                const storageRef = storage.ref(`motoristas/${currentUser.uid}/documents/${type}.${ext}`);
+                await storageRef.put(file);
+                const url = await storageRef.getDownloadURL();
+                
+                uploadedDocuments[type] = {
+                    url: url,
+                    uploadedAt: new Date(),
+                    status: 'pending'
                 };
                 
-                // 4. Salvar no Firestore
-                await db.collection('taxistasPerfil').doc(currentUser.uid).set(perfilData, { merge: true });
-                
-                // 5. Atualizar status no Firestore (coleção pública)
-                await db.collection('taxistasStatus').doc(currentUser.uid).set({
-                    status: perfilData.status,
-                    disponivel: perfilData.status === 'disponivel',
-                    ultimaAtualizacao: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true });
-                
-                // 6. Mostrar sucesso
-                showSuccess();
-                
+                updateDocumentStatus(type, true);
+                showToast('Sucesso!', 'Documento enviado para análise', 'success');
             } catch (error) {
-                console.error('Erro ao salvar perfil:', error);
-                showError('Erro ao salvar perfil: ' + error.message);
+                showToast('Erro', 'Falha ao enviar documento', 'error');
             } finally {
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
+                showLoading(false);
             }
-        });
+        }
 
-        // Função para upload de foto
-        async function uploadFoto(file, userId) {
-            return new Promise((resolve, reject) => {
-                const storageRef = storage.ref();
-                const fotoRef = storageRef.child(`taxistas/${userId}/perfil/${Date.now()}_${file.name}`);
-                
-                const uploadTask = fotoRef.put(file);
-                
-                uploadTask.on('state_changed',
-                    (snapshot) => {
-                        // Progresso (opcional)
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        console.log('Upload progress: ' + progress + '%');
-                    },
-                    (error) => {
-                        reject(error);
-                    },
-                    async () => {
-                        // Upload completo
-                        const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-                        resolve(downloadURL);
-                    }
-                );
+        function updateDocumentStatus(type, uploaded) {
+            const statusEl = document.getElementById(`${type}Status`);
+            const badgeEl = document.getElementById(`${type}Badge`);
+            
+            if (uploaded) {
+                statusEl.textContent = 'Documento enviado - Aguardando verificação';
+                badgeEl.className = 'document-status verified';
+                badgeEl.innerHTML = '<i class="fas fa-check"></i><span>Enviado</span>';
+            }
+        }
+
+        // Validation
+        function validateForm() {
+            const required = ['fullName', 'cpf', 'phone', 'plate', 'carModel', 'carYear', 'carColor'];
+            let valid = true;
+
+            required.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el.value.trim()) {
+                    el.classList.add('error');
+                    valid = false;
+                } else {
+                    el.classList.remove('error');
+                }
             });
+
+            if (!valid) {
+                showToast('Atenção', 'Preencha todos os campos obrigatórios', 'error');
+                return false;
+            }
+
+            return true;
         }
 
-        // Gerar ID único (se não existir)
-        function generateIdUnico() {
-            const prefix = 'TX';
-            const random = Math.floor(100000 + Math.random() * 900000);
-            return `${prefix}-${random}`;
+        // Input Masks
+        function maskCPF(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            e.target.value = value;
         }
 
-        function showSuccess() {
-            document.getElementById('successMessage').style.display = 'block';
+        function maskPhone(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            
+            if (value.length > 7) {
+                value = value.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+            } else if (value.length > 2) {
+                value = value.replace(/^(\d{2})(\d)/, '($1) $2');
+            }
+            
+            e.target.value = value;
+        }
+
+        function maskPlate(e) {
+            let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            if (value.length > 7) value = value.slice(0, 7);
+            
+            // Mercosul plate format: ABC1D23 or old format: ABC-1234
+            if (value.length > 3) {
+                value = value.replace(/^([A-Z]{3})(\d)/, '$1-$2');
+            }
+            
+            e.target.value = value;
+        }
+
+        // Utilities
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        }
+
+        function showLoading(show) {
+            loadingOverlay.classList.toggle('active', show);
+        }
+
+        function showToast(title, message, type = 'info') {
+            const toastEl = document.getElementById('toast');
+            const iconEl = toastEl.querySelector('.toast-icon i');
+            
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMessage').textContent = message;
+            
+            toastEl.className = 'toast show ' + type;
+            
+            if (type === 'success') {
+                iconEl.className = 'fas fa-check-circle';
+            } else if (type === 'error') {
+                iconEl.className = 'fas fa-exclamation-circle';
+            } else {
+                iconEl.className = 'fas fa-info-circle';
+            }
+            
             setTimeout(() => {
-                document.getElementById('successMessage').style.display = 'none';
+                toastEl.classList.remove('show');
             }, 3000);
         }
 
-        function showError(message) {
-            const errorDiv = document.getElementById('errorMessage');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-            setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 5000);
+        function resetForm() {
+            if (confirm('Descartar alterações não salvas?')) {
+                fillForm(userData);
+                showToast('Info', 'Formulário restaurado');
+            }
+        }
+
+        function logout() {
+            if (confirm('Deseja realmente sair?')) {
+                auth.signOut().then(() => {
+                    window.location.href = 'login.html';
+                });
+            }
+        }
+
+        function deleteAccount() {
+            if (!confirm('ATENÇÃO: Esta ação não pode ser desfeita. Deseja realmente excluir sua conta?')) return;
+            if (!confirm('Todos seus dados serão permanentemente removidos. Confirma?')) return;
+
+            showLoading(true);
+            
+            // Delete from Firestore
+            db.collection('motoristas').doc(currentUser.uid).delete()
+                .then(() => {
+                    // Delete Auth account
+                    return currentUser.delete();
+                })
+                .then(() => {
+                    showToast('Conta excluída', 'Redirecionando...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                })
+                .catch(error => {
+                    showLoading(false);
+                    showToast('Erro', 'Não foi possível excluir a conta. Faça login novamente.', 'error');
+                });
         }
     </script>
 </body>
