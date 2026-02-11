@@ -1103,10 +1103,11 @@
 
     <script>
     // ==========================================
-    // CONFIGURAÇÃO IMGUR (MESMO DO SCANHUB)
+    // CONFIGURAÇÃO IMGUR
     // ==========================================
-    const IMGUR_CLIENT_ID = '546c25a59c58ad7'; // Client ID público - NÃO PRECISA TROCAR!
-    
+    const IMGUR_CLIENT_ID = '546c25a59c58ad7';
+    const USER_DATA_KEY = 'taxibf_motorista_perfil';
+
     // ==========================================
     // VARIÁVEIS GLOBAIS
     // ==========================================
@@ -1117,7 +1118,7 @@
         email: '',
         bio: '',
         userType: 'taxi',
-        photoURL: null, // SÓ A URL, NEM PRECISA DE KEY!
+        photoURL: null,
         taxi: {
             plate: '',
             model: '',
@@ -1125,7 +1126,7 @@
             color: '',
             alvara: '',
             permissao: '',
-            photos: [null, null, null, null, null] // SÓ URLs
+            photos: [null, null, null, null, null]
         },
         moto: {
             plate: '',
@@ -1134,7 +1135,7 @@
             color: '',
             alvara: '',
             capacete: '',
-            photos: [null, null, null, null, null] // SÓ URLs
+            photos: [null, null, null, null, null]
         },
         documents: {},
         preferences: {
@@ -1145,115 +1146,82 @@
         updatedAt: new Date().toISOString()
     };
 
-    // Arrays de fotos (só URLs, sem keys)
     let taxiPhotos = [null, null, null, null, null];
     let motoPhotos = [null, null, null, null, null];
 
     // ==========================================
-    // FUNÇÃO DE UPLOAD - IMGUR (COPIADO DO SCANHUB)
+    // FUNÇÃO DE UPLOAD - IMGUR
     // ==========================================
     async function uploadParaImgur(arquivo) {
-        // Validar tamanho (máx 10MB)
-        if (arquivo.size > 10 * 1024 * 1024) {
-            throw new Error('Arquivo muito grande. Máximo 10MB');
-        }
-        
-        // Validar tipo
-        if (!arquivo.type.startsWith('image/')) {
-            throw new Error('Arquivo deve ser uma imagem');
-        }
-
-        // Converter para base64
-        const base64 = await converterParaBase64(arquivo);
-        
-        const formData = new FormData();
-        formData.append('image', base64.split(',')[1]);
-        formData.append('type', 'base64');
-        
-        try {
-            console.log('📤 Enviando para Imgur...');
-            
-            const resposta = await fetch('https://api.imgur.com/3/image', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Client-ID ${IMGUR_CLIENT_ID}`
-                },
-                body: formData
-            });
-            
-            if (!resposta.ok) {
-                throw new Error(`Erro ${resposta.status}: ${resposta.statusText}`);
-            }
-            
-            const dados = await resposta.json();
-            
-            if (!dados.success) {
-                throw new Error(dados.data?.error || 'Erro desconhecido');
-            }
-            
-            console.log('✅ Upload OK:', dados.data.link);
-            return dados.data.link; // URL direta da imagem
-            
-        } catch (erro) {
-            console.error('❌ Erro no Imgur:', erro);
-            throw new Error('Falha ao enviar imagem: ' + erro.message);
-        }
-    }
-
-    // ==========================================
-    // CONVERTER FILE PARA BASE64
-    // ==========================================
-    function converterParaBase64(arquivo) {
         return new Promise((resolve, reject) => {
             const leitor = new FileReader();
-            leitor.onload = (e) => resolve(e.target.result);
-            leitor.onerror = (e) => reject(new Error('Erro ao ler arquivo'));
+            
+            leitor.onload = async function() {
+                try {
+                    const base64 = leitor.result.split(',')[1];
+                    const formData = new FormData();
+                    formData.append('image', base64);
+                    
+                    const resposta = await fetch('https://api.imgur.com/3/image', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Client-ID ${IMGUR_CLIENT_ID}`
+                        },
+                        body: formData
+                    });
+                    
+                    const dados = await resposta.json();
+                    
+                    if (dados.success) {
+                        resolve(dados.data.link);
+                    } else {
+                        reject(new Error('Erro no upload'));
+                    }
+                } catch (erro) {
+                    reject(erro);
+                }
+            };
+            
+            leitor.onerror = () => reject(new Error('Erro ao ler arquivo'));
             leitor.readAsDataURL(arquivo);
         });
     }
 
     // ==========================================
-    // UPLOAD DE FOTO DE PERFIL
+    // FOTO DE PERFIL
     // ==========================================
     async function handlePhotoUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
-
-        // Validações
+        
         if (!file.type.startsWith('image/')) {
             showToast('Erro', 'Selecione uma imagem válida', 'error');
             return;
         }
-
+        
         if (file.size > 5 * 1024 * 1024) {
             showToast('Erro', 'A imagem deve ter no máximo 5MB', 'error');
             return;
         }
-
-        // Preview local (rápido)
+        
         const leitor = new FileReader();
         leitor.onload = function(e) {
             displayProfilePhoto(e.target.result);
         };
         leitor.readAsDataURL(file);
-
+        
         showLoading(true, 'Enviando foto...');
-
+        
         try {
-            // Upload para Imgur
             const url = await uploadParaImgur(file);
             
-            // Atualizar dados (SÓ A URL)
             userData.photoURL = url;
             saveToLocalStorage();
-
-            // Atualizar UI com a URL real
             displayProfilePhoto(url);
             showToast('Sucesso', 'Foto de perfil atualizada', 'success');
             
         } catch (error) {
-            console.error(error);
-            showToast('Erro', error.message || 'Falha ao enviar imagem', 'error');
+            showToast('Erro', 'Falha ao enviar imagem', 'error');
         } finally {
             showLoading(false);
             event.target.value = '';
@@ -1272,46 +1240,41 @@
     }
 
     // ==========================================
-    // UPLOAD DE FOTOS DO TÁXI
+    // FOTOS DO TÁXI
     // ==========================================
     async function handleVehiclePhoto(event, index) {
         const file = event.target.files[0];
         if (!file) return;
-
+        
         if (!file.type.startsWith('image/')) {
             showToast('Erro', 'Selecione uma imagem', 'error');
             return;
         }
-
+        
         if (file.size > 5 * 1024 * 1024) {
             showToast('Erro', 'A imagem deve ter no máximo 5MB', 'error');
             return;
         }
-
-        // Preview local
+        
         const leitor = new FileReader();
         leitor.onload = function(e) {
             displayVehiclePhoto(e.target.result, index);
         };
         leitor.readAsDataURL(file);
-
+        
         showLoading(true, 'Enviando foto...');
-
+        
         try {
-            // Upload para Imgur
             const url = await uploadParaImgur(file);
             
-            // Atualizar arrays (SÓ A URL)
             taxiPhotos[index] = url;
             userData.taxi.photos = taxiPhotos;
             saveToLocalStorage();
-
-            // Atualizar UI com a URL real
             displayVehiclePhoto(url, index);
             showToast('Sucesso', 'Foto adicionada', 'success');
             
         } catch (error) {
-            showToast('Erro', error.message, 'error');
+            showToast('Erro', 'Falha ao enviar imagem', 'error');
         } finally {
             showLoading(false);
             event.target.value = '';
@@ -1334,17 +1297,15 @@
         box.classList.add('has-image');
     }
 
-    async function removeVehiclePhoto(event, index) {
+    function removeVehiclePhoto(event, index) {
         event.stopPropagation();
         
         if (!confirm('Remover esta foto?')) return;
         
-        // Só limpar do array (não precisa deletar do Imgur)
         taxiPhotos[index] = null;
         userData.taxi.photos = taxiPhotos;
         saveToLocalStorage();
         
-        // Resetar UI
         const boxes = document.querySelectorAll('#vehiclePhotos .photo-upload-box');
         const box = boxes[index];
         const labels = ['Frente', 'Traseira', 'Lateral', 'Interior', 'Placa'];
@@ -1360,45 +1321,41 @@
     }
 
     // ==========================================
-    // UPLOAD DE FOTOS DA MOTO
+    // FOTOS DA MOTO
     // ==========================================
     async function handleMotoPhoto(event, index) {
         const file = event.target.files[0];
         if (!file) return;
-
+        
         if (!file.type.startsWith('image/')) {
             showToast('Erro', 'Selecione uma imagem', 'error');
             return;
         }
-
+        
         if (file.size > 5 * 1024 * 1024) {
             showToast('Erro', 'A imagem deve ter no máximo 5MB', 'error');
             return;
         }
-
-        // Preview local
+        
         const leitor = new FileReader();
         leitor.onload = function(e) {
             displayMotoPhoto(e.target.result, index);
         };
         leitor.readAsDataURL(file);
-
+        
         showLoading(true, 'Enviando foto...');
-
+        
         try {
-            // Upload para Imgur
             const url = await uploadParaImgur(file);
             
-            // Atualizar arrays (SÓ A URL)
             motoPhotos[index] = url;
             userData.moto.photos = motoPhotos;
             saveToLocalStorage();
-
             displayMotoPhoto(url, index);
             showToast('Sucesso', 'Foto adicionada', 'success');
             
         } catch (error) {
-            showToast('Erro', error.message, 'error');
+            showToast('Erro', 'Falha ao enviar imagem', 'error');
         } finally {
             showLoading(false);
             event.target.value = '';
@@ -1421,11 +1378,10 @@
         box.classList.add('has-image');
     }
 
-    async function removeMotoPhoto(event, index) {
+    function removeMotoPhoto(event, index) {
         event.stopPropagation();
         if (!confirm('Remover esta foto?')) return;
         
-        // Só limpar do array
         motoPhotos[index] = null;
         userData.moto.photos = motoPhotos;
         saveToLocalStorage();
@@ -1445,32 +1401,27 @@
     }
 
     // ==========================================
-    // UPLOAD DE DOCUMENTOS
+    // DOCUMENTOS
     // ==========================================
     async function handleDocumentUpload(event, type) {
         const file = event.target.files[0];
         if (!file) return;
-
+        
+        if (!file.type.startsWith('image/')) {
+            showToast('Erro', 'Envie apenas imagens (JPG, PNG)', 'error');
+            return;
+        }
+        
         if (file.size > 10 * 1024 * 1024) {
             showToast('Erro', 'Arquivo muito grande. Máximo 10MB', 'error');
             return;
         }
 
         showLoading(true, 'Enviando documento...');
-
+        
         try {
-            let url;
+            const url = await uploadParaImgur(file);
             
-            if (file.type.startsWith('image/')) {
-                // Upload para Imgur se for imagem
-                url = await uploadParaImgur(file);
-            } else {
-                // Se for PDF, não dá pra usar Imgur. Guardar como base64?
-                showToast('Erro', 'Envie apenas imagens (JPG, PNG)', 'error');
-                showLoading(false);
-                return;
-            }
-
             const docData = {
                 url: url,
                 name: file.name,
@@ -1479,11 +1430,10 @@
                 uploadedAt: new Date().toISOString(),
                 status: 'pending'
             };
-
+            
             userData.documents[type] = docData;
             saveToLocalStorage();
-
-            // Atualizar UI
+            
             const statusEl = document.getElementById(`${type}Status`);
             const badgeEl = document.getElementById(`${type}Badge`);
             
@@ -1493,11 +1443,11 @@
             if (badgeEl) {
                 badgeEl.innerHTML = '<i class="fas fa-clock"></i> Aguardando';
             }
-
+            
             showToast('Sucesso', 'Documento enviado', 'success');
             
         } catch (error) {
-            showToast('Erro', error.message, 'error');
+            showToast('Erro', 'Falha ao enviar documento', 'error');
         } finally {
             showLoading(false);
             event.target.value = '';
@@ -1505,18 +1455,14 @@
     }
 
     // ==========================================
-    // LOCALSTORAGE (MESMO DO SCANHUB)
+    // LOCALSTORAGE
     // ==========================================
-    const USER_DATA_KEY = 'taxibf_motorista_perfil';
-
     function saveToLocalStorage() {
         try {
             userData.updatedAt = new Date().toISOString();
             localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
-            console.log('✅ Dados salvos no localStorage');
             return true;
         } catch (e) {
-            console.error('❌ Erro ao salvar localStorage:', e);
             return false;
         }
     }
@@ -1528,15 +1474,13 @@
                 const data = JSON.parse(saved);
                 userData = { ...userData, ...data };
                 
-                // Restaurar arrays
                 if (userData.taxi?.photos) taxiPhotos = [...userData.taxi.photos];
                 if (userData.moto?.photos) motoPhotos = [...userData.moto.photos];
                 
-                console.log('✅ Dados carregados do localStorage');
                 return true;
             }
         } catch (e) {
-            console.error('❌ Erro ao carregar localStorage:', e);
+            return false;
         }
         return false;
     }
@@ -1570,14 +1514,12 @@
     // PREENCHER FORMULÁRIO
     // ==========================================
     function fillForm() {
-        // Dados pessoais
         setValue('fullName', userData.fullName);
         setValue('cpf', userData.cpf);
         setValue('phone', userData.phone);
         setValue('email', userData.email || '');
         setValue('bio', userData.bio || '');
         
-        // Táxi
         setValue('plate', userData.taxi?.plate || '');
         setValue('carModel', userData.taxi?.model || '');
         setValue('carYear', userData.taxi?.year || '');
@@ -1585,7 +1527,6 @@
         setValue('alvara', userData.taxi?.alvara || '');
         setValue('permissao', userData.taxi?.permissao || '');
         
-        // Moto
         setValue('motoPlate', userData.moto?.plate || '');
         setValue('motoModel', userData.moto?.model || '');
         setValue('motoYear', userData.moto?.year || '');
@@ -1593,46 +1534,42 @@
         setValue('motoAlvara', userData.moto?.alvara || '');
         setValue('motoCapacete', userData.moto?.capacete || '');
         
-        // Preferências
         setCheckbox('notifyWhatsApp', userData.preferences?.notifyWhatsApp !== false);
         setCheckbox('deactivateAccount', userData.status === 'inactive');
         
-        // Perfil
         updateProfileDisplay();
         
-        // Foto de perfil
         if (userData.photoURL) {
             displayProfilePhoto(userData.photoURL);
         }
         
-        // Fotos do táxi
         if (userData.taxi?.photos) {
             userData.taxi.photos.forEach((url, index) => {
                 if (url) displayVehiclePhoto(url, index);
             });
         }
         
-        // Fotos da moto
         if (userData.moto?.photos) {
             userData.moto.photos.forEach((url, index) => {
                 if (url) displayMotoPhoto(url, index);
             });
         }
         
-        // Documentos
         if (userData.documents) {
             if (userData.documents.cnh) {
-                document.getElementById('cnhStatus').textContent = userData.documents.cnh.name.substring(0, 40) + '...';
+                const el = document.getElementById('cnhStatus');
+                if (el) el.textContent = userData.documents.cnh.name.substring(0, 40) + '...';
             }
             if (userData.documents.crlv) {
-                document.getElementById('crlvStatus').textContent = userData.documents.crlv.name.substring(0, 40) + '...';
+                const el = document.getElementById('crlvStatus');
+                if (el) el.textContent = userData.documents.crlv.name.substring(0, 40) + '...';
             }
             if (userData.documents.address) {
-                document.getElementById('addressStatus').textContent = userData.documents.address.name.substring(0, 40) + '...';
+                const el = document.getElementById('addressStatus');
+                if (el) el.textContent = userData.documents.address.name.substring(0, 40) + '...';
             }
         }
         
-        // Tipo de veículo
         setVehicleType(userData.userType || 'taxi');
     }
 
@@ -1687,15 +1624,13 @@
     // ==========================================
     function saveProfile() {
         if (!validateForm()) return;
-
-        // Dados pessoais
+        
         userData.fullName = getValue('fullName');
         userData.cpf = getValue('cpf');
         userData.phone = getValue('phone');
         userData.email = getValue('email');
         userData.bio = getValue('bio');
         
-        // Dados do táxi
         if (userData.userType === 'taxi') {
             userData.taxi = userData.taxi || {};
             userData.taxi.plate = getValue('plate').toUpperCase();
@@ -1716,17 +1651,12 @@
             userData.moto.photos = motoPhotos;
         }
         
-        // Preferências
         userData.preferences = userData.preferences || {};
         userData.preferences.notifyWhatsApp = document.getElementById('notifyWhatsApp')?.checked || false;
-        
-        // Status
         userData.status = document.getElementById('deactivateAccount')?.checked ? 'inactive' : 'available';
         
-        // Salvar
         saveToLocalStorage();
         updateProfileDisplay();
-        
         showToast('Sucesso', 'Perfil salvo com sucesso', 'success');
     }
 
@@ -1735,7 +1665,6 @@
     // ==========================================
     function validateForm() {
         let valid = true;
-        
         const required = ['fullName', 'cpf', 'phone'];
         
         if (userData.userType === 'taxi') {
@@ -1881,23 +1810,15 @@
     // INIT
     // ==========================================
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 TaxiBF - Usando IMGUR igual ao ScanHub!');
-        console.log('📸 Client ID:', IMGUR_CLIENT_ID);
-        
-        // Popular anos
         populateYears();
-        
-        // Carregar dados salvos
         loadFromLocalStorage();
         fillForm();
         
-        // Máscaras
         document.getElementById('cpf')?.addEventListener('input', maskCPF);
         document.getElementById('phone')?.addEventListener('input', maskPhone);
         document.getElementById('plate')?.addEventListener('input', maskPlate);
         document.getElementById('motoPlate')?.addEventListener('input', maskPlate);
         
-        // Status checkbox
         const deactivateCheck = document.getElementById('deactivateAccount');
         if (deactivateCheck) {
             deactivateCheck.addEventListener('change', function() {
@@ -1905,10 +1826,6 @@
                 updateProfileDisplay();
             });
         }
-        
-        // Teste rápido do Imgur
-        console.log('✅ Sistema IMGUR carregado!');
-        console.log('🔧 Client ID:', IMGUR_CLIENT_ID);
     });
 
     // ==========================================
@@ -1924,7 +1841,6 @@
     window.saveProfile = saveProfile;
     window.resetForm = resetForm;
     window.logout = logout;
-    window.uploadParaImgur = uploadParaImgur; // Útil para testes
 </script>
 </body>
 </html>
