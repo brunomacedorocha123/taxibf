@@ -7,9 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- AWS SDK para S3 (Cloudflare R2) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1048.0/aws-sdk.min.js"></script>
-    
     <style>
         * {
             margin: 0;
@@ -35,7 +32,6 @@
             line-height: 1.5;
         }
 
-        /* NAVBAR */
         .navbar {
             background: var(--dark-graphite);
             position: fixed;
@@ -59,6 +55,7 @@
             align-items: center;
             gap: 0.5rem;
             font-weight: 600;
+            text-decoration: none;
         }
 
         .btn-back:hover {
@@ -91,7 +88,6 @@
             color: var(--busy);
         }
 
-        /* MAIN */
         .main-content {
             margin-top: 80px;
             padding: 2rem 1.5rem;
@@ -116,7 +112,6 @@
             color: var(--taxi-yellow);
         }
 
-        /* PROFILE CARD */
         .profile-card {
             background: var(--dark-graphite);
             border-radius: 24px;
@@ -224,7 +219,6 @@
             color: var(--busy);
         }
 
-        /* FORM SECTIONS */
         .form-section {
             background: var(--dark-graphite);
             border-radius: 24px;
@@ -314,7 +308,12 @@
             border-color: var(--busy);
         }
 
-        /* VEHICLE TYPE SELECTOR */
+        input[readonly] {
+            background: rgba(255,255,255,0.02);
+            color: #aaa;
+            cursor: not-allowed;
+        }
+
         .vehicle-type-selector {
             display: flex;
             gap: 1rem;
@@ -353,7 +352,6 @@
             color: var(--taxi-yellow);
         }
 
-        /* PHOTOS GRID */
         .photos-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -430,7 +428,6 @@
             transform: scale(1.1);
         }
 
-        /* DOCUMENT UPLOAD */
         .document-upload {
             display: flex;
             align-items: center;
@@ -486,7 +483,11 @@
             color: var(--warning);
         }
 
-        /* TOGGLE */
+        .document-status.verified {
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--available);
+        }
+
         .toggle-group {
             display: flex;
             align-items: center;
@@ -552,7 +553,6 @@
             background: var(--dark-graphite);
         }
 
-        /* BUTTONS */
         .form-actions {
             display: flex;
             gap: 1rem;
@@ -580,6 +580,13 @@
             box-shadow: 0 5px 20px rgba(255,196,0,0.3);
         }
 
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
         .btn-secondary {
             padding: 0.9rem 1.8rem;
             border: 1px solid rgba(255,255,255,0.2);
@@ -599,7 +606,6 @@
             color: var(--taxi-yellow);
         }
 
-        /* LOADING */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -632,7 +638,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* TOAST */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -663,6 +668,10 @@
             border-left-color: var(--busy);
         }
 
+        .toast.warning {
+            border-left-color: var(--warning);
+        }
+
         .toast-icon {
             width: 36px;
             height: 36px;
@@ -685,6 +694,11 @@
             color: var(--busy);
         }
 
+        .toast.warning .toast-icon {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--warning);
+        }
+
         .toast-content h4 {
             font-size: 0.9rem;
             margin-bottom: 0.1rem;
@@ -695,7 +709,6 @@
             color: #aaa;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 768px) {
             .main-content { padding: 1rem; }
             .photo-section { justify-content: center; text-align: center; }
@@ -706,6 +719,7 @@
             .vehicle-type-selector { flex-direction: column; }
             .form-actions { flex-direction: column; }
             .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+            .toast { left: 20px; right: 20px; max-width: none; }
         }
 
         @media (max-width: 480px) {
@@ -723,7 +737,7 @@
         
         <div style="display: flex; align-items: center; gap: 0.8rem;">
             <div class="user-avatar" id="navAvatar">TX</div>
-            <button class="btn-logout" onclick="logout()" title="Sair">
+            <button class="btn-logout" id="btnLogout" title="Sair">
                 <i class="fas fa-sign-out-alt"></i>
             </button>
         </div>
@@ -744,12 +758,12 @@
                     <label class="photo-overlay" for="fileInput">
                         <i class="fas fa-camera"></i>
                     </label>
-                    <input type="file" id="fileInput" accept="image/*" onchange="handlePhotoUpload(event)">
+                    <input type="file" id="fileInput" accept="image/*">
                 </div>
                 
                 <div class="profile-info">
-                    <div class="profile-name" id="displayName">-</div>
-                    <div class="profile-email" id="displayEmail">-</div>
+                    <div class="profile-name" id="displayName">Carregando...</div>
+                    <div class="profile-email" id="displayEmail">carregando...</div>
                     <div class="profile-status" id="profileStatus">
                         <i class="fas fa-circle"></i> Disponível
                     </div>
@@ -765,11 +779,11 @@
             </div>
             
             <div class="vehicle-type-selector">
-                <div class="vehicle-type-card active" id="typeTaxi" onclick="setVehicleType('taxi')">
+                <div class="vehicle-type-card active" id="typeTaxi">
                     <i class="fas fa-taxi"></i>
                     <span>Táxi</span>
                 </div>
-                <div class="vehicle-type-card" id="typeMoto" onclick="setVehicleType('moto')">
+                <div class="vehicle-type-card" id="typeMoto">
                     <i class="fas fa-motorcycle"></i>
                     <span>Moto Táxi</span>
                 </div>
@@ -786,7 +800,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label><i class="fas fa-user-tag"></i> Nome Completo <span class="required">*</span></label>
-                    <input type="text" id="fullName" placeholder="Digite seu nome completo">
+                    <input type="text" id="fullName" placeholder="Seu nome completo" readonly>
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-id-card"></i> CPF <span class="required">*</span></label>
@@ -801,7 +815,7 @@
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-envelope"></i> E-mail</label>
-                    <input type="email" id="email" placeholder="seu@email.com" readonly style="background: rgba(255,255,255,0.02);">
+                    <input type="email" id="email" readonly>
                 </div>
             </div>
 
@@ -811,7 +825,7 @@
             </div>
         </div>
 
-        <!-- SEÇÃO TÁXI (INICIAL) -->
+        <!-- SEÇÃO TÁXI -->
         <div id="vehicleTaxiSection">
             <div class="form-section">
                 <div class="section-header">
@@ -834,13 +848,13 @@
                     <div class="form-group">
                         <label><i class="fas fa-calendar"></i> Ano <span class="required">*</span></label>
                         <select id="carYear">
-                            <option value="">Selecione</option>
+                            <option value="">Selecione o ano</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label><i class="fas fa-palette"></i> Cor <span class="required">*</span></label>
                         <select id="carColor">
-                            <option value="">Selecione</option>
+                            <option value="">Selecione a cor</option>
                             <option value="Preto">Preto</option>
                             <option value="Branco">Branco</option>
                             <option value="Prata">Prata</option>
@@ -848,6 +862,7 @@
                             <option value="Vermelho">Vermelho</option>
                             <option value="Azul">Azul</option>
                             <option value="Verde">Verde</option>
+                            <option value="Amarelo">Amarelo</option>
                         </select>
                     </div>
                 </div>
@@ -866,30 +881,25 @@
                 <div class="form-group full-width">
                     <label><i class="fas fa-images"></i> Fotos do Veículo</label>
                     <div class="photos-grid" id="vehiclePhotos">
-                        <div class="photo-upload-box" onclick="document.getElementById('vehiclePhoto0').click()">
+                        <div class="photo-upload-box" data-index="0">
                             <i class="fas fa-plus"></i>
                             <span>Frente</span>
-                            <input type="file" id="vehiclePhoto0" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, 0)">
                         </div>
-                        <div class="photo-upload-box" onclick="document.getElementById('vehiclePhoto1').click()">
+                        <div class="photo-upload-box" data-index="1">
                             <i class="fas fa-plus"></i>
                             <span>Traseira</span>
-                            <input type="file" id="vehiclePhoto1" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, 1)">
                         </div>
-                        <div class="photo-upload-box" onclick="document.getElementById('vehiclePhoto2').click()">
+                        <div class="photo-upload-box" data-index="2">
                             <i class="fas fa-plus"></i>
                             <span>Lateral</span>
-                            <input type="file" id="vehiclePhoto2" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, 2)">
                         </div>
-                        <div class="photo-upload-box" onclick="document.getElementById('vehiclePhoto3').click()">
+                        <div class="photo-upload-box" data-index="3">
                             <i class="fas fa-plus"></i>
                             <span>Interior</span>
-                            <input type="file" id="vehiclePhoto3" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, 3)">
                         </div>
-                        <div class="photo-upload-box" onclick="document.getElementById('vehiclePhoto4').click()">
+                        <div class="photo-upload-box" data-index="4">
                             <i class="fas fa-plus"></i>
                             <span>Placa</span>
-                            <input type="file" id="vehiclePhoto4" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, 4)">
                         </div>
                     </div>
                     <p style="color: #666; font-size: 0.75rem; margin-top: 0.5rem;">Envie fotos nítidas de todos os ângulos</p>
@@ -897,7 +907,7 @@
             </div>
         </div>
 
-        <!-- SEÇÃO MOTO (OCULTA INICIALMENTE) -->
+        <!-- SEÇÃO MOTO -->
         <div id="vehicleMotoSection" style="display: none;">
             <div class="form-section">
                 <div class="section-header">
@@ -920,18 +930,19 @@
                     <div class="form-group">
                         <label><i class="fas fa-calendar"></i> Ano <span class="required">*</span></label>
                         <select id="motoYear">
-                            <option value="">Selecione</option>
+                            <option value="">Selecione o ano</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label><i class="fas fa-palette"></i> Cor <span class="required">*</span></label>
                         <select id="motoColor">
-                            <option value="">Selecione</option>
+                            <option value="">Selecione a cor</option>
                             <option value="Preta">Preta</option>
                             <option value="Branca">Branca</option>
                             <option value="Vermelha">Vermelha</option>
                             <option value="Azul">Azul</option>
                             <option value="Cinza">Cinza</option>
+                            <option value="Prata">Prata</option>
                         </select>
                     </div>
                 </div>
@@ -954,30 +965,25 @@
                 <div class="form-group full-width">
                     <label><i class="fas fa-images"></i> Fotos da Moto</label>
                     <div class="photos-grid" id="motoPhotos">
-                        <div class="photo-upload-box" onclick="document.getElementById('motoPhoto0').click()">
+                        <div class="photo-upload-box" data-index="0">
                             <i class="fas fa-plus"></i>
                             <span>Frente</span>
-                            <input type="file" id="motoPhoto0" accept="image/*" style="display: none;" onchange="handleMotoPhoto(event, 0)">
                         </div>
-                        <div class="photo-upload-box" onclick="document.getElementById('motoPhoto1').click()">
+                        <div class="photo-upload-box" data-index="1">
                             <i class="fas fa-plus"></i>
                             <span>Lateral</span>
-                            <input type="file" id="motoPhoto1" accept="image/*" style="display: none;" onchange="handleMotoPhoto(event, 1)">
                         </div>
-                        <div class="photo-upload-box" onclick="document.getElementById('motoPhoto2').click()">
+                        <div class="photo-upload-box" data-index="2">
                             <i class="fas fa-plus"></i>
                             <span>Traseira</span>
-                            <input type="file" id="motoPhoto2" accept="image/*" style="display: none;" onchange="handleMotoPhoto(event, 2)">
                         </div>
-                        <div class="photo-upload-box" onclick="document.getElementById('motoPhoto3').click()">
+                        <div class="photo-upload-box" data-index="3">
                             <i class="fas fa-plus"></i>
                             <span>Placa</span>
-                            <input type="file" id="motoPhoto3" accept="image/*" style="display: none;" onchange="handleMotoPhoto(event, 3)">
                         </div>
-                        <div class="photo-upload-box" onclick="document.getElementById('motoPhoto4').click()">
+                        <div class="photo-upload-box" data-index="4">
                             <i class="fas fa-plus"></i>
                             <span>Capacete</span>
-                            <input type="file" id="motoPhoto4" accept="image/*" style="display: none;" onchange="handleMotoPhoto(event, 4)">
                         </div>
                     </div>
                 </div>
@@ -993,7 +999,7 @@
             
             <div class="form-group full-width" style="margin-bottom: 1rem;">
                 <label>CNH <span class="required">*</span></label>
-                <div class="document-upload" onclick="document.getElementById('cnhFile').click()">
+                <div class="document-upload" id="cnhUpload">
                     <div class="document-icon">
                         <i class="fas fa-id-card"></i>
                     </div>
@@ -1004,13 +1010,12 @@
                     <div class="document-status" id="cnhBadge">
                         <i class="fas fa-clock"></i> Pendente
                     </div>
-                    <input type="file" id="cnhFile" accept="image/*,.pdf" style="display: none;" onchange="handleDocumentUpload(event, 'cnh')">
                 </div>
             </div>
 
             <div class="form-group full-width" style="margin-bottom: 1rem;">
                 <label>CRLV</label>
-                <div class="document-upload" onclick="document.getElementById('crlvFile').click()">
+                <div class="document-upload" id="crlvUpload">
                     <div class="document-icon">
                         <i class="fas fa-file-invoice"></i>
                     </div>
@@ -1021,13 +1026,12 @@
                     <div class="document-status" id="crlvBadge">
                         <i class="fas fa-clock"></i> Pendente
                     </div>
-                    <input type="file" id="crlvFile" accept="image/*,.pdf" style="display: none;" onchange="handleDocumentUpload(event, 'crlv')">
                 </div>
             </div>
 
             <div class="form-group full-width">
                 <label>Comprovante de Residência</label>
-                <div class="document-upload" onclick="document.getElementById('addressFile').click()">
+                <div class="document-upload" id="addressUpload">
                     <div class="document-icon">
                         <i class="fas fa-home"></i>
                     </div>
@@ -1038,7 +1042,6 @@
                     <div class="document-status" id="addressBadge">
                         <i class="fas fa-clock"></i> Pendente
                     </div>
-                    <input type="file" id="addressFile" accept="image/*,.pdf" style="display: none;" onchange="handleDocumentUpload(event, 'address')">
                 </div>
             </div>
         </div>
@@ -1068,17 +1071,17 @@
                 </div>
                 <label class="toggle-switch">
                     <input type="checkbox" id="deactivateAccount">
-                    <span class="toggle-slider" style="background: rgba(231, 76, 60, 0.2);"></span>
+                    <span class="toggle-slider"></span>
                 </label>
             </div>
         </div>
 
         <!-- BOTÕES -->
         <div class="form-actions">
-            <button class="btn-secondary" onclick="resetForm()">
+            <button class="btn-secondary" id="btnReset">
                 <i class="fas fa-undo-alt"></i> Limpar
             </button>
-            <button class="btn-primary" onclick="saveProfile()" id="saveBtn">
+            <button class="btn-primary" id="btnSave">
                 <i class="fas fa-save"></i> Salvar Perfil
             </button>
         </div>
@@ -1098,749 +1101,1112 @@
     <!-- LOADING -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
-        <p style="color: #888;" id="loadingMessage">Enviando imagem...</p>
+        <p style="color: #888;" id="loadingMessage">Carregando...</p>
     </div>
 
-    <script>
-    // ==========================================
-    // CONFIGURAÇÃO IMGUR
-    // ==========================================
-    const IMGUR_CLIENT_ID = '546c25a59c58ad7';
-    const USER_DATA_KEY = 'taxibf_motorista_perfil';
+    <!-- INPUTS OCULTOS PARA UPLOAD -->
+    <input type="file" id="vehiclePhotoInput" accept="image/*" style="display: none;">
+    <input type="file" id="motoPhotoInput" accept="image/*" style="display: none;">
+    <input type="file" id="documentInput" accept="image/*" style="display: none;">
 
-    // ==========================================
-    // VARIÁVEIS GLOBAIS
-    // ==========================================
-    let userData = {
-        fullName: '',
-        cpf: '',
-        phone: '',
-        email: '',
-        bio: '',
-        userType: 'taxi',
-        photoURL: null,
-        taxi: {
-            plate: '',
-            model: '',
-            year: '',
-            color: '',
-            alvara: '',
-            permissao: '',
-            photos: [null, null, null, null, null]
-        },
-        moto: {
-            plate: '',
-            model: '',
-            year: '',
-            color: '',
-            alvara: '',
-            capacete: '',
-            photos: [null, null, null, null, null]
-        },
-        documents: {},
-        preferences: {
-            notifyWhatsApp: true
-        },
-        status: 'available',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-    };
+    <!-- FIREBASE + SCRIPT PRINCIPAL -->
+    <script type="module">
+        // ==========================================
+        // CONFIGURAÇÃO FIREBASE - COLE SEUS DADOS AQUI!
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_AUTH_DOMAIN",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET",
+            messagingSenderId: "SEU_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
 
-    let taxiPhotos = [null, null, null, null, null];
-    let motoPhotos = [null, null, null, null, null];
+        // ==========================================
+        // INICIALIZAÇÃO FIREBASE
+        // ==========================================
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged,
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc,
+            updateDoc,
+            setDoc,
+            collection,
+            query,
+            where,
+            getDocs
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // ==========================================
-    // FUNÇÃO DE UPLOAD - IMGUR
-    // ==========================================
-    async function uploadParaImgur(arquivo) {
-        return new Promise((resolve, reject) => {
-            const leitor = new FileReader();
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // ==========================================
+        // CONFIGURAÇÃO IMGUR
+        // ==========================================
+        const IMGUR_CLIENT_ID = '546c25a59c58ad7';
+
+        // ==========================================
+        // VARIÁVEIS GLOBAIS
+        // ==========================================
+        let currentUser = null;
+        let userData = {
+            uid: '',
+            email: '',
+            fullName: '',
+            cpf: '',
+            phone: '',
+            bio: '',
+            userType: 'taxi',
+            photoURL: null,
+            vehicle: {
+                plate: '',
+                model: '',
+                year: '',
+                color: '',
+                alvara: '',
+                permissao: '',
+                photos: [null, null, null, null, null]
+            },
+            moto: {
+                plate: '',
+                model: '',
+                year: '',
+                color: '',
+                alvara: '',
+                capacete: '',
+                photos: [null, null, null, null, null]
+            },
+            documents: {
+                cnh: null,
+                crlv: null,
+                address: null
+            },
+            preferences: {
+                notifyWhatsApp: true
+            },
+            status: 'available',
+            stats: {
+                totalRides: 0,
+                rating: 0,
+                favorites: 0,
+                todayRides: 0
+            },
+            createdAt: null,
+            updatedAt: null,
+            lastStatusUpdate: null
+        };
+
+        let taxiPhotos = [null, null, null, null, null];
+        let motoPhotos = [null, null, null, null, null];
+        let currentPhotoIndex = null;
+        let currentPhotoType = null;
+        let currentDocumentType = null;
+
+        // ==========================================
+        // ELEMENTOS DOM
+        // ==========================================
+        const elements = {
+            navAvatar: document.getElementById('navAvatar'),
+            profilePlaceholder: document.getElementById('profilePlaceholder'),
+            profilePhoto: document.getElementById('profilePhoto'),
+            fileInput: document.getElementById('fileInput'),
+            displayName: document.getElementById('displayName'),
+            displayEmail: document.getElementById('displayEmail'),
+            profileStatus: document.getElementById('profileStatus'),
+            fullName: document.getElementById('fullName'),
+            cpf: document.getElementById('cpf'),
+            phone: document.getElementById('phone'),
+            email: document.getElementById('email'),
+            bio: document.getElementById('bio'),
+            typeTaxi: document.getElementById('typeTaxi'),
+            typeMoto: document.getElementById('typeMoto'),
+            vehicleTaxiSection: document.getElementById('vehicleTaxiSection'),
+            vehicleMotoSection: document.getElementById('vehicleMotoSection'),
+            plate: document.getElementById('plate'),
+            carModel: document.getElementById('carModel'),
+            carYear: document.getElementById('carYear'),
+            carColor: document.getElementById('carColor'),
+            alvara: document.getElementById('alvara'),
+            permissao: document.getElementById('permissao'),
+            motoPlate: document.getElementById('motoPlate'),
+            motoModel: document.getElementById('motoModel'),
+            motoYear: document.getElementById('motoYear'),
+            motoColor: document.getElementById('motoColor'),
+            motoAlvara: document.getElementById('motoAlvara'),
+            motoCapacete: document.getElementById('motoCapacete'),
+            notifyWhatsApp: document.getElementById('notifyWhatsApp'),
+            deactivateAccount: document.getElementById('deactivateAccount'),
+            btnSave: document.getElementById('btnSave'),
+            btnReset: document.getElementById('btnReset'),
+            btnLogout: document.getElementById('btnLogout'),
+            toast: document.getElementById('toast'),
+            toastTitle: document.getElementById('toastTitle'),
+            toastMessage: document.getElementById('toastMessage'),
+            loadingOverlay: document.getElementById('loadingOverlay'),
+            loadingMessage: document.getElementById('loadingMessage'),
+            vehiclePhotoInput: document.getElementById('vehiclePhotoInput'),
+            motoPhotoInput: document.getElementById('motoPhotoInput'),
+            documentInput: document.getElementById('documentInput'),
+            cnhStatus: document.getElementById('cnhStatus'),
+            cnhBadge: document.getElementById('cnhBadge'),
+            crlvStatus: document.getElementById('crlvStatus'),
+            crlvBadge: document.getElementById('crlvBadge'),
+            addressStatus: document.getElementById('addressStatus'),
+            addressBadge: document.getElementById('addressBadge')
+        };
+
+        // ==========================================
+        // FUNÇÕES UTILITÁRIAS
+        // ==========================================
+        
+        function showLoading(message = 'Carregando...') {
+            if (elements.loadingMessage) elements.loadingMessage.textContent = message;
+            elements.loadingOverlay.classList.add('active');
+        }
+
+        function hideLoading() {
+            elements.loadingOverlay.classList.remove('active');
+        }
+
+        function showToast(title, message, type = 'info') {
+            elements.toastTitle.textContent = title;
+            elements.toastMessage.textContent = message;
             
-            leitor.onload = async function() {
-                try {
-                    const base64 = leitor.result.split(',')[1];
-                    const formData = new FormData();
-                    formData.append('image', base64);
+            elements.toast.className = 'toast show';
+            elements.toast.classList.add(type);
+            
+            const icon = elements.toast.querySelector('.toast-icon i');
+            if (type === 'success') icon.className = 'fas fa-check-circle';
+            else if (type === 'error') icon.className = 'fas fa-exclamation-circle';
+            else if (type === 'warning') icon.className = 'fas fa-exclamation-triangle';
+            else icon.className = 'fas fa-info-circle';
+            
+            setTimeout(() => elements.toast.classList.remove('show'), 3500);
+        }
+
+        function converterParaBase64(arquivo) {
+            return new Promise((resolve, reject) => {
+                const leitor = new FileReader();
+                leitor.onload = () => resolve(leitor.result);
+                leitor.onerror = reject;
+                leitor.readAsDataURL(arquivo);
+            });
+        }
+
+        // ==========================================
+        // UPLOAD PARA IMGUR
+        // ==========================================
+        async function uploadParaImgur(arquivo) {
+            try {
+                const base64 = await converterParaBase64(arquivo);
+                const base64Data = base64.split(',')[1];
+                
+                const formData = new FormData();
+                formData.append('image', base64Data);
+                
+                const resposta = await fetch('https://api.imgur.com/3/image', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Client-ID ${IMGUR_CLIENT_ID}`
+                    },
+                    body: formData
+                });
+                
+                const dados = await resposta.json();
+                
+                if (dados.success) {
+                    return dados.data.link;
+                } else {
+                    throw new Error('Erro no upload');
+                }
+            } catch (erro) {
+                console.error('Erro Imgur:', erro);
+                throw erro;
+            }
+        }
+
+        // ==========================================
+        // CARREGAR DADOS DO USUÁRIO
+        // ==========================================
+        async function carregarDadosUsuario() {
+            if (!currentUser) return;
+            
+            showLoading('Carregando seu perfil...');
+            
+            try {
+                // 1. PRIMEIRO: Buscar na coleção /users (dados do auth)
+                const userRef = doc(db, "users", currentUser.uid);
+                const userDoc = await getDoc(userRef);
+                
+                if (userDoc.exists()) {
+                    const dados = userDoc.data();
                     
-                    const resposta = await fetch('https://api.imgur.com/3/image', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Client-ID ${IMGUR_CLIENT_ID}`
-                        },
-                        body: formData
-                    });
+                    // Dados obrigatórios do auth
+                    userData.uid = currentUser.uid;
+                    userData.email = dados.email || currentUser.email || '';
+                    userData.fullName = dados.fullName || dados.nomeCompleto || '';
+                    userData.phone = dados.phone || dados.celular || '';
+                    userData.createdAt = dados.createdAt || new Date().toISOString();
                     
-                    const dados = await resposta.json();
+                    // Preencher campos readonly
+                    if (elements.fullName) elements.fullName.value = userData.fullName;
+                    if (elements.email) elements.email.value = userData.email;
+                }
+                
+                // 2. SEGUNDO: Buscar na coleção /taxistasPerfil (dados do motorista)
+                const taxistaRef = doc(db, "taxistasPerfil", currentUser.uid);
+                const taxistaDoc = await getDoc(taxistaRef);
+                
+                if (taxistaDoc.exists()) {
+                    const dados = taxistaDoc.data();
                     
-                    if (dados.success) {
-                        resolve(dados.data.link);
-                    } else {
-                        reject(new Error('Erro no upload'));
+                    // Sobrescrever com dados do taxista
+                    userData = { ...userData, ...dados };
+                    
+                    // Dados pessoais
+                    if (dados.cpf) userData.cpf = dados.cpf;
+                    if (dados.bio) userData.bio = dados.bio;
+                    if (dados.photoURL) userData.photoURL = dados.photoURL;
+                    if (dados.userType) userData.userType = dados.userType;
+                    if (dados.status) userData.status = dados.status;
+                    if (dados.preferences) userData.preferences = { ...userData.preferences, ...dados.preferences };
+                    if (dados.stats) userData.stats = { ...userData.stats, ...dados.stats };
+                    
+                    // Dados do veículo (táxi)
+                    if (dados.vehicle) {
+                        userData.vehicle = { ...userData.vehicle, ...dados.vehicle };
+                        if (dados.vehicle.photos) taxiPhotos = [...dados.vehicle.photos];
                     }
+                    
+                    // Dados da moto
+                    if (dados.moto) {
+                        userData.moto = { ...userData.moto, ...dados.moto };
+                        if (dados.moto.photos) motoPhotos = [...dados.moto.photos];
+                    }
+                    
+                    // Documentos
+                    if (dados.documents) {
+                        userData.documents = { ...userData.documents, ...dados.documents };
+                    }
+                } else {
+                    // Criar documento se não existir
+                    await setDoc(taxistaRef, {
+                        uid: currentUser.uid,
+                        email: userData.email,
+                        fullName: userData.fullName,
+                        phone: userData.phone,
+                        userType: 'taxi',
+                        status: 'available',
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString(),
+                        stats: {
+                            totalRides: 0,
+                            rating: 0,
+                            favorites: 0,
+                            todayRides: 0
+                        }
+                    });
+                }
+                
+                // Atualizar UI
+                preencherFormulario();
+                atualizarDisplayPerfil();
+                
+            } catch (erro) {
+                console.error('Erro ao carregar dados:', erro);
+                showToast('Erro', 'Falha ao carregar dados do perfil', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ==========================================
+        // PREENCHER FORMULÁRIO
+        // ==========================================
+        function preencherFormulario() {
+            // Dados pessoais
+            if (elements.fullName) elements.fullName.value = userData.fullName || '';
+            if (elements.cpf) elements.cpf.value = userData.cpf || '';
+            if (elements.phone) elements.phone.value = userData.phone || '';
+            if (elements.email) elements.email.value = userData.email || '';
+            if (elements.bio) elements.bio.value = userData.bio || '';
+            
+            // Dados do táxi
+            if (elements.plate) elements.plate.value = userData.vehicle?.plate || '';
+            if (elements.carModel) elements.carModel.value = userData.vehicle?.model || '';
+            if (elements.carYear) elements.carYear.value = userData.vehicle?.year || '';
+            if (elements.carColor) elements.carColor.value = userData.vehicle?.color || '';
+            if (elements.alvara) elements.alvara.value = userData.vehicle?.alvara || '';
+            if (elements.permissao) elements.permissao.value = userData.vehicle?.permissao || '';
+            
+            // Dados da moto
+            if (elements.motoPlate) elements.motoPlate.value = userData.moto?.plate || '';
+            if (elements.motoModel) elements.motoModel.value = userData.moto?.model || '';
+            if (elements.motoYear) elements.motoYear.value = userData.moto?.year || '';
+            if (elements.motoColor) elements.motoColor.value = userData.moto?.color || '';
+            if (elements.motoAlvara) elements.motoAlvara.value = userData.moto?.alvara || '';
+            if (elements.motoCapacete) elements.motoCapacete.value = userData.moto?.capacete || '';
+            
+            // Preferências
+            if (elements.notifyWhatsApp) elements.notifyWhatsApp.checked = userData.preferences?.notifyWhatsApp !== false;
+            if (elements.deactivateAccount) elements.deactivateAccount.checked = userData.status === 'inactive';
+            
+            // Tipo de veículo
+            setVehicleType(userData.userType || 'taxi');
+            
+            // Foto de perfil
+            if (userData.photoURL) {
+                displayProfilePhoto(userData.photoURL);
+            } else {
+                const initials = getInitials();
+                if (elements.profilePlaceholder) elements.profilePlaceholder.textContent = initials;
+                if (elements.profilePhoto) elements.profilePhoto.style.display = 'none';
+                if (elements.profilePlaceholder) elements.profilePlaceholder.style.display = 'flex';
+            }
+            
+            // Fotos do táxi
+            if (taxiPhotos) {
+                taxiPhotos.forEach((url, index) => {
+                    if (url) displayVehiclePhoto(url, index);
+                });
+            }
+            
+            // Fotos da moto
+            if (motoPhotos) {
+                motoPhotos.forEach((url, index) => {
+                    if (url) displayMotoPhoto(url, index);
+                });
+            }
+            
+            // Documentos
+            if (userData.documents) {
+                if (userData.documents.cnh) {
+                    if (elements.cnhStatus) elements.cnhStatus.textContent = userData.documents.cnh.name || 'Documento enviado';
+                    if (elements.cnhBadge) {
+                        elements.cnhBadge.innerHTML = '<i class="fas fa-check-circle"></i> Enviado';
+                        elements.cnhBadge.classList.add('verified');
+                    }
+                }
+                if (userData.documents.crlv) {
+                    if (elements.crlvStatus) elements.crlvStatus.textContent = userData.documents.crlv.name || 'Documento enviado';
+                    if (elements.crlvBadge) {
+                        elements.crlvBadge.innerHTML = '<i class="fas fa-check-circle"></i> Enviado';
+                        elements.crlvBadge.classList.add('verified');
+                    }
+                }
+                if (userData.documents.address) {
+                    if (elements.addressStatus) elements.addressStatus.textContent = userData.documents.address.name || 'Documento enviado';
+                    if (elements.addressBadge) {
+                        elements.addressBadge.innerHTML = '<i class="fas fa-check-circle"></i> Enviado';
+                        elements.addressBadge.classList.add('verified');
+                    }
+                }
+            }
+        }
+
+        // ==========================================
+        // ATUALIZAR DISPLAY DO PERFIL
+        // ==========================================
+        function atualizarDisplayPerfil() {
+            const name = userData.fullName || 'Motorista';
+            const email = userData.email || 'Não informado';
+            const initials = getInitials();
+            
+            if (elements.displayName) elements.displayName.textContent = name;
+            if (elements.displayEmail) elements.displayEmail.textContent = email;
+            if (elements.navAvatar) elements.navAvatar.textContent = initials;
+            
+            if (!userData.photoURL && elements.profilePlaceholder) {
+                elements.profilePlaceholder.textContent = initials;
+            }
+            
+            if (elements.profileStatus) {
+                if (userData.status === 'inactive') {
+                    elements.profileStatus.className = 'profile-status inactive';
+                    elements.profileStatus.innerHTML = '<i class="fas fa-circle"></i> Inativo';
+                } else {
+                    elements.profileStatus.className = 'profile-status';
+                    elements.profileStatus.innerHTML = '<i class="fas fa-circle"></i> Disponível';
+                }
+            }
+        }
+
+        function getInitials() {
+            if (userData.fullName) {
+                return userData.fullName.split(' ')
+                    .map(n => n[0])
+                    .join('')
+                    .substring(0, 2)
+                    .toUpperCase();
+            }
+            return 'TX';
+        }
+
+        // ==========================================
+        // FOTO DE PERFIL
+        // ==========================================
+        function displayProfilePhoto(url) {
+            if (elements.profilePhoto && url) {
+                elements.profilePhoto.src = url;
+                elements.profilePhoto.style.display = 'block';
+                if (elements.profilePlaceholder) elements.profilePlaceholder.style.display = 'none';
+            }
+        }
+
+        async function handlePhotoUpload(file) {
+            if (!file) return;
+            
+            if (!file.type.startsWith('image/')) {
+                showToast('Erro', 'Selecione uma imagem válida', 'error');
+                return;
+            }
+            
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Erro', 'A imagem deve ter no máximo 5MB', 'error');
+                return;
+            }
+            
+            const leitor = new FileReader();
+            leitor.onload = (e) => displayProfilePhoto(e.target.result);
+            leitor.readAsDataURL(file);
+            
+            showLoading('Enviando foto...');
+            
+            try {
+                const url = await uploadParaImgur(file);
+                
+                userData.photoURL = url;
+                
+                const taxistaRef = doc(db, "taxistasPerfil", currentUser.uid);
+                await updateDoc(taxistaRef, {
+                    photoURL: url,
+                    updatedAt: new Date().toISOString()
+                });
+                
+                displayProfilePhoto(url);
+                showToast('Sucesso', 'Foto de perfil atualizada', 'success');
+                
+            } catch (erro) {
+                showToast('Erro', 'Falha ao enviar imagem', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ==========================================
+        // FOTOS DO TÁXI
+        // ==========================================
+        function displayVehiclePhoto(url, index) {
+            const boxes = document.querySelectorAll('#vehiclePhotos .photo-upload-box');
+            if (!boxes[index]) return;
+            
+            const box = boxes[index];
+            const labels = ['Frente', 'Traseira', 'Lateral', 'Interior', 'Placa'];
+            
+            box.innerHTML = `
+                <img src="${url}" alt="Foto ${labels[index]}">
+                <button class="photo-remove" data-type="taxi" data-index="${index}">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            box.classList.add('has-image');
+        }
+
+        async function handleVehiclePhotoUpload(file, index) {
+            if (!file) return;
+            
+            if (!file.type.startsWith('image/')) {
+                showToast('Erro', 'Selecione uma imagem', 'error');
+                return;
+            }
+            
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Erro', 'A imagem deve ter no máximo 5MB', 'error');
+                return;
+            }
+            
+            const leitor = new FileReader();
+            leitor.onload = (e) => displayVehiclePhoto(e.target.result, index);
+            leitor.readAsDataURL(file);
+            
+            showLoading('Enviando foto...');
+            
+            try {
+                const url = await uploadParaImgur(file);
+                
+                taxiPhotos[index] = url;
+                userData.vehicle.photos = taxiPhotos;
+                
+                const taxistaRef = doc(db, "taxistasPerfil", currentUser.uid);
+                await updateDoc(taxistaRef, {
+                    'vehicle.photos': taxiPhotos,
+                    updatedAt: new Date().toISOString()
+                });
+                
+                displayVehiclePhoto(url, index);
+                showToast('Sucesso', 'Foto adicionada', 'success');
+                
+            } catch (erro) {
+                showToast('Erro', 'Falha ao enviar imagem', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function removeVehiclePhoto(index) {
+            if (!confirm('Remover esta foto?')) return;
+            
+            taxiPhotos[index] = null;
+            userData.vehicle.photos = taxiPhotos;
+            
+            try {
+                const taxistaRef = doc(db, "taxistasPerfil", currentUser.uid);
+                await updateDoc(taxistaRef, {
+                    'vehicle.photos': taxiPhotos,
+                    updatedAt: new Date().toISOString()
+                });
+                
+                const boxes = document.querySelectorAll('#vehiclePhotos .photo-upload-box');
+                const box = boxes[index];
+                const labels = ['Frente', 'Traseira', 'Lateral', 'Interior', 'Placa'];
+                
+                box.innerHTML = `
+                    <i class="fas fa-plus"></i>
+                    <span>${labels[index]}</span>
+                `;
+                box.classList.remove('has-image');
+                
+                showToast('Sucesso', 'Foto removida', 'success');
+                
+            } catch (erro) {
+                showToast('Erro', 'Falha ao remover foto', 'error');
+            }
+        }
+
+        // ==========================================
+        // FOTOS DA MOTO
+        // ==========================================
+        function displayMotoPhoto(url, index) {
+            const boxes = document.querySelectorAll('#motoPhotos .photo-upload-box');
+            if (!boxes[index]) return;
+            
+            const box = boxes[index];
+            const labels = ['Frente', 'Lateral', 'Traseira', 'Placa', 'Capacete'];
+            
+            box.innerHTML = `
+                <img src="${url}" alt="Foto ${labels[index]}">
+                <button class="photo-remove" data-type="moto" data-index="${index}">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            box.classList.add('has-image');
+        }
+
+        async function handleMotoPhotoUpload(file, index) {
+            if (!file) return;
+            
+            if (!file.type.startsWith('image/')) {
+                showToast('Erro', 'Selecione uma imagem', 'error');
+                return;
+            }
+            
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Erro', 'A imagem deve ter no máximo 5MB', 'error');
+                return;
+            }
+            
+            const leitor = new FileReader();
+            leitor.onload = (e) => displayMotoPhoto(e.target.result, index);
+            leitor.readAsDataURL(file);
+            
+            showLoading('Enviando foto...');
+            
+            try {
+                const url = await uploadParaImgur(file);
+                
+                motoPhotos[index] = url;
+                userData.moto.photos = motoPhotos;
+                
+                const taxistaRef = doc(db, "taxistasPerfil", currentUser.uid);
+                await updateDoc(taxistaRef, {
+                    'moto.photos': motoPhotos,
+                    updatedAt: new Date().toISOString()
+                });
+                
+                displayMotoPhoto(url, index);
+                showToast('Sucesso', 'Foto adicionada', 'success');
+                
+            } catch (erro) {
+                showToast('Erro', 'Falha ao enviar imagem', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function removeMotoPhoto(index) {
+            if (!confirm('Remover esta foto?')) return;
+            
+            motoPhotos[index] = null;
+            userData.moto.photos = motoPhotos;
+            
+            try {
+                const taxistaRef = doc(db, "taxistasPerfil", currentUser.uid);
+                await updateDoc(taxistaRef, {
+                    'moto.photos': motoPhotos,
+                    updatedAt: new Date().toISOString()
+                });
+                
+                const boxes = document.querySelectorAll('#motoPhotos .photo-upload-box');
+                const box = boxes[index];
+                const labels = ['Frente', 'Lateral', 'Traseira', 'Placa', 'Capacete'];
+                
+                box.innerHTML = `
+                    <i class="fas fa-plus"></i>
+                    <span>${labels[index]}</span>
+                `;
+                box.classList.remove('has-image');
+                
+                showToast('Sucesso', 'Foto removida', 'success');
+                
+            } catch (erro) {
+                showToast('Erro', 'Falha ao remover foto', 'error');
+            }
+        }
+
+        // ==========================================
+        // DOCUMENTOS
+        // ==========================================
+        async function handleDocumentUpload(file, type) {
+            if (!file) return;
+            
+            if (!file.type.startsWith('image/')) {
+                showToast('Erro', 'Envie apenas imagens (JPG, PNG)', 'error');
+                return;
+            }
+            
+            if (file.size > 10 * 1024 * 1024) {
+                showToast('Erro', 'Arquivo muito grande. Máximo 10MB', 'error');
+                return;
+            }
+            
+            showLoading('Enviando documento...');
+            
+            try {
+                const url = await uploadParaImgur(file);
+                
+                const docData = {
+                    url: url,
+                    name: file.name,
+                    type: file.type,
+                    size: file.size,
+                    uploadedAt: new Date().toISOString(),
+                    status: 'pending'
+                };
+                
+                userData.documents[type] = docData;
+                
+                const taxistaRef = doc(db, "taxistasPerfil", currentUser.uid);
+                await updateDoc(taxistaRef, {
+                    [`documents.${type}`]: docData,
+                    updatedAt: new Date().toISOString()
+                });
+                
+                const statusEl = document.getElementById(`${type}Status`);
+                const badgeEl = document.getElementById(`${type}Badge`);
+                
+                if (statusEl) {
+                    statusEl.textContent = file.name.length > 40 ? file.name.substring(0, 40) + '...' : file.name;
+                }
+                if (badgeEl) {
+                    badgeEl.innerHTML = '<i class="fas fa-check-circle"></i> Enviado';
+                    badgeEl.classList.add('verified');
+                }
+                
+                showToast('Sucesso', 'Documento enviado', 'success');
+                
+            } catch (erro) {
+                showToast('Erro', 'Falha ao enviar documento', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ==========================================
+        // TIPO DE VEÍCULO
+        // ==========================================
+        function setVehicleType(type) {
+            userData.userType = type;
+            
+            if (type === 'taxi') {
+                if (elements.typeTaxi) elements.typeTaxi.classList.add('active');
+                if (elements.typeMoto) elements.typeMoto.classList.remove('active');
+                if (elements.vehicleTaxiSection) elements.vehicleTaxiSection.style.display = 'block';
+                if (elements.vehicleMotoSection) elements.vehicleMotoSection.style.display = 'none';
+            } else {
+                if (elements.typeMoto) elements.typeMoto.classList.add('active');
+                if (elements.typeTaxi) elements.typeTaxi.classList.remove('active');
+                if (elements.vehicleMotoSection) elements.vehicleMotoSection.style.display = 'block';
+                if (elements.vehicleTaxiSection) elements.vehicleTaxiSection.style.display = 'none';
+            }
+        }
+
+        // ==========================================
+        // SALVAR PERFIL
+        // ==========================================
+        async function saveProfile() {
+            if (!currentUser) {
+                showToast('Erro', 'Usuário não autenticado', 'error');
+                return;
+            }
+            
+            if (!validateForm()) return;
+            
+            showLoading('Salvando perfil...');
+            
+            try {
+                // Coletar dados do formulário
+                const dadosAtualizados = {
+                    cpf: elements.cpf.value,
+                    phone: elements.phone.value,
+                    bio: elements.bio.value,
+                    userType: userData.userType,
+                    preferences: {
+                        notifyWhatsApp: elements.notifyWhatsApp.checked
+                    },
+                    status: elements.deactivateAccount.checked ? 'inactive' : 'available',
+                    updatedAt: new Date().toISOString(),
+                    lastStatusUpdate: new Date().toISOString()
+                };
+                
+                // Dados do táxi
+                if (userData.userType === 'taxi') {
+                    dadosAtualizados.vehicle = {
+                        plate: elements.plate.value.toUpperCase(),
+                        model: elements.carModel.value,
+                        year: elements.carYear.value,
+                        color: elements.carColor.value,
+                        alvara: elements.alvara.value,
+                        permissao: elements.permissao.value,
+                        photos: taxiPhotos
+                    };
+                } else {
+                    dadosAtualizados.moto = {
+                        plate: elements.motoPlate.value.toUpperCase(),
+                        model: elements.motoModel.value,
+                        year: elements.motoYear.value,
+                        color: elements.motoColor.value,
+                        alvara: elements.motoAlvara.value,
+                        capacete: elements.motoCapacete.value,
+                        photos: motoPhotos
+                    };
+                }
+                
+                // Atualizar Firestore
+                const taxistaRef = doc(db, "taxistasPerfil", currentUser.uid);
+                await updateDoc(taxistaRef, dadosAtualizados);
+                
+                // Atualizar objeto local
+                Object.assign(userData, dadosAtualizados);
+                
+                atualizarDisplayPerfil();
+                showToast('Sucesso', 'Perfil salvo com sucesso', 'success');
+                
+            } catch (erro) {
+                console.error('Erro ao salvar:', erro);
+                showToast('Erro', 'Falha ao salvar perfil', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ==========================================
+        // VALIDAÇÃO
+        // ==========================================
+        function validateForm() {
+            let valid = true;
+            const required = ['cpf', 'phone'];
+            
+            if (userData.userType === 'taxi') {
+                required.push('plate', 'carModel', 'carYear', 'carColor');
+            } else {
+                required.push('motoPlate', 'motoModel', 'motoYear', 'motoColor');
+            }
+            
+            required.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && !el.value.trim()) {
+                    el.classList.add('error');
+                    valid = false;
+                } else if (el) {
+                    el.classList.remove('error');
+                }
+            });
+            
+            if (!valid) {
+                showToast('Atenção', 'Preencha todos os campos obrigatórios', 'warning');
+            }
+            
+            return valid;
+        }
+
+        // ==========================================
+        // RESET FORM
+        // ==========================================
+        function resetForm() {
+            if (confirm('Limpar todas as alterações não salvas?')) {
+                preencherFormulario();
+                showToast('Info', 'Formulário restaurado', 'info');
+            }
+        }
+
+        // ==========================================
+        // POPULAR ANOS
+        // ==========================================
+        function populateYears() {
+            const currentYear = new Date().getFullYear();
+            
+            ['carYear', 'motoYear'].forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    select.innerHTML = '<option value="">Selecione o ano</option>';
+                    for (let year = currentYear; year >= 2000; year--) {
+                        const option = document.createElement('option');
+                        option.value = year;
+                        option.textContent = year;
+                        select.appendChild(option);
+                    }
+                }
+            });
+        }
+
+        // ==========================================
+        // MÁSCARAS
+        // ==========================================
+        function maskCPF(e) {
+            let v = e.target.value.replace(/\D/g, '').substring(0, 11);
+            v = v.replace(/(\d{3})(\d)/, '$1.$2');
+            v = v.replace(/(\d{3})(\d)/, '$1.$2');
+            v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            e.target.value = v;
+        }
+
+        function maskPhone(e) {
+            let v = e.target.value.replace(/\D/g, '').substring(0, 11);
+            if (v.length === 11) {
+                v = v.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+            } else if (v.length === 10) {
+                v = v.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
+            } else if (v.length > 2) {
+                v = v.replace(/^(\d{2})(\d)/, '($1) $2');
+            }
+            e.target.value = v;
+        }
+
+        function maskPlate(e) {
+            let v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 7);
+            if (v.length === 7) {
+                if (/^[A-Z]{3}[0-9][A-Z][0-9]{2}$/.test(v)) {
+                    v = v.replace(/^([A-Z]{3})([0-9])([A-Z])([0-9]{2})$/, '$1$2$3$4');
+                } else {
+                    v = v.replace(/^([A-Z]{3})(\d{4})$/, '$1-$2');
+                }
+            } else if (v.length > 3) {
+                v = v.replace(/^([A-Z]{3})(.+)$/, '$1-$2');
+            }
+            e.target.value = v;
+        }
+
+        // ==========================================
+        // LOGOUT
+        // ==========================================
+        async function logout() {
+            if (confirm('Deseja sair da sua conta?')) {
+                try {
+                    await signOut(auth);
+                    window.location.href = 'login.html';
                 } catch (erro) {
-                    reject(erro);
-                }
-            };
-            
-            leitor.onerror = () => reject(new Error('Erro ao ler arquivo'));
-            leitor.readAsDataURL(arquivo);
-        });
-    }
-
-    // ==========================================
-    // FOTO DE PERFIL
-    // ==========================================
-    async function handlePhotoUpload(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        
-        if (!file.type.startsWith('image/')) {
-            showToast('Erro', 'Selecione uma imagem válida', 'error');
-            return;
-        }
-        
-        if (file.size > 5 * 1024 * 1024) {
-            showToast('Erro', 'A imagem deve ter no máximo 5MB', 'error');
-            return;
-        }
-        
-        const leitor = new FileReader();
-        leitor.onload = function(e) {
-            displayProfilePhoto(e.target.result);
-        };
-        leitor.readAsDataURL(file);
-        
-        showLoading(true, 'Enviando foto...');
-        
-        try {
-            const url = await uploadParaImgur(file);
-            
-            userData.photoURL = url;
-            saveToLocalStorage();
-            displayProfilePhoto(url);
-            showToast('Sucesso', 'Foto de perfil atualizada', 'success');
-            
-        } catch (error) {
-            showToast('Erro', 'Falha ao enviar imagem', 'error');
-        } finally {
-            showLoading(false);
-            event.target.value = '';
-        }
-    }
-
-    function displayProfilePhoto(url) {
-        const photo = document.getElementById('profilePhoto');
-        const placeholder = document.getElementById('profilePlaceholder');
-        
-        if (photo && url) {
-            photo.src = url;
-            photo.style.display = 'block';
-            placeholder.style.display = 'none';
-        }
-    }
-
-    // ==========================================
-    // FOTOS DO TÁXI
-    // ==========================================
-    async function handleVehiclePhoto(event, index) {
-        const file = event.target.files[0];
-        if (!file) return;
-        
-        if (!file.type.startsWith('image/')) {
-            showToast('Erro', 'Selecione uma imagem', 'error');
-            return;
-        }
-        
-        if (file.size > 5 * 1024 * 1024) {
-            showToast('Erro', 'A imagem deve ter no máximo 5MB', 'error');
-            return;
-        }
-        
-        const leitor = new FileReader();
-        leitor.onload = function(e) {
-            displayVehiclePhoto(e.target.result, index);
-        };
-        leitor.readAsDataURL(file);
-        
-        showLoading(true, 'Enviando foto...');
-        
-        try {
-            const url = await uploadParaImgur(file);
-            
-            taxiPhotos[index] = url;
-            userData.taxi.photos = taxiPhotos;
-            saveToLocalStorage();
-            displayVehiclePhoto(url, index);
-            showToast('Sucesso', 'Foto adicionada', 'success');
-            
-        } catch (error) {
-            showToast('Erro', 'Falha ao enviar imagem', 'error');
-        } finally {
-            showLoading(false);
-            event.target.value = '';
-        }
-    }
-
-    function displayVehiclePhoto(url, index) {
-        const boxes = document.querySelectorAll('#vehiclePhotos .photo-upload-box');
-        if (!boxes[index]) return;
-        
-        const box = boxes[index];
-        const labels = ['Frente', 'Traseira', 'Lateral', 'Interior', 'Placa'];
-        
-        box.innerHTML = `
-            <img src="${url}" alt="Foto ${labels[index]}">
-            <button class="photo-remove" onclick="removeVehiclePhoto(event, ${index})">
-                <i class="fas fa-times"></i>
-            </button>
-        `;
-        box.classList.add('has-image');
-    }
-
-    function removeVehiclePhoto(event, index) {
-        event.stopPropagation();
-        
-        if (!confirm('Remover esta foto?')) return;
-        
-        taxiPhotos[index] = null;
-        userData.taxi.photos = taxiPhotos;
-        saveToLocalStorage();
-        
-        const boxes = document.querySelectorAll('#vehiclePhotos .photo-upload-box');
-        const box = boxes[index];
-        const labels = ['Frente', 'Traseira', 'Lateral', 'Interior', 'Placa'];
-        
-        box.innerHTML = `
-            <i class="fas fa-plus"></i>
-            <span>${labels[index]}</span>
-            <input type="file" id="vehiclePhoto${index}" accept="image/*" style="display: none;" onchange="handleVehiclePhoto(event, ${index})">
-        `;
-        box.classList.remove('has-image');
-        
-        showToast('Sucesso', 'Foto removida', 'success');
-    }
-
-    // ==========================================
-    // FOTOS DA MOTO
-    // ==========================================
-    async function handleMotoPhoto(event, index) {
-        const file = event.target.files[0];
-        if (!file) return;
-        
-        if (!file.type.startsWith('image/')) {
-            showToast('Erro', 'Selecione uma imagem', 'error');
-            return;
-        }
-        
-        if (file.size > 5 * 1024 * 1024) {
-            showToast('Erro', 'A imagem deve ter no máximo 5MB', 'error');
-            return;
-        }
-        
-        const leitor = new FileReader();
-        leitor.onload = function(e) {
-            displayMotoPhoto(e.target.result, index);
-        };
-        leitor.readAsDataURL(file);
-        
-        showLoading(true, 'Enviando foto...');
-        
-        try {
-            const url = await uploadParaImgur(file);
-            
-            motoPhotos[index] = url;
-            userData.moto.photos = motoPhotos;
-            saveToLocalStorage();
-            displayMotoPhoto(url, index);
-            showToast('Sucesso', 'Foto adicionada', 'success');
-            
-        } catch (error) {
-            showToast('Erro', 'Falha ao enviar imagem', 'error');
-        } finally {
-            showLoading(false);
-            event.target.value = '';
-        }
-    }
-
-    function displayMotoPhoto(url, index) {
-        const boxes = document.querySelectorAll('#motoPhotos .photo-upload-box');
-        if (!boxes[index]) return;
-        
-        const box = boxes[index];
-        const labels = ['Frente', 'Lateral', 'Traseira', 'Placa', 'Capacete'];
-        
-        box.innerHTML = `
-            <img src="${url}" alt="Foto ${labels[index]}">
-            <button class="photo-remove" onclick="removeMotoPhoto(event, ${index})">
-                <i class="fas fa-times"></i>
-            </button>
-        `;
-        box.classList.add('has-image');
-    }
-
-    function removeMotoPhoto(event, index) {
-        event.stopPropagation();
-        if (!confirm('Remover esta foto?')) return;
-        
-        motoPhotos[index] = null;
-        userData.moto.photos = motoPhotos;
-        saveToLocalStorage();
-        
-        const boxes = document.querySelectorAll('#motoPhotos .photo-upload-box');
-        const box = boxes[index];
-        const labels = ['Frente', 'Lateral', 'Traseira', 'Placa', 'Capacete'];
-        
-        box.innerHTML = `
-            <i class="fas fa-plus"></i>
-            <span>${labels[index]}</span>
-            <input type="file" id="motoPhoto${index}" accept="image/*" style="display: none;" onchange="handleMotoPhoto(event, ${index})">
-        `;
-        box.classList.remove('has-image');
-        
-        showToast('Sucesso', 'Foto removida', 'success');
-    }
-
-    // ==========================================
-    // DOCUMENTOS
-    // ==========================================
-    async function handleDocumentUpload(event, type) {
-        const file = event.target.files[0];
-        if (!file) return;
-        
-        if (!file.type.startsWith('image/')) {
-            showToast('Erro', 'Envie apenas imagens (JPG, PNG)', 'error');
-            return;
-        }
-        
-        if (file.size > 10 * 1024 * 1024) {
-            showToast('Erro', 'Arquivo muito grande. Máximo 10MB', 'error');
-            return;
-        }
-
-        showLoading(true, 'Enviando documento...');
-        
-        try {
-            const url = await uploadParaImgur(file);
-            
-            const docData = {
-                url: url,
-                name: file.name,
-                type: file.type,
-                size: file.size,
-                uploadedAt: new Date().toISOString(),
-                status: 'pending'
-            };
-            
-            userData.documents[type] = docData;
-            saveToLocalStorage();
-            
-            const statusEl = document.getElementById(`${type}Status`);
-            const badgeEl = document.getElementById(`${type}Badge`);
-            
-            if (statusEl) {
-                statusEl.textContent = file.name.length > 40 ? file.name.substring(0, 40) + '...' : file.name;
-            }
-            if (badgeEl) {
-                badgeEl.innerHTML = '<i class="fas fa-clock"></i> Aguardando';
-            }
-            
-            showToast('Sucesso', 'Documento enviado', 'success');
-            
-        } catch (error) {
-            showToast('Erro', 'Falha ao enviar documento', 'error');
-        } finally {
-            showLoading(false);
-            event.target.value = '';
-        }
-    }
-
-    // ==========================================
-    // LOCALSTORAGE
-    // ==========================================
-    function saveToLocalStorage() {
-        try {
-            userData.updatedAt = new Date().toISOString();
-            localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
-            return true;
-        } catch (e) {
-            return false;
-        }
-    }
-
-    function loadFromLocalStorage() {
-        try {
-            const saved = localStorage.getItem(USER_DATA_KEY);
-            if (saved) {
-                const data = JSON.parse(saved);
-                userData = { ...userData, ...data };
-                
-                if (userData.taxi?.photos) taxiPhotos = [...userData.taxi.photos];
-                if (userData.moto?.photos) motoPhotos = [...userData.moto.photos];
-                
-                return true;
-            }
-        } catch (e) {
-            return false;
-        }
-        return false;
-    }
-
-    // ==========================================
-    // TIPO DE VEÍCULO
-    // ==========================================
-    function setVehicleType(type) {
-        userData.userType = type;
-        saveToLocalStorage();
-        
-        const taxiCard = document.getElementById('typeTaxi');
-        const motoCard = document.getElementById('typeMoto');
-        const taxiSection = document.getElementById('vehicleTaxiSection');
-        const motoSection = document.getElementById('vehicleMotoSection');
-        
-        if (type === 'taxi') {
-            taxiCard.classList.add('active');
-            motoCard.classList.remove('active');
-            taxiSection.style.display = 'block';
-            motoSection.style.display = 'none';
-        } else {
-            motoCard.classList.add('active');
-            taxiCard.classList.remove('active');
-            motoSection.style.display = 'block';
-            taxiSection.style.display = 'none';
-        }
-    }
-
-    // ==========================================
-    // PREENCHER FORMULÁRIO
-    // ==========================================
-    function fillForm() {
-        setValue('fullName', userData.fullName);
-        setValue('cpf', userData.cpf);
-        setValue('phone', userData.phone);
-        setValue('email', userData.email || '');
-        setValue('bio', userData.bio || '');
-        
-        setValue('plate', userData.taxi?.plate || '');
-        setValue('carModel', userData.taxi?.model || '');
-        setValue('carYear', userData.taxi?.year || '');
-        setValue('carColor', userData.taxi?.color || '');
-        setValue('alvara', userData.taxi?.alvara || '');
-        setValue('permissao', userData.taxi?.permissao || '');
-        
-        setValue('motoPlate', userData.moto?.plate || '');
-        setValue('motoModel', userData.moto?.model || '');
-        setValue('motoYear', userData.moto?.year || '');
-        setValue('motoColor', userData.moto?.color || '');
-        setValue('motoAlvara', userData.moto?.alvara || '');
-        setValue('motoCapacete', userData.moto?.capacete || '');
-        
-        setCheckbox('notifyWhatsApp', userData.preferences?.notifyWhatsApp !== false);
-        setCheckbox('deactivateAccount', userData.status === 'inactive');
-        
-        updateProfileDisplay();
-        
-        if (userData.photoURL) {
-            displayProfilePhoto(userData.photoURL);
-        }
-        
-        if (userData.taxi?.photos) {
-            userData.taxi.photos.forEach((url, index) => {
-                if (url) displayVehiclePhoto(url, index);
-            });
-        }
-        
-        if (userData.moto?.photos) {
-            userData.moto.photos.forEach((url, index) => {
-                if (url) displayMotoPhoto(url, index);
-            });
-        }
-        
-        if (userData.documents) {
-            if (userData.documents.cnh) {
-                const el = document.getElementById('cnhStatus');
-                if (el) el.textContent = userData.documents.cnh.name.substring(0, 40) + '...';
-            }
-            if (userData.documents.crlv) {
-                const el = document.getElementById('crlvStatus');
-                if (el) el.textContent = userData.documents.crlv.name.substring(0, 40) + '...';
-            }
-            if (userData.documents.address) {
-                const el = document.getElementById('addressStatus');
-                if (el) el.textContent = userData.documents.address.name.substring(0, 40) + '...';
-            }
-        }
-        
-        setVehicleType(userData.userType || 'taxi');
-    }
-
-    function setValue(id, value) {
-        const el = document.getElementById(id);
-        if (el) el.value = value || '';
-    }
-
-    function setCheckbox(id, checked) {
-        const el = document.getElementById(id);
-        if (el) el.checked = checked || false;
-    }
-
-    function getValue(id) {
-        const el = document.getElementById(id);
-        return el ? el.value.trim() : '';
-    }
-
-    function updateProfileDisplay() {
-        const name = userData.fullName || 'Motorista';
-        const email = userData.email || 'Não informado';
-        const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'TX';
-        
-        setText('displayName', name);
-        setText('displayEmail', email);
-        setText('navAvatar', initials);
-        
-        const placeholder = document.getElementById('profilePlaceholder');
-        if (placeholder && !userData.photoURL) {
-            placeholder.textContent = initials;
-        }
-        
-        const statusEl = document.getElementById('profileStatus');
-        if (statusEl) {
-            if (userData.status === 'inactive') {
-                statusEl.className = 'profile-status inactive';
-                statusEl.innerHTML = '<i class="fas fa-circle"></i> Inativo';
-            } else {
-                statusEl.className = 'profile-status';
-                statusEl.innerHTML = '<i class="fas fa-circle"></i> Disponível';
-            }
-        }
-    }
-
-    function setText(id, text) {
-        const el = document.getElementById(id);
-        if (el) el.textContent = text;
-    }
-
-    // ==========================================
-    // SALVAR PERFIL
-    // ==========================================
-    function saveProfile() {
-        if (!validateForm()) return;
-        
-        userData.fullName = getValue('fullName');
-        userData.cpf = getValue('cpf');
-        userData.phone = getValue('phone');
-        userData.email = getValue('email');
-        userData.bio = getValue('bio');
-        
-        if (userData.userType === 'taxi') {
-            userData.taxi = userData.taxi || {};
-            userData.taxi.plate = getValue('plate').toUpperCase();
-            userData.taxi.model = getValue('carModel');
-            userData.taxi.year = getValue('carYear');
-            userData.taxi.color = getValue('carColor');
-            userData.taxi.alvara = getValue('alvara');
-            userData.taxi.permissao = getValue('permissao');
-            userData.taxi.photos = taxiPhotos;
-        } else {
-            userData.moto = userData.moto || {};
-            userData.moto.plate = getValue('motoPlate').toUpperCase();
-            userData.moto.model = getValue('motoModel');
-            userData.moto.year = getValue('motoYear');
-            userData.moto.color = getValue('motoColor');
-            userData.moto.alvara = getValue('motoAlvara');
-            userData.moto.capacete = getValue('motoCapacete');
-            userData.moto.photos = motoPhotos;
-        }
-        
-        userData.preferences = userData.preferences || {};
-        userData.preferences.notifyWhatsApp = document.getElementById('notifyWhatsApp')?.checked || false;
-        userData.status = document.getElementById('deactivateAccount')?.checked ? 'inactive' : 'available';
-        
-        saveToLocalStorage();
-        updateProfileDisplay();
-        showToast('Sucesso', 'Perfil salvo com sucesso', 'success');
-    }
-
-    // ==========================================
-    // VALIDAÇÃO
-    // ==========================================
-    function validateForm() {
-        let valid = true;
-        const required = ['fullName', 'cpf', 'phone'];
-        
-        if (userData.userType === 'taxi') {
-            required.push('plate', 'carModel', 'carYear', 'carColor');
-        } else {
-            required.push('motoPlate', 'motoModel', 'motoYear', 'motoColor');
-        }
-        
-        required.forEach(id => {
-            const el = document.getElementById(id);
-            if (el && !el.value.trim()) {
-                el.classList.add('error');
-                valid = false;
-            } else if (el) {
-                el.classList.remove('error');
-            }
-        });
-        
-        if (!valid) {
-            showToast('Atenção', 'Preencha todos os campos obrigatórios', 'error');
-        }
-        
-        return valid;
-    }
-
-    // ==========================================
-    // RESET FORM
-    // ==========================================
-    function resetForm() {
-        if (confirm('Limpar todas as alterações não salvas?')) {
-            loadFromLocalStorage();
-            fillForm();
-            showToast('Info', 'Formulário restaurado', 'info');
-        }
-    }
-
-    // ==========================================
-    // POPULAR ANOS
-    // ==========================================
-    function populateYears() {
-        const currentYear = new Date().getFullYear();
-        
-        ['carYear', 'motoYear'].forEach(selectId => {
-            const select = document.getElementById(selectId);
-            if (select) {
-                select.innerHTML = '<option value="">Selecione o ano</option>';
-                for (let year = currentYear; year >= 2000; year--) {
-                    const option = document.createElement('option');
-                    option.value = year;
-                    option.textContent = year;
-                    select.appendChild(option);
+                    showToast('Erro', 'Falha ao sair', 'error');
                 }
             }
-        });
-    }
-
-    // ==========================================
-    // MÁSCARAS
-    // ==========================================
-    function maskCPF(e) {
-        let v = e.target.value.replace(/\D/g, '').substring(0, 11);
-        v = v.replace(/(\d{3})(\d)/, '$1.$2');
-        v = v.replace(/(\d{3})(\d)/, '$1.$2');
-        v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-        e.target.value = v;
-    }
-
-    function maskPhone(e) {
-        let v = e.target.value.replace(/\D/g, '').substring(0, 11);
-        if (v.length === 11) {
-            v = v.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
-        } else if (v.length === 10) {
-            v = v.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
-        } else if (v.length > 2) {
-            v = v.replace(/^(\d{2})(\d)/, '($1) $2');
         }
-        e.target.value = v;
-    }
 
-    function maskPlate(e) {
-        let v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 7);
-        if (v.length === 7) {
-            if (/^[A-Z]{3}[0-9][A-Z][0-9]{2}$/.test(v)) {
-                v = v.replace(/^([A-Z]{3})([0-9])([A-Z])([0-9]{2})$/, '$1$2$3$4');
-            } else {
-                v = v.replace(/^([A-Z]{3})(\d{4})$/, '$1-$2');
+        // ==========================================
+        // EVENT LISTENERS
+        // ==========================================
+        function setupEventListeners() {
+            
+            // Foto de perfil
+            if (elements.fileInput) {
+                elements.fileInput.addEventListener('change', (e) => {
+                    handlePhotoUpload(e.target.files[0]);
+                });
             }
-        } else if (v.length > 3) {
-            v = v.replace(/^([A-Z]{3})(.+)$/, '$1-$2');
-        }
-        e.target.value = v;
-    }
-
-    // ==========================================
-    // TOAST
-    // ==========================================
-    function showToast(title, message, type = 'info') {
-        const toast = document.getElementById('toast');
-        const icon = toast.querySelector('.toast-icon i');
-        const titleEl = document.getElementById('toastTitle');
-        const msgEl = document.getElementById('toastMessage');
-        
-        titleEl.textContent = title;
-        msgEl.textContent = message;
-        
-        toast.className = 'toast show';
-        toast.classList.add(type);
-        
-        if (type === 'success') icon.className = 'fas fa-check-circle';
-        else if (type === 'error') icon.className = 'fas fa-exclamation-circle';
-        else icon.className = 'fas fa-info-circle';
-        
-        setTimeout(() => toast.classList.remove('show'), 3500);
-    }
-
-    // ==========================================
-    // LOADING
-    // ==========================================
-    function showLoading(show, message = 'Enviando...') {
-        const overlay = document.getElementById('loadingOverlay');
-        const msgEl = document.getElementById('loadingMessage');
-        
-        if (overlay) {
-            if (show) {
-                if (msgEl) msgEl.textContent = message;
-                overlay.classList.add('active');
-            } else {
-                overlay.classList.remove('active');
-            }
-        }
-    }
-
-    // ==========================================
-    // LOGOUT
-    // ==========================================
-    function logout() {
-        if (confirm('Deseja sair da sua conta?')) {
-            window.location.href = 'login.html';
-        }
-    }
-
-    // ==========================================
-    // INIT
-    // ==========================================
-    document.addEventListener('DOMContentLoaded', function() {
-        populateYears();
-        loadFromLocalStorage();
-        fillForm();
-        
-        document.getElementById('cpf')?.addEventListener('input', maskCPF);
-        document.getElementById('phone')?.addEventListener('input', maskPhone);
-        document.getElementById('plate')?.addEventListener('input', maskPlate);
-        document.getElementById('motoPlate')?.addEventListener('input', maskPlate);
-        
-        const deactivateCheck = document.getElementById('deactivateAccount');
-        if (deactivateCheck) {
-            deactivateCheck.addEventListener('change', function() {
-                userData.status = this.checked ? 'inactive' : 'available';
-                updateProfileDisplay();
+            
+            // Fotos do táxi
+            document.querySelectorAll('#vehiclePhotos .photo-upload-box').forEach(box => {
+                box.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('photo-remove')) {
+                        return;
+                    }
+                    const index = parseInt(this.dataset.index);
+                    currentPhotoType = 'taxi';
+                    currentPhotoIndex = index;
+                    if (elements.vehiclePhotoInput) {
+                        elements.vehiclePhotoInput.click();
+                    }
+                });
             });
+            
+            // Fotos da moto
+            document.querySelectorAll('#motoPhotos .photo-upload-box').forEach(box => {
+                box.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('photo-remove')) {
+                        return;
+                    }
+                    const index = parseInt(this.dataset.index);
+                    currentPhotoType = 'moto';
+                    currentPhotoIndex = index;
+                    if (elements.motoPhotoInput) {
+                        elements.motoPhotoInput.click();
+                    }
+                });
+            });
+            
+            // Upload de fotos do táxi
+            if (elements.vehiclePhotoInput) {
+                elements.vehiclePhotoInput.addEventListener('change', (e) => {
+                    if (currentPhotoType === 'taxi' && currentPhotoIndex !== null) {
+                        handleVehiclePhotoUpload(e.target.files[0], currentPhotoIndex);
+                    }
+                    e.target.value = '';
+                });
+            }
+            
+            // Upload de fotos da moto
+            if (elements.motoPhotoInput) {
+                elements.motoPhotoInput.addEventListener('change', (e) => {
+                    if (currentPhotoType === 'moto' && currentPhotoIndex !== null) {
+                        handleMotoPhotoUpload(e.target.files[0], currentPhotoIndex);
+                    }
+                    e.target.value = '';
+                });
+            }
+            
+            // Remover fotos (delegação)
+            document.addEventListener('click', function(e) {
+                const btn = e.target.closest('.photo-remove');
+                if (!btn) return;
+                
+                const type = btn.dataset.type;
+                const index = parseInt(btn.dataset.index);
+                
+                if (type === 'taxi') {
+                    removeVehiclePhoto(index);
+                } else if (type === 'moto') {
+                    removeMotoPhoto(index);
+                }
+            });
+            
+            // Documentos
+            if (document.getElementById('cnhUpload')) {
+                document.getElementById('cnhUpload').addEventListener('click', () => {
+                    currentDocumentType = 'cnh';
+                    if (elements.documentInput) elements.documentInput.click();
+                });
+            }
+            
+            if (document.getElementById('crlvUpload')) {
+                document.getElementById('crlvUpload').addEventListener('click', () => {
+                    currentDocumentType = 'crlv';
+                    if (elements.documentInput) elements.documentInput.click();
+                });
+            }
+            
+            if (document.getElementById('addressUpload')) {
+                document.getElementById('addressUpload').addEventListener('click', () => {
+                    currentDocumentType = 'address';
+                    if (elements.documentInput) elements.documentInput.click();
+                });
+            }
+            
+            if (elements.documentInput) {
+                elements.documentInput.addEventListener('change', (e) => {
+                    if (currentDocumentType) {
+                        handleDocumentUpload(e.target.files[0], currentDocumentType);
+                    }
+                    e.target.value = '';
+                });
+            }
+            
+            // Tipo de veículo
+            if (elements.typeTaxi) {
+                elements.typeTaxi.addEventListener('click', () => setVehicleType('taxi'));
+            }
+            if (elements.typeMoto) {
+                elements.typeMoto.addEventListener('click', () => setVehicleType('moto'));
+            }
+            
+            // Botões
+            if (elements.btnSave) {
+                elements.btnSave.addEventListener('click', saveProfile);
+            }
+            if (elements.btnReset) {
+                elements.btnReset.addEventListener('click', resetForm);
+            }
+            if (elements.btnLogout) {
+                elements.btnLogout.addEventListener('click', logout);
+            }
+            
+            // Máscaras
+            if (elements.cpf) {
+                elements.cpf.addEventListener('input', maskCPF);
+            }
+            if (elements.phone) {
+                elements.phone.addEventListener('input', maskPhone);
+            }
+            if (elements.plate) {
+                elements.plate.addEventListener('input', maskPlate);
+            }
+            if (elements.motoPlate) {
+                elements.motoPlate.addEventListener('input', maskPlate);
+            }
+            
+            // Status checkbox
+            if (elements.deactivateAccount) {
+                elements.deactivateAccount.addEventListener('change', function() {
+                    userData.status = this.checked ? 'inactive' : 'available';
+                    atualizarDisplayPerfil();
+                });
+            }
         }
-    });
 
-    // ==========================================
-    // EXPORTAR FUNÇÕES
-    // ==========================================
-    window.handlePhotoUpload = handlePhotoUpload;
-    window.handleVehiclePhoto = handleVehiclePhoto;
-    window.removeVehiclePhoto = removeVehiclePhoto;
-    window.handleMotoPhoto = handleMotoPhoto;
-    window.removeMotoPhoto = removeMotoPhoto;
-    window.handleDocumentUpload = handleDocumentUpload;
-    window.setVehicleType = setVehicleType;
-    window.saveProfile = saveProfile;
-    window.resetForm = resetForm;
-    window.logout = logout;
-</script>
+        // ==========================================
+        // AUTH STATE LISTENER
+        // ==========================================
+        onAuthStateChanged(auth, (usuario) => {
+            if (usuario) {
+                currentUser = usuario;
+                carregarDadosUsuario();
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        // ==========================================
+        // INIT
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            populateYears();
+            setupEventListeners();
+        });
+    </script>
 </body>
 </html>
