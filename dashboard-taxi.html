@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaxiBF - Dashboard do Motorista</title>
+    <title>TaxiBF - Painel do Motorista</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     
     <style>
         :root {
             --taxi-yellow: #FFC400;
             --dark-graphite: #1C1C1C;
+            --darker: #121212;
             --white: #FFFFFF;
             --light-gray: #F5F5F5;
-            --gray: #E0E0E0;
+            --gray: #2A2A2A;
             --available: #2ECC71;
             --busy: #E74C3C;
             --offline: #9E9E9E;
@@ -35,21 +35,21 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--light-gray);
-            color: var(--dark-graphite);
+            background: var(--darker);
+            color: var(--white);
             min-height: 100vh;
         }
 
         /* Navbar */
         .navbar {
-            background: var(--white);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            background: var(--dark-graphite);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
             padding: 1rem 0;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
         .nav-container {
@@ -73,6 +73,7 @@
             object-fit: contain;
             transform: scale(2.5);
             margin-left: 15px;
+            filter: brightness(0) invert(1);
         }
 
         .nav-menu {
@@ -85,7 +86,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: #666;
+            color: #888;
             text-decoration: none;
             font-weight: 500;
             cursor: pointer;
@@ -95,7 +96,7 @@
         }
 
         .nav-item:hover, .nav-item.active {
-            color: var(--dark-graphite);
+            color: var(--taxi-yellow);
         }
 
         .nav-item.active::after {
@@ -114,6 +115,43 @@
             gap: 1.5rem;
         }
 
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.3rem;
+            cursor: pointer;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .notification-btn:hover {
+            background: rgba(255,196,0,0.1);
+            color: var(--taxi-yellow);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--busy);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .user-avatar {
             width: 50px;
             height: 50px;
@@ -125,19 +163,20 @@
             font-weight: 700;
             color: var(--dark-graphite);
             cursor: pointer;
-            border: 3px solid var(--white);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 3px solid var(--dark-graphite);
+            box-shadow: 0 4px 12px rgba(255,196,0,0.3);
             transition: all 0.3s;
         }
 
         .user-avatar:hover {
             transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(255,196,0,0.4);
         }
 
         .btn-logout {
             background: none;
             border: none;
-            color: #666;
+            color: #888;
             cursor: pointer;
             font-size: 1.3rem;
             transition: color 0.3s;
@@ -160,7 +199,7 @@
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
-            color: var(--dark-graphite);
+            color: var(--white);
             width: 45px;
             height: 45px;
             border-radius: 50%;
@@ -179,17 +218,16 @@
 
         /* Status Toggle Section */
         .status-section {
-            background: var(--white);
+            background: linear-gradient(135deg, var(--dark-graphite) 0%, var(--gray) 100%);
             border-radius: 24px;
             padding: 2rem;
             margin-bottom: 2rem;
-            border: 1px solid rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 1.5rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
 
         .status-info {
@@ -229,17 +267,16 @@
         .status-text h2 {
             font-size: 1.8rem;
             margin-bottom: 0.3rem;
-            color: var(--dark-graphite);
         }
 
         .status-text p {
-            color: #666;
+            color: #888;
             font-size: 0.95rem;
         }
 
         .status-toggle {
             display: flex;
-            background: #f0f0f0;
+            background: rgba(255,255,255,0.05);
             border-radius: 50px;
             padding: 0.4rem;
             gap: 0.4rem;
@@ -249,7 +286,7 @@
             padding: 0.8rem 1.5rem;
             border: none;
             background: transparent;
-            color: #666;
+            color: #888;
             font-weight: 600;
             cursor: pointer;
             border-radius: 50px;
@@ -267,11 +304,74 @@
         }
 
         .toggle-btn:hover:not(.active) {
-            color: var(--dark-graphite);
-            background: rgba(0,0,0,0.05);
+            color: var(--white);
+            background: rgba(255,255,255,0.1);
         }
 
-        /* Stats Grid */
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+        }
+
+        .left-column, .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--dark-graphite);
+            border-radius: 20px;
+            padding: 1.8rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: var(--white);
+        }
+
+        .card-title i {
+            color: var(--taxi-yellow);
+            font-size: 1.3rem;
+        }
+
+        .badge {
+            background: var(--taxi-yellow);
+            color: var(--dark-graphite);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 800;
+        }
+
+        .badge-outline {
+            background: transparent;
+            border: 2px solid var(--taxi-yellow);
+            color: var(--taxi-yellow);
+        }
+
+        /* Quick Stats */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -280,13 +380,12 @@
         }
 
         .stat-card {
-            background: var(--white);
+            background: var(--dark-graphite);
             border-radius: 16px;
             padding: 1.5rem;
-            border: 1px solid rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
             text-align: center;
             transition: all 0.3s;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
 
         .stat-card:hover {
@@ -310,242 +409,102 @@
         .stat-value {
             font-size: 2rem;
             font-weight: 800;
-            color: var(--dark-graphite);
+            color: var(--white);
             margin-bottom: 0.3rem;
         }
 
         .stat-label {
-            color: #666;
+            color: #888;
             font-size: 0.9rem;
             font-weight: 500;
         }
 
-        /* Grid Layout */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 2rem;
-        }
-
-        /* Map Section */
-        .map-container {
-            background: var(--white);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            height: 500px;
-            position: relative;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .map-placeholder {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #e0e0e0 0%, #f0f0f0 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            color: #666;
-        }
-
-        .map-placeholder i {
-            font-size: 5rem;
-            margin-bottom: 1.5rem;
-            color: var(--taxi-yellow);
-            opacity: 0.7;
-        }
-
-        .map-placeholder p {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--dark-graphite);
-        }
-
-        .map-placeholder small {
-            font-size: 0.9rem;
-            color: #999;
-        }
-
-        .map-controls {
-            position: absolute;
-            top: 1.5rem;
-            left: 1.5rem;
-            right: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 10;
-        }
-
-        .radius-selector {
-            background: var(--white);
-            padding: 0.8rem 1.5rem;
-            border-radius: 50px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .radius-selector label {
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: var(--dark-graphite);
-        }
-
-        .radius-selector select {
-            border: none;
-            background: var(--light-gray);
-            padding: 0.6rem 1.2rem;
-            border-radius: 20px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            cursor: pointer;
-            color: var(--dark-graphite);
-            outline: none;
-        }
-
-        .location-btn {
-            background: var(--taxi-yellow);
-            border: none;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(255,196,0,0.4);
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--dark-graphite);
-        }
-
-        .location-btn:hover {
-            transform: scale(1.1);
-        }
-
-        /* Cards */
-        .card {
-            background: var(--white);
-            border-radius: 20px;
-            padding: 1.8rem;
-            border: 1px solid rgba(0,0,0,0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.12);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--light-gray);
-        }
-
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            color: var(--dark-graphite);
-        }
-
-        .card-title i {
-            color: var(--taxi-yellow);
-            font-size: 1.3rem;
-        }
-
-        .badge {
-            background: var(--taxi-yellow);
-            color: var(--dark-graphite);
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 800;
-        }
-
-        .badge-outline {
-            background: transparent;
-            border: 2px solid var(--taxi-yellow);
-            color: var(--taxi-yellow);
-        }
-
-        /* Driver List */
-        .driver-list {
+        /* Notifications */
+        .notification-list {
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            max-height: 400px;
+            max-height: 350px;
             overflow-y: auto;
             padding-right: 0.5rem;
         }
 
-        .driver-list::-webkit-scrollbar {
+        .notification-list::-webkit-scrollbar {
             width: 6px;
         }
 
-        .driver-list::-webkit-scrollbar-track {
-            background: #f1f1f1;
+        .notification-list::-webkit-scrollbar-track {
+            background: var(--gray);
             border-radius: 10px;
         }
 
-        .driver-list::-webkit-scrollbar-thumb {
+        .notification-list::-webkit-scrollbar-thumb {
             background: var(--taxi-yellow);
             border-radius: 10px;
         }
 
-        .driver-card {
+        .notification-item {
             display: flex;
-            align-items: center;
             gap: 1rem;
-            padding: 1rem;
-            background: var(--light-gray);
-            border-radius: 16px;
-            border: 1px solid rgba(0,0,0,0.05);
+            padding: 1.2rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border-left: 4px solid var(--taxi-yellow);
             transition: all 0.3s;
+            cursor: pointer;
         }
 
-        .driver-avatar {
-            width: 55px;
-            height: 55px;
+        .notification-item:hover {
+            background: rgba(255,255,255,0.06);
+            transform: translateX(5px);
+        }
+
+        .notification-icon {
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--taxi-yellow), #FFD700);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 800;
-            font-size: 1.3rem;
-            color: var(--dark-graphite);
             flex-shrink: 0;
+            font-size: 1.1rem;
         }
 
-        .driver-info {
+        .notification-icon.ride {
+            background: rgba(46, 204, 113, 0.2);
+            color: var(--available);
+        }
+
+        .notification-icon.schedule {
+            background: rgba(52, 152, 219, 0.2);
+            color: var(--info);
+        }
+
+        .notification-icon.alert {
+            background: rgba(243, 156, 18, 0.2);
+            color: var(--warning);
+        }
+
+        .notification-content {
             flex: 1;
         }
 
-        .driver-name {
-            font-weight: 700;
-            margin-bottom: 0.2rem;
-            color: var(--dark-graphite);
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            color: var(--white);
         }
 
-        .driver-vehicle {
-            font-size: 0.85rem;
+        .notification-text {
+            font-size: 0.9rem;
+            color: #888;
+            line-height: 1.4;
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
             color: #666;
-        }
-
-        .driver-distance {
-            font-weight: 700;
-            color: var(--taxi-yellow);
+            margin-top: 0.5rem;
         }
 
         /* Empty State */
@@ -558,21 +517,20 @@
         .empty-state i {
             font-size: 3rem;
             margin-bottom: 1rem;
-            color: #ccc;
+            color: #444;
         }
 
         .empty-state p {
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: #666;
+            color: #888;
         }
 
         .empty-state small {
             font-size: 0.9rem;
-            color: #999;
         }
 
-        /* Schedule List */
+        /* Schedule */
         .schedule-list {
             display: flex;
             flex-direction: column;
@@ -580,17 +538,17 @@
         }
 
         .schedule-item {
-            padding: 1rem;
-            background: var(--light-gray);
-            border-radius: 16px;
-            border: 1px solid rgba(0,0,0,0.05);
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .schedule-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
+            align-items: start;
+            margin-bottom: 0.8rem;
         }
 
         .schedule-time {
@@ -599,6 +557,7 @@
             gap: 0.5rem;
             color: var(--taxi-yellow);
             font-weight: 700;
+            font-size: 1.1rem;
         }
 
         .schedule-status {
@@ -608,23 +567,50 @@
             font-weight: 600;
         }
 
+        .schedule-status.pending {
+            background: rgba(243, 156, 18, 0.2);
+            color: var(--warning);
+        }
+
         .schedule-status.confirmed {
             background: rgba(46, 204, 113, 0.2);
             color: var(--available);
+        }
+
+        .schedule-route {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .route-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--taxi-yellow);
+        }
+
+        .route-line {
+            flex: 1;
+            height: 2px;
+            background: rgba(255,255,255,0.1);
+            position: relative;
         }
 
         .schedule-passenger {
             display: flex;
             align-items: center;
             gap: 0.8rem;
-            margin-top: 0.8rem;
             padding-top: 0.8rem;
-            border-top: 1px solid rgba(0,0,0,0.05);
+            border-top: 1px solid rgba(255,255,255,0.05);
         }
 
         .passenger-avatar {
-            width: 40px;
-            height: 40px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--taxi-yellow), #FFD700);
             display: flex;
@@ -632,6 +618,114 @@
             justify-content: center;
             font-weight: 700;
             color: var(--dark-graphite);
+            font-size: 0.9rem;
+        }
+
+        .passenger-info {
+            flex: 1;
+        }
+
+        .passenger-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .passenger-phone {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .btn-contact {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(46, 204, 113, 0.2);
+            color: var(--available);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-contact:hover {
+            background: var(--available);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Profile Preview */
+        .profile-preview {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-avatar-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--taxi-yellow), #FFD700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--dark-graphite);
+            border: 4px solid rgba(255,196,0,0.3);
+        }
+
+        .profile-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .profile-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--taxi-yellow);
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-meta {
+            display: flex;
+            gap: 1rem;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .profile-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            background: var(--taxi-yellow);
+            color: var(--dark-graphite);
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255,196,0,0.3);
         }
 
         /* Responsive */
@@ -639,19 +733,23 @@
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
 
-        @media (max-width: 992px) {
+        @media (max-width: 768px) {
             .nav-menu {
                 display: none;
                 position: absolute;
                 top: 100%;
                 left: 0;
                 right: 0;
-                background: var(--white);
+                background: var(--dark-graphite);
                 flex-direction: column;
                 padding: 2rem;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             }
             
             .nav-menu.active {
@@ -668,6 +766,7 @@
             
             .main-content {
                 padding: 1rem;
+                margin-top: 90px;
             }
             
             .status-section {
@@ -682,6 +781,11 @@
             .stats-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .logo img {
+                transform: scale(1.8);
+                margin-left: 5px;
+            }
         }
 
         /* Toast */
@@ -689,11 +793,11 @@
             position: fixed;
             bottom: 30px;
             right: 30px;
-            background: var(--white);
+            background: var(--dark-graphite);
             border-left: 4px solid var(--taxi-yellow);
             padding: 1.2rem 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
             display: flex;
             align-items: center;
             gap: 1rem;
@@ -705,14 +809,6 @@
 
         .toast.show {
             transform: translateX(0);
-        }
-
-        .toast.success {
-            border-left-color: var(--available);
-        }
-
-        .toast.error {
-            border-left-color: var(--busy);
         }
 
         .toast-icon {
@@ -727,25 +823,14 @@
             font-size: 1.2rem;
         }
 
-        .toast.success .toast-icon {
-            background: rgba(46, 204, 113, 0.1);
-            color: var(--available);
-        }
-
-        .toast.error .toast-icon {
-            background: rgba(231, 76, 60, 0.1);
-            color: var(--busy);
-        }
-
         .toast-content h4 {
             font-size: 0.95rem;
             margin-bottom: 0.2rem;
-            color: var(--dark-graphite);
         }
 
         .toast-content p {
             font-size: 0.85rem;
-            color: #666;
+            color: #888;
         }
 
         /* Loading */
@@ -755,7 +840,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(255,255,255,0.95);
+            background: rgba(18,18,18,0.95);
             display: none;
             align-items: center;
             justify-content: center;
@@ -795,13 +880,13 @@
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="#" class="nav-item" onclick="showToast('Em desenvolvimento', 'Funcionalidade em breve', 'info')">
+                <a href="#" class="nav-item" onclick="showToast('Em desenvolvimento', 'Funcionalidade em breve')">
                     <i class="fas fa-calendar-alt"></i>
                     <span>Agenda</span>
                 </a>
-                <a href="#" class="nav-item" onclick="showToast('Em desenvolvimento', 'Funcionalidade em breve', 'info')">
-                    <i class="fas fa-credit-card"></i>
-                    <span>Financeiro</span>
+                <a href="#" class="nav-item" onclick="showToast('Em desenvolvimento', 'Funcionalidade em breve')">
+                    <i class="fas fa-users"></i>
+                    <span>Passageiros</span>
                 </a>
                 <a href="perfil-taxi.html" class="nav-item">
                     <i class="fas fa-user"></i>
@@ -810,8 +895,15 @@
             </div>
 
             <div class="user-menu">
-                <div class="user-avatar" id="userAvatar" onclick="goToProfile()">
-                    --
+                <div style="position: relative;">
+                    <button class="notification-btn" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notifBadge">0</span>
+                    </button>
+                </div>
+
+                <div class="user-avatar" id="userAvatar" onclick="window.location.href='perfil-taxi.html'">
+                    JM
                 </div>
                 <button class="btn-logout" title="Sair" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i>
@@ -881,32 +973,8 @@
         <div class="dashboard-grid">
             <!-- Left Column -->
             <div class="left-column">
-                <!-- Map Section -->
-                <div class="map-container">
-                    <div class="map-controls">
-                        <div class="radius-selector">
-                            <label><i class="fas fa-ruler"></i> Raio:</label>
-                            <select id="radiusSelect">
-                                <option value="1">1 km</option>
-                                <option value="2" selected>2 km</option>
-                                <option value="5">5 km</option>
-                                <option value="10">10 km</option>
-                            </select>
-                        </div>
-                        <button class="location-btn" onclick="centerMap()">
-                            <i class="fas fa-crosshairs"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="map-placeholder">
-                        <i class="fas fa-map-marked-alt"></i>
-                        <p>Mapa Interativo</p>
-                        <small>Ative sua localização para ver passageiros próximos</small>
-                    </div>
-                </div>
-
                 <!-- Schedule Card -->
-                <div class="card" style="margin-top: 2rem;">
+                <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">
                             <i class="fas fa-calendar-check"></i>
@@ -927,51 +995,55 @@
 
             <!-- Right Column -->
             <div class="right-column">
-                <!-- Nearby Drivers Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-users"></i>
-                            Passageiros Próximos
-                        </h3>
-                        <span class="badge" id="nearbyCount">0</span>
-                    </div>
-                    
-                    <div class="driver-list" id="nearbyList">
-                        <div class="empty-state">
-                            <i class="fas fa-user-slash"></i>
-                            <p>Nenhum passageiro próximo</p>
-                            <small>Aguardando solicitações...</small>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Profile Card -->
+                <!-- Profile Preview -->
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">
                             <i class="fas fa-id-card"></i>
                             Meu Perfil
                         </h3>
+                        <span class="badge" style="background: var(--available); color: white;" id="statusBadge">Ativo</span>
                     </div>
                     
-                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
-                        <div class="user-avatar" id="profileAvatar" style="width: 70px; height: 70px; font-size: 1.8rem;">
-                            --
-                        </div>
-                        <div>
+                    <div class="profile-preview">
+                        <div class="profile-avatar-large" id="profileAvatar">JM</div>
+                        <div class="profile-info">
                             <h3 id="profileName">Carregando...</h3>
-                            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; color: #666;">
+                            <div class="profile-rating">
+                                <i class="fas fa-star"></i>
+                                <span id="profileRating">0.0</span>
+                                <small style="color: #888;">(0 avaliações)</small>
+                            </div>
+                            <div class="profile-meta">
                                 <span><i class="fas fa-taxi"></i> <span id="profilePlate">---</span></span>
-                                <span><i class="fas fa-star" style="color: var(--taxi-yellow);"></i> <span id="profileRating">0.0</span></span>
+                                <span><i class="fas fa-car"></i> <span id="profileCar">---</span></span>
                             </div>
                         </div>
                     </div>
                     
-                    <button class="toggle-btn" onclick="goToProfile()" style="width: 100%; justify-content: center; background: var(--light-gray);">
+                    <button class="btn-primary" onclick="window.location.href='perfil-taxi.html'">
                         <i class="fas fa-edit"></i>
-                        Editar Perfil
+                        Editar Perfil Completo
                     </button>
+                </div>
+
+                <!-- Notifications Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-bell"></i>
+                            Notificações
+                        </h3>
+                        <span class="badge badge-outline" id="recentNotifCount">0</span>
+                    </div>
+                    
+                    <div class="notification-list" id="notificationList">
+                        <div class="empty-state">
+                            <i class="fas fa-bell-slash"></i>
+                            <p>Nenhuma notificação</p>
+                            <small>Você está em dia</small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -991,21 +1063,21 @@
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner-large"></div>
-        <p style="color: #666;">Carregando...</p>
+        <p style="color: #888; margin-top: 1rem;">Carregando...</p>
     </div>
 
     <script>
-        // 🔥 COLE SUAS CREDENCIAIS DO FIREBASE AQUI
+        // 🔥 SEU FIREBASE - EXATAMENTE IGUAL AO SEU LOGIN
         const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_PROJETO.firebaseapp.com",
-            projectId: "SEU_PROJETO",
-            storageBucket: "SEU_PROJETO.appspot.com",
-            messagingSenderId: "SEU_SENDER_ID",
-            appId: "SEU_APP_ID"
+            apiKey: "AIzaSyDsLnfKynKVsn66paVJjCnbHeH8pGBahCw",
+            authDomain: "taxibf-1f545.firebaseapp.com",
+            projectId: "taxibf-1f545",
+            storageBucket: "taxibf-1f545.firebasestorage.app",
+            messagingSenderId: "965457489049",
+            appId: "1:965457489049:web:cd0baf070944e3927bdc08"
         };
 
-        // Initialize Firebase
+        // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
@@ -1031,6 +1103,7 @@
                     currentUser = user;
                     loadUserData();
                 } else {
+                    // Não logado - redireciona pro login
                     window.location.href = 'login.html';
                 }
             });
@@ -1048,9 +1121,6 @@
                     navMenu.classList.remove('active');
                 }
             });
-
-            // Raio de busca
-            document.getElementById('radiusSelect').addEventListener('change', updateRadius);
         }
 
         // Carregar dados do motorista
@@ -1058,18 +1128,19 @@
             showLoading(true);
             
             try {
+                // TENTA CARREGAR DO BANCO
                 const doc = await db.collection('motoristas').doc(currentUser.uid).get();
                 
                 if (doc.exists) {
                     userData = doc.data();
                     updateUI();
                 } else {
-                    // Criar perfil básico
+                    // CRIAR PERFIL BÁSICO SE NÃO EXISTIR
                     const newProfile = {
                         uid: currentUser.uid,
                         email: currentUser.email,
-                        displayName: currentUser.displayName || 'Motorista',
-                        fullName: currentUser.displayName || '',
+                        fullName: currentUser.displayName || 'Motorista',
+                        phone: '',
                         status: 'available',
                         stats: {
                             totalRides: 0,
@@ -1092,7 +1163,15 @@
                 }
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
-                showToast('Erro', 'Não foi possível carregar seus dados', 'error');
+                // Mesmo com erro, mostra dados básicos do auth
+                userData = {
+                    fullName: currentUser.displayName || 'Motorista',
+                    email: currentUser.email,
+                    status: 'available',
+                    stats: { rating: 0, totalRides: 0, favorites: 0, todayRides: 0 },
+                    vehicle: { plate: '---', model: '---' }
+                };
+                updateUI();
             } finally {
                 showLoading(false);
             }
@@ -1103,7 +1182,7 @@
             if (!userData) return;
 
             // Nome
-            const name = userData.fullName || userData.displayName || 'Motorista';
+            const name = userData.fullName || userData.displayName || currentUser?.displayName || 'Motorista';
             document.getElementById('profileName').textContent = name;
             
             // Iniciais para avatar
@@ -1111,9 +1190,9 @@
             document.getElementById('userAvatar').textContent = initials;
             document.getElementById('profileAvatar').textContent = initials;
 
-            // Placa
-            const plate = userData.vehicle?.plate || '---';
-            document.getElementById('profilePlate').textContent = plate;
+            // Placa e carro
+            document.getElementById('profilePlate').textContent = userData.vehicle?.plate || '---';
+            document.getElementById('profileCar').textContent = userData.vehicle?.model || '---';
 
             // Rating
             const rating = userData.stats?.rating || '0.0';
@@ -1121,15 +1200,19 @@
             document.getElementById('profileRating').textContent = rating;
 
             // Corridas hoje
-            const todayRides = userData.stats?.todayRides || 0;
-            document.getElementById('ridesToday').textContent = todayRides;
+            document.getElementById('ridesToday').textContent = userData.stats?.todayRides || 0;
 
             // Favoritos
-            const favorites = userData.stats?.favorites || 0;
-            document.getElementById('favoritesCount').textContent = favorites;
+            document.getElementById('favoritesCount').textContent = userData.stats?.favorites || 0;
 
             // Status
             setStatus(userData.status || 'available');
+        }
+
+        // Iniciais do nome
+        function getInitials(name) {
+            if (!name || name === 'Motorista') return 'JM';
+            return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
         }
 
         // Status do motorista
@@ -1142,6 +1225,7 @@
             const btnAvailable = document.getElementById('btnAvailable');
             const btnBusy = document.getElementById('btnBusy');
             const btnOffline = document.getElementById('btnOffline');
+            const statusBadge = document.getElementById('statusBadge');
             
             // Reset botões
             [btnAvailable, btnBusy, btnOffline].forEach(btn => btn.classList.remove('active'));
@@ -1154,6 +1238,8 @@
                     statusTitle.textContent = 'Disponível';
                     statusDesc.textContent = 'Você está visível para passageiros próximos';
                     btnAvailable.classList.add('active');
+                    statusBadge.textContent = 'Ativo';
+                    statusBadge.style.background = 'var(--available)';
                     break;
                 case 'busy':
                     statusIcon.className = 'status-icon busy';
@@ -1161,6 +1247,8 @@
                     statusTitle.textContent = 'Ocupado';
                     statusDesc.textContent = 'Você está em uma corrida ou indisponível';
                     btnBusy.classList.add('active');
+                    statusBadge.textContent = 'Ocupado';
+                    statusBadge.style.background = 'var(--busy)';
                     break;
                 case 'offline':
                     statusIcon.className = 'status-icon offline';
@@ -1168,87 +1256,53 @@
                     statusTitle.textContent = 'Offline';
                     statusDesc.textContent = 'Você está invisível no mapa';
                     btnOffline.classList.add('active');
+                    statusBadge.textContent = 'Offline';
+                    statusBadge.style.background = 'var(--offline)';
                     break;
             }
             
-            // Salvar no Firebase
+            // Salvar no Firebase se usuário logado
             if (currentUser) {
                 db.collection('motoristas').doc(currentUser.uid).update({
                     status: status,
                     lastStatusUpdate: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                }).catch(err => console.log('Erro ao salvar status:', err));
             }
         }
 
-        // Navegação
-        function goToProfile() {
-            window.location.href = 'perfil-taxi.html';
+        // Toast
+        function showToast(title, message) {
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
         }
 
-        // Mapa
-        function centerMap() {
-            if (navigator.geolocation) {
-                showLoading(true);
-                navigator.geolocation.getCurrentPosition(
-                    () => {
-                        setTimeout(() => {
-                            showLoading(false);
-                            showToast('Localização', 'Mapa centralizado', 'success');
-                        }, 500);
-                    },
-                    () => {
-                        showLoading(false);
-                        showToast('Erro', 'Ative a localização', 'error');
-                    }
-                );
-            } else {
-                showToast('Erro', 'Geolocalização não suportada', 'error');
-            }
-        }
-
-        function updateRadius() {
-            showToast('Raio atualizado', `Buscando em ${document.getElementById('radiusSelect').value}km`, 'success');
-        }
-
-        // Utilitários
-        function getInitials(name) {
-            if (!name) return '--';
-            return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-        }
-
+        // Loading
         function showLoading(show) {
             loadingOverlay.classList.toggle('active', show);
         }
 
-        function showToast(title, message, type = 'info') {
-            const toastEl = document.getElementById('toast');
-            const iconEl = toastEl.querySelector('.toast-icon i');
-            
-            document.getElementById('toastTitle').textContent = title;
-            document.getElementById('toastMessage').textContent = message;
-            
-            toastEl.className = 'toast show ' + type;
-            
-            if (type === 'success') {
-                iconEl.className = 'fas fa-check-circle';
-            } else if (type === 'error') {
-                iconEl.className = 'fas fa-exclamation-circle';
-            } else {
-                iconEl.className = 'fas fa-info-circle';
-            }
-            
-            setTimeout(() => {
-                toastEl.classList.remove('show');
-            }, 3000);
-        }
-
+        // Logout
         function logout() {
             if (confirm('Deseja realmente sair?')) {
+                showLoading(true);
                 auth.signOut().then(() => {
+                    window.location.href = 'login.html';
+                }).catch(() => {
+                    showLoading(false);
                     window.location.href = 'login.html';
                 });
             }
         }
+
+        // Notificações (vazio)
+        document.getElementById('notificationBtn').addEventListener('click', function() {
+            showToast('Notificações', 'Nenhuma notificação no momento');
+        });
     </script>
 </body>
 </html>
