@@ -18,21 +18,14 @@
             --dark-graphite: #1C1C1C;
             --darker: #121212;
             --white: #FFFFFF;
-            --light-gray: #F5F5F5;
             --gray: #2A2A2A;
             --available: #2ECC71;
             --busy: #E74C3C;
             --offline: #9E9E9E;
-            --warning: #F39C12;
-            --info: #3498DB;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             font-family: 'Inter', sans-serif;
             background: var(--darker);
@@ -40,10 +33,9 @@
             min-height: 100vh;
         }
 
-        /* Navbar */
+        /* NAVBAR - SEM NENHUM LINK QUEBRADO */
         .navbar {
             background: var(--dark-graphite);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
             position: fixed;
             width: 100%;
             top: 0;
@@ -61,16 +53,8 @@
             align-items: center;
         }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-        }
-
         .logo img {
             height: 50px;
-            width: auto;
-            object-fit: contain;
             transform: scale(2.5);
             margin-left: 15px;
             filter: brightness(0) invert(1);
@@ -82,6 +66,7 @@
             align-items: center;
         }
 
+        /* TODOS OS LINKS DIRETOS - SEM ONCLICK, SEM TOAST */
         .nav-item {
             display: flex;
             align-items: center;
@@ -89,25 +74,11 @@
             color: #888;
             text-decoration: none;
             font-weight: 500;
-            cursor: pointer;
-            transition: color 0.3s;
-            position: relative;
             padding: 0.5rem 0;
         }
-
-        .nav-item:hover, .nav-item.active {
-            color: var(--taxi-yellow);
-        }
-
-        .nav-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: -25px;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--taxi-yellow);
-        }
+        
+        .nav-item:hover { color: var(--taxi-yellow); }
+        .nav-item.active { color: var(--taxi-yellow); }
 
         .user-menu {
             display: flex;
@@ -115,43 +86,7 @@
             gap: 1.5rem;
         }
 
-        .notification-btn {
-            position: relative;
-            background: none;
-            border: none;
-            color: #888;
-            font-size: 1.3rem;
-            cursor: pointer;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .notification-btn:hover {
-            background: rgba(255,196,0,0.1);
-            color: var(--taxi-yellow);
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: var(--busy);
-            color: white;
-            font-size: 0.7rem;
-            font-weight: 700;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
+        /* AVATAR - LINK DIRETO PARA PERFIL */
         .user-avatar {
             width: 50px;
             height: 50px;
@@ -164,14 +99,10 @@
             color: var(--dark-graphite);
             cursor: pointer;
             border: 3px solid var(--dark-graphite);
-            box-shadow: 0 4px 12px rgba(255,196,0,0.3);
-            transition: all 0.3s;
+            text-decoration: none;
         }
-
-        .user-avatar:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(255,196,0,0.4);
-        }
+        
+        .user-avatar:hover { transform: scale(1.05); }
 
         .btn-logout {
             background: none;
@@ -179,17 +110,13 @@
             color: #888;
             cursor: pointer;
             font-size: 1.3rem;
-            transition: color 0.3s;
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
-
-        .btn-logout:hover {
-            color: var(--busy);
+        
+        .btn-logout:hover { 
+            color: var(--busy); 
             background: rgba(231, 76, 60, 0.1);
         }
 
@@ -198,16 +125,10 @@
             background: none;
             border: none;
             font-size: 1.5rem;
-            cursor: pointer;
             color: var(--white);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            align-items: center;
-            justify-content: center;
         }
 
-        /* Main Content */
+        /* MAIN CONTENT */
         .main-content {
             margin-top: 100px;
             padding: 2rem;
@@ -216,18 +137,16 @@
             margin-right: auto;
         }
 
-        /* Status Toggle Section */
+        /* STATUS */
         .status-section {
             background: linear-gradient(135deg, var(--dark-graphite) 0%, var(--gray) 100%);
             border-radius: 24px;
             padding: 2rem;
             margin-bottom: 2rem;
-            border: 1px solid rgba(255,255,255,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 1.5rem;
         }
 
         .status-info {
@@ -244,42 +163,21 @@
             align-items: center;
             justify-content: center;
             font-size: 2rem;
-            transition: all 0.3s;
         }
 
         .status-icon.available {
             background: rgba(46, 204, 113, 0.2);
             color: var(--available);
-            box-shadow: 0 0 30px rgba(46, 204, 113, 0.3);
         }
 
-        .status-icon.busy {
-            background: rgba(231, 76, 60, 0.2);
-            color: var(--busy);
-            box-shadow: 0 0 30px rgba(231, 76, 60, 0.3);
-        }
-
-        .status-icon.offline {
-            background: rgba(158, 158, 158, 0.2);
-            color: var(--offline);
-        }
-
-        .status-text h2 {
-            font-size: 1.8rem;
-            margin-bottom: 0.3rem;
-        }
-
-        .status-text p {
-            color: #888;
-            font-size: 0.95rem;
-        }
+        .status-text h2 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+        .status-text p { color: #888; }
 
         .status-toggle {
             display: flex;
             background: rgba(255,255,255,0.05);
             border-radius: 50px;
             padding: 0.4rem;
-            gap: 0.4rem;
         }
 
         .toggle-btn {
@@ -290,7 +188,6 @@
             font-weight: 600;
             cursor: pointer;
             border-radius: 50px;
-            transition: all 0.3s;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -300,39 +197,53 @@
         .toggle-btn.active {
             background: var(--taxi-yellow);
             color: var(--dark-graphite);
-            box-shadow: 0 4px 15px rgba(255,196,0,0.3);
         }
 
-        .toggle-btn:hover:not(.active) {
-            color: var(--white);
-            background: rgba(255,255,255,0.1);
+        /* STATS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
         }
 
-        /* Grid Layout */
+        .stat-card {
+            background: var(--dark-graphite);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.3rem;
+            background: rgba(255,196,0,0.1);
+            color: var(--taxi-yellow);
+        }
+
+        .stat-value { font-size: 2rem; font-weight: 800; margin-bottom: 0.3rem; }
+        .stat-label { color: #888; }
+
+        /* GRID */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 1fr 400px;
             gap: 2rem;
         }
 
-        .left-column, .right-column {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
-        /* Cards */
+        /* CARDS */
         .card {
             background: var(--dark-graphite);
             border-radius: 20px;
             padding: 1.8rem;
             border: 1px solid rgba(255,255,255,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
 
         .card-header {
@@ -351,311 +262,9 @@
             color: var(--white);
         }
 
-        .card-title i {
-            color: var(--taxi-yellow);
-            font-size: 1.3rem;
-        }
+        .card-title i { color: var(--taxi-yellow); }
 
-        .badge {
-            background: var(--taxi-yellow);
-            color: var(--dark-graphite);
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 800;
-        }
-
-        .badge-outline {
-            background: transparent;
-            border: 2px solid var(--taxi-yellow);
-            color: var(--taxi-yellow);
-        }
-
-        /* Quick Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--dark-graphite);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 1px solid rgba(255,255,255,0.1);
-            text-align: center;
-            transition: all 0.3s;
-        }
-
-        .stat-card:hover {
-            border-color: var(--taxi-yellow);
-            transform: translateY(-3px);
-        }
-
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            font-size: 1.3rem;
-            background: rgba(255,196,0,0.1);
-            color: var(--taxi-yellow);
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--white);
-            margin-bottom: 0.3rem;
-        }
-
-        .stat-label {
-            color: #888;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        /* Notifications */
-        .notification-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            max-height: 350px;
-            overflow-y: auto;
-            padding-right: 0.5rem;
-        }
-
-        .notification-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .notification-list::-webkit-scrollbar-track {
-            background: var(--gray);
-            border-radius: 10px;
-        }
-
-        .notification-list::-webkit-scrollbar-thumb {
-            background: var(--taxi-yellow);
-            border-radius: 10px;
-        }
-
-        .notification-item {
-            display: flex;
-            gap: 1rem;
-            padding: 1.2rem;
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
-            border-left: 4px solid var(--taxi-yellow);
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .notification-item:hover {
-            background: rgba(255,255,255,0.06);
-            transform: translateX(5px);
-        }
-
-        .notification-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 1.1rem;
-        }
-
-        .notification-icon.ride {
-            background: rgba(46, 204, 113, 0.2);
-            color: var(--available);
-        }
-
-        .notification-icon.schedule {
-            background: rgba(52, 152, 219, 0.2);
-            color: var(--info);
-        }
-
-        .notification-icon.alert {
-            background: rgba(243, 156, 18, 0.2);
-            color: var(--warning);
-        }
-
-        .notification-content {
-            flex: 1;
-        }
-
-        .notification-title {
-            font-weight: 600;
-            margin-bottom: 0.3rem;
-            color: var(--white);
-        }
-
-        .notification-text {
-            font-size: 0.9rem;
-            color: #888;
-            line-height: 1.4;
-        }
-
-        .notification-time {
-            font-size: 0.8rem;
-            color: #666;
-            margin-top: 0.5rem;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 2rem;
-            color: #666;
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: #444;
-        }
-
-        .empty-state p {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #888;
-        }
-
-        .empty-state small {
-            font-size: 0.9rem;
-        }
-
-        /* Schedule */
-        .schedule-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .schedule-item {
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
-            padding: 1.2rem;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .schedule-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 0.8rem;
-        }
-
-        .schedule-time {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--taxi-yellow);
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        .schedule-status {
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .schedule-status.pending {
-            background: rgba(243, 156, 18, 0.2);
-            color: var(--warning);
-        }
-
-        .schedule-status.confirmed {
-            background: rgba(46, 204, 113, 0.2);
-            color: var(--available);
-        }
-
-        .schedule-route {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            margin-bottom: 0.8rem;
-            color: #aaa;
-            font-size: 0.9rem;
-        }
-
-        .route-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--taxi-yellow);
-        }
-
-        .route-line {
-            flex: 1;
-            height: 2px;
-            background: rgba(255,255,255,0.1);
-            position: relative;
-        }
-
-        .schedule-passenger {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            padding-top: 0.8rem;
-            border-top: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .passenger-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--taxi-yellow), #FFD700);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: var(--dark-graphite);
-            font-size: 0.9rem;
-        }
-
-        .passenger-info {
-            flex: 1;
-        }
-
-        .passenger-name {
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-
-        .passenger-phone {
-            font-size: 0.8rem;
-            color: #666;
-        }
-
-        .btn-contact {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: none;
-            background: rgba(46, 204, 113, 0.2);
-            color: var(--available);
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-contact:hover {
-            background: var(--available);
-            color: white;
-            transform: scale(1.1);
-        }
-
-        /* Profile Preview */
+        /* PERFIL PREVIEW */
         .profile-preview {
             display: flex;
             align-items: center;
@@ -677,36 +286,13 @@
             font-size: 2rem;
             font-weight: 800;
             color: var(--dark-graphite);
-            border: 4px solid rgba(255,196,0,0.3);
         }
 
-        .profile-info h3 {
-            font-size: 1.3rem;
-            margin-bottom: 0.3rem;
-        }
+        .profile-info h3 { font-size: 1.3rem; margin-bottom: 0.3rem; }
+        .profile-meta { display: flex; gap: 1rem; color: #888; }
 
-        .profile-rating {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--taxi-yellow);
-            margin-bottom: 0.5rem;
-        }
-
-        .profile-meta {
-            display: flex;
-            gap: 1rem;
-            color: #888;
-            font-size: 0.9rem;
-        }
-
-        .profile-meta span {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        .btn-primary {
+        /* BOTÃO - LINK DIRETO SEM ONCLICK COMPLICADO */
+        .btn-profile {
             width: 100%;
             padding: 1rem;
             border: none;
@@ -715,80 +301,30 @@
             font-weight: 700;
             border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s;
             font-family: 'Inter', sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            text-decoration: none;
         }
-
-        .btn-primary:hover {
+        
+        .btn-profile:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(255,196,0,0.3);
         }
 
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #666;
         }
+        
+        .empty-state i { font-size: 3rem; margin-bottom: 1rem; color: #444; }
+        .empty-state p { font-weight: 600; margin-bottom: 0.5rem; color: #888; }
 
-        @media (max-width: 768px) {
-            .nav-menu {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: var(--dark-graphite);
-                flex-direction: column;
-                padding: 2rem;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            }
-            
-            .nav-menu.active {
-                display: flex;
-            }
-            
-            .nav-item.active::after {
-                display: none;
-            }
-            
-            .mobile-menu-btn {
-                display: flex;
-            }
-            
-            .main-content {
-                padding: 1rem;
-                margin-top: 90px;
-            }
-            
-            .status-section {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .status-info {
-                flex-direction: column;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .logo img {
-                transform: scale(1.8);
-                margin-left: 5px;
-            }
-        }
-
-        /* Toast */
+        /* TOAST */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -797,20 +333,15 @@
             border-left: 4px solid var(--taxi-yellow);
             padding: 1.2rem 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
             display: flex;
             align-items: center;
             gap: 1rem;
             transform: translateX(400px);
             transition: transform 0.3s ease;
             z-index: 10000;
-            max-width: 350px;
         }
-
-        .toast.show {
-            transform: translateX(0);
-        }
-
+        
+        .toast.show { transform: translateX(0); }
         .toast-icon {
             width: 40px;
             height: 40px;
@@ -820,20 +351,9 @@
             align-items: center;
             justify-content: center;
             color: var(--taxi-yellow);
-            font-size: 1.2rem;
         }
 
-        .toast-content h4 {
-            font-size: 0.95rem;
-            margin-bottom: 0.2rem;
-        }
-
-        .toast-content p {
-            font-size: 0.85rem;
-            color: #888;
-        }
-
-        /* Loading */
+        /* LOADING */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -845,13 +365,10 @@
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            flex-direction: column;
         }
-
-        .loading-overlay.active {
-            display: flex;
-        }
-
+        
+        .loading-overlay.active { display: flex; }
+        
         .spinner-large {
             width: 70px;
             height: 70px;
@@ -859,16 +376,24 @@
             border-radius: 50%;
             border-top-color: var(--taxi-yellow);
             animation: spin 1s linear infinite;
-            margin-bottom: 2rem;
         }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        @media (max-width: 1200px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .mobile-menu-btn { display: flex; }
+            .nav-menu.active { display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--dark-graphite); padding: 2rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
+    <!-- NAVBAR - TODOS OS LINKS DIRETOS, SEM NENHUM ONCLICK -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="#" class="logo">
@@ -877,35 +402,26 @@
             
             <div class="nav-menu" id="navMenu">
                 <a href="dashboard-taxi.html" class="nav-item active">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
+                    <i class="fas fa-home"></i> Dashboard
                 </a>
-                <a href="#" class="nav-item" onclick="showToast('Em desenvolvimento', 'Funcionalidade em breve')">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>Agenda</span>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-calendar-alt"></i> Agenda
                 </a>
-                <a href="#" class="nav-item" onclick="showToast('Em desenvolvimento', 'Funcionalidade em breve')">
-                    <i class="fas fa-users"></i>
-                    <span>Passageiros</span>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-users"></i> Passageiros
                 </a>
+                <!-- LINK DIRETO PARA PERFIL - SEM TOAST, SEM HREF="#", SEM ONCLICK -->
                 <a href="perfil-taxi.html" class="nav-item">
-                    <i class="fas fa-user"></i>
-                    <span>Perfil</span>
+                    <i class="fas fa-user"></i> Perfil
                 </a>
             </div>
 
             <div class="user-menu">
-                <div style="position: relative;">
-                    <button class="notification-btn" id="notificationBtn">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge" id="notifBadge">0</span>
-                    </button>
-                </div>
-
-                <div class="user-avatar" id="userAvatar" onclick="window.location.href='perfil-taxi.html'">
+                <!-- AVATAR - LINK DIRETO PARA PERFIL -->
+                <a href="perfil-taxi.html" class="user-avatar" id="userAvatar">
                     JM
-                </div>
-                <button class="btn-logout" title="Sair" onclick="logout()">
+                </a>
+                <button class="btn-logout" id="logoutBtn">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
                 <button class="mobile-menu-btn" id="mobileMenuBtn">
@@ -915,9 +431,9 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
+    <!-- MAIN CONTENT -->
     <main class="main-content">
-        <!-- Status Section -->
+        <!-- STATUS SECTION -->
         <div class="status-section">
             <div class="status-info">
                 <div class="status-icon available" id="statusIcon">
@@ -931,77 +447,58 @@
             
             <div class="status-toggle">
                 <button class="toggle-btn active" onclick="setStatus('available')" id="btnAvailable">
-                    <i class="fas fa-check-circle"></i>
-                    Disponível
+                    <i class="fas fa-check-circle"></i> Disponível
                 </button>
                 <button class="toggle-btn" onclick="setStatus('busy')" id="btnBusy">
-                    <i class="fas fa-times-circle"></i>
-                    Ocupado
+                    <i class="fas fa-times-circle"></i> Ocupado
                 </button>
                 <button class="toggle-btn" onclick="setStatus('offline')" id="btnOffline">
-                    <i class="fas fa-power-off"></i>
-                    Offline
+                    <i class="fas fa-power-off"></i> Offline
                 </button>
             </div>
         </div>
 
-        <!-- Quick Stats -->
+        <!-- STATS -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-route"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-route"></i></div>
                 <div class="stat-value" id="ridesToday">0</div>
                 <div class="stat-label">Corridas Hoje</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-star"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-star"></i></div>
                 <div class="stat-value" id="rating">0.0</div>
                 <div class="stat-label">Avaliação</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-heart"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-heart"></i></div>
                 <div class="stat-value" id="favoritesCount">0</div>
                 <div class="stat-label">Favoritaram Você</div>
             </div>
         </div>
 
         <div class="dashboard-grid">
-            <!-- Left Column -->
+            <!-- LEFT COLUMN -->
             <div class="left-column">
-                <!-- Schedule Card -->
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-calendar-check"></i>
-                            Próximos Agendamentos
-                        </h3>
-                        <span class="badge badge-outline" id="scheduleCount">0</span>
+                        <h3 class="card-title"><i class="fas fa-calendar-check"></i> Próximos Agendamentos</h3>
+                        <span class="badge-outline" id="scheduleCount">0</span>
                     </div>
-                    
-                    <div class="schedule-list" id="scheduleList">
-                        <div class="empty-state">
-                            <i class="fas fa-calendar"></i>
-                            <p>Nenhum agendamento</p>
-                            <small>Você não tem corridas agendadas</small>
-                        </div>
+                    <div class="empty-state">
+                        <i class="fas fa-calendar"></i>
+                        <p>Nenhum agendamento</p>
+                        <small>Você não tem corridas agendadas</small>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column -->
+            <!-- RIGHT COLUMN -->
             <div class="right-column">
-                <!-- Profile Preview -->
+                <!-- PERFIL PREVIEW COM LINK DIRETO -->
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-id-card"></i>
-                            Meu Perfil
-                        </h3>
+                        <h3 class="card-title"><i class="fas fa-id-card"></i> Meu Perfil</h3>
                         <span class="badge" style="background: var(--available); color: white;" id="statusBadge">Ativo</span>
                     </div>
                     
@@ -1009,11 +506,6 @@
                         <div class="profile-avatar-large" id="profileAvatar">JM</div>
                         <div class="profile-info">
                             <h3 id="profileName">Carregando...</h3>
-                            <div class="profile-rating">
-                                <i class="fas fa-star"></i>
-                                <span id="profileRating">0.0</span>
-                                <small style="color: #888;">(0 avaliações)</small>
-                            </div>
                             <div class="profile-meta">
                                 <span><i class="fas fa-taxi"></i> <span id="profilePlate">---</span></span>
                                 <span><i class="fas fa-car"></i> <span id="profileCar">---</span></span>
@@ -1021,53 +513,44 @@
                         </div>
                     </div>
                     
-                    <button class="btn-primary" onclick="window.location.href='perfil-taxi.html'">
-                        <i class="fas fa-edit"></i>
-                        Editar Perfil Completo
-                    </button>
+                    <!-- BOTÃO LINK DIRETO - NADA DE ONCLICK -->
+                    <a href="perfil-taxi.html" class="btn-profile">
+                        <i class="fas fa-edit"></i> Editar Perfil Completo
+                    </a>
                 </div>
 
-                <!-- Notifications Card -->
+                <!-- NOTIFICAÇÕES -->
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-bell"></i>
-                            Notificações
-                        </h3>
-                        <span class="badge badge-outline" id="recentNotifCount">0</span>
+                        <h3 class="card-title"><i class="fas fa-bell"></i> Notificações</h3>
+                        <span class="badge-outline">0</span>
                     </div>
-                    
-                    <div class="notification-list" id="notificationList">
-                        <div class="empty-state">
-                            <i class="fas fa-bell-slash"></i>
-                            <p>Nenhuma notificação</p>
-                            <small>Você está em dia</small>
-                        </div>
+                    <div class="empty-state">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>Nenhuma notificação</p>
+                        <small>Você está em dia</small>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Toast Notification -->
+    <!-- TOAST -->
     <div class="toast" id="toast">
-        <div class="toast-icon">
-            <i class="fas fa-info-circle"></i>
-        </div>
+        <div class="toast-icon"><i class="fas fa-info-circle"></i></div>
         <div class="toast-content">
             <h4 id="toastTitle">Notificação</h4>
             <p id="toastMessage">Mensagem aqui</p>
         </div>
     </div>
 
-    <!-- Loading Overlay -->
+    <!-- LOADING -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner-large"></div>
-        <p style="color: #888; margin-top: 1rem;">Carregando...</p>
     </div>
 
     <script>
-        // 🔥 SEU FIREBASE - EXATAMENTE IGUAL AO SEU LOGIN
+        // FIREBASE - SEUS DADOS
         const firebaseConfig = {
             apiKey: "AIzaSyDsLnfKynKVsn66paVJjCnbHeH8pGBahCw",
             authDomain: "taxibf-1f545.firebaseapp.com",
@@ -1077,160 +560,91 @@
             appId: "1:965457489049:web:cd0baf070944e3927bdc08"
         };
 
-        // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Elementos DOM
+        // ELEMENTOS
         const loadingOverlay = document.getElementById('loadingOverlay');
         const toast = document.getElementById('toast');
         const navMenu = document.getElementById('navMenu');
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 
-        // Status atual
-        let currentStatus = 'available';
         let currentUser = null;
         let userData = null;
 
-        // Inicialização
+        // INIT
         document.addEventListener('DOMContentLoaded', function() {
-            setupEventListeners();
+            mobileMenuBtn.addEventListener('click', () => navMenu.classList.toggle('active'));
             
-            // Verificar autenticação
             auth.onAuthStateChanged((user) => {
                 if (user) {
                     currentUser = user;
                     loadUserData();
                 } else {
-                    // Não logado - redireciona pro login
                     window.location.href = 'login.html';
                 }
             });
         });
 
-        function setupEventListeners() {
-            // Menu mobile
-            mobileMenuBtn.addEventListener('click', () => {
-                navMenu.classList.toggle('active');
-            });
-
-            // Fechar menu ao clicar fora
-            document.addEventListener('click', (e) => {
-                if (!navMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
-                    navMenu.classList.remove('active');
-                }
-            });
-        }
-
-        // Carregar dados do motorista
+        // CARREGAR DADOS
         async function loadUserData() {
             showLoading(true);
-            
             try {
-                // TENTA CARREGAR DO BANCO
                 const doc = await db.collection('motoristas').doc(currentUser.uid).get();
-                
                 if (doc.exists) {
                     userData = doc.data();
-                    updateUI();
                 } else {
-                    // CRIAR PERFIL BÁSICO SE NÃO EXISTIR
-                    const newProfile = {
-                        uid: currentUser.uid,
-                        email: currentUser.email,
+                    userData = {
                         fullName: currentUser.displayName || 'Motorista',
-                        phone: '',
+                        email: currentUser.email,
                         status: 'available',
-                        stats: {
-                            totalRides: 0,
-                            rating: 0,
-                            favorites: 0,
-                            todayRides: 0
-                        },
-                        vehicle: {
-                            plate: '',
-                            model: '',
-                            year: '',
-                            color: ''
-                        },
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        stats: { rating: 0, totalRides: 0, favorites: 0, todayRides: 0 },
+                        vehicle: { plate: '---', model: '---' }
                     };
-                    
-                    await db.collection('motoristas').doc(currentUser.uid).set(newProfile);
-                    userData = newProfile;
-                    updateUI();
+                    await db.collection('motoristas').doc(currentUser.uid).set(userData);
                 }
+                updateUI();
             } catch (error) {
-                console.error('Erro ao carregar dados:', error);
-                // Mesmo com erro, mostra dados básicos do auth
-                userData = {
-                    fullName: currentUser.displayName || 'Motorista',
-                    email: currentUser.email,
-                    status: 'available',
-                    stats: { rating: 0, totalRides: 0, favorites: 0, todayRides: 0 },
-                    vehicle: { plate: '---', model: '---' }
-                };
+                console.error(error);
+                userData = { fullName: 'Motorista', stats: { rating: 0, todayRides: 0, favorites: 0 }, vehicle: { plate: '---', model: '---' } };
                 updateUI();
             } finally {
                 showLoading(false);
             }
         }
 
-        // Atualizar interface
+        // ATUALIZAR UI
         function updateUI() {
             if (!userData) return;
-
-            // Nome
-            const name = userData.fullName || userData.displayName || currentUser?.displayName || 'Motorista';
-            document.getElementById('profileName').textContent = name;
             
-            // Iniciais para avatar
-            const initials = getInitials(name);
-            document.getElementById('userAvatar').textContent = initials;
-            document.getElementById('profileAvatar').textContent = initials;
-
-            // Placa e carro
+            const name = userData.fullName || 'Motorista';
+            const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'JM';
+            
+            document.getElementById('profileName').textContent = name;
+            document.getElementById('userAvatar').innerHTML = initials;
+            document.getElementById('profileAvatar').innerHTML = initials;
             document.getElementById('profilePlate').textContent = userData.vehicle?.plate || '---';
             document.getElementById('profileCar').textContent = userData.vehicle?.model || '---';
-
-            // Rating
-            const rating = userData.stats?.rating || '0.0';
-            document.getElementById('rating').textContent = rating;
-            document.getElementById('profileRating').textContent = rating;
-
-            // Corridas hoje
+            document.getElementById('rating').textContent = userData.stats?.rating || '0.0';
             document.getElementById('ridesToday').textContent = userData.stats?.todayRides || 0;
-
-            // Favoritos
             document.getElementById('favoritesCount').textContent = userData.stats?.favorites || 0;
-
-            // Status
+            
             setStatus(userData.status || 'available');
         }
 
-        // Iniciais do nome
-        function getInitials(name) {
-            if (!name || name === 'Motorista') return 'JM';
-            return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-        }
-
-        // Status do motorista
+        // STATUS
         function setStatus(status) {
-            currentStatus = status;
-            
-            const statusIcon = document.getElementById('statusIcon');
-            const statusTitle = document.getElementById('statusTitle');
-            const statusDesc = document.getElementById('statusDesc');
             const btnAvailable = document.getElementById('btnAvailable');
             const btnBusy = document.getElementById('btnBusy');
             const btnOffline = document.getElementById('btnOffline');
+            const statusIcon = document.getElementById('statusIcon');
+            const statusTitle = document.getElementById('statusTitle');
+            const statusDesc = document.getElementById('statusDesc');
             const statusBadge = document.getElementById('statusBadge');
             
-            // Reset botões
             [btnAvailable, btnBusy, btnOffline].forEach(btn => btn.classList.remove('active'));
             
-            // Atualizar UI
             switch(status) {
                 case 'available':
                     statusIcon.className = 'status-icon available';
@@ -1239,16 +653,16 @@
                     statusDesc.textContent = 'Você está visível para passageiros próximos';
                     btnAvailable.classList.add('active');
                     statusBadge.textContent = 'Ativo';
-                    statusBadge.style.background = 'var(--available)';
+                    statusBadge.style.background = '#2ECC71';
                     break;
                 case 'busy':
                     statusIcon.className = 'status-icon busy';
                     statusIcon.innerHTML = '<i class="fas fa-times"></i>';
                     statusTitle.textContent = 'Ocupado';
-                    statusDesc.textContent = 'Você está em uma corrida ou indisponível';
+                    statusDesc.textContent = 'Você está em uma corrida';
                     btnBusy.classList.add('active');
                     statusBadge.textContent = 'Ocupado';
-                    statusBadge.style.background = 'var(--busy)';
+                    statusBadge.style.background = '#E74C3C';
                     break;
                 case 'offline':
                     statusIcon.className = 'status-icon offline';
@@ -1257,52 +671,36 @@
                     statusDesc.textContent = 'Você está invisível no mapa';
                     btnOffline.classList.add('active');
                     statusBadge.textContent = 'Offline';
-                    statusBadge.style.background = 'var(--offline)';
+                    statusBadge.style.background = '#9E9E9E';
                     break;
             }
             
-            // Salvar no Firebase se usuário logado
             if (currentUser) {
-                db.collection('motoristas').doc(currentUser.uid).update({
-                    status: status,
-                    lastStatusUpdate: firebase.firestore.FieldValue.serverTimestamp()
-                }).catch(err => console.log('Erro ao salvar status:', err));
+                db.collection('motoristas').doc(currentUser.uid).update({ status: status });
             }
         }
 
-        // Toast
-        function showToast(title, message) {
-            document.getElementById('toastTitle').textContent = title;
-            document.getElementById('toastMessage').textContent = message;
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-        // Loading
-        function showLoading(show) {
-            loadingOverlay.classList.toggle('active', show);
-        }
-
-        // Logout
-        function logout() {
+        // LOGOUT
+        document.getElementById('logoutBtn').addEventListener('click', function() {
             if (confirm('Deseja realmente sair?')) {
                 showLoading(true);
                 auth.signOut().then(() => {
                     window.location.href = 'login.html';
-                }).catch(() => {
-                    showLoading(false);
-                    window.location.href = 'login.html';
                 });
             }
+        });
+
+        // UTILS
+        function showToast(title, msg) {
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMessage').textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // Notificações (vazio)
-        document.getElementById('notificationBtn').addEventListener('click', function() {
-            showToast('Notificações', 'Nenhuma notificação no momento');
-        });
+        function showLoading(show) {
+            loadingOverlay.classList.toggle('active', show);
+        }
     </script>
 </body>
 </html>
